@@ -1,8 +1,6 @@
 package com.taig.android.parcelable
 
-import android.graphics.Rect
-import android.os.{Bundle, Parcel}
-import android.text.TextUtils
+import android.os.Parcel
 import org.robolectric.annotation.Config
 import org.scalatest._
 
@@ -117,6 +115,16 @@ with	RobolectricSuite
 		parcel.setDataPosition( 0 )
 
 		entity shouldBe ClassWithMapArgument.CREATOR.createFromParcel( parcel )
+	}
+
+	it should "support class to class inheritance" in
+	{
+		val parcel = Parcel.obtain()
+		val entity = new ClassWithArgumentsInherited()
+		entity.writeToParcel( parcel, 0 )
+		parcel.setDataPosition( 0 )
+
+		entity shouldBe ClassWithArgumentsInherited.CREATOR.createFromParcel( parcel )
 	}
 
 	"@Parcelable annotation at abstract class / trait" should "generate a companion object, if none is present" in

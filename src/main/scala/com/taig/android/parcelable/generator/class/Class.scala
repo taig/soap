@@ -17,7 +17,7 @@ extends	Context[C]
 	{
 		val ClassDef( modifiers, name, types, Template( parents, self, body ) ) = classDef
 
-		if( classDef.extendsFrom[android.os.Parcelable] )
+		if( classDef.hasParent[android.os.Parcelable] )
 		{
 			classDef
 		}
