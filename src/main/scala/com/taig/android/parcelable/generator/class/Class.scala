@@ -17,7 +17,7 @@ extends	Context[C]
 	{
 		val ClassDef( modifiers, name, types, Template( parents, self, body ) ) = classDef
 
-		if( classDef.extendsFrom[android.os.Parcelable] )
+		if( classDef.hasParent[android.os.Parcelable] )
 		{
 			classDef
 		}
@@ -53,7 +53,7 @@ extends	Context[C]
 		case tpe if tpe <:< typeOf[Boolean] => q"destination.writeValue( $name )"
 		case tpe if tpe <:< typeOf[Byte] => q"destination.writeByte( $name )"
 		case tpe if tpe <:< typeOf[Double] => q"destination.writeDouble( $name )"
-		case tpe if tpe <:< typeOf[Exception] => q"destination.writeException( $name )"
+		case tpe if tpe <:< typeOf[IBinder] => q"destination.writeStrongBinder( $name )"
 		case tpe if tpe <:< typeOf[FileDescriptor] => q"destination.writeFileDescriptor( $name )"
 		case tpe if tpe <:< typeOf[Float] => q"destination.writeFloat( $name )"
 		case tpe if tpe <:< typeOf[Int] => q"destination.writeInt( $name )"

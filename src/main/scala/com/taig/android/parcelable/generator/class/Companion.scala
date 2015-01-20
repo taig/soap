@@ -31,7 +31,7 @@ extends	Context[C]
 					self,
 					body :+
 					q"""
-					val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}]
+					override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}]
 					{
 						override def createFromParcel( source: android.os.Parcel ) = new ${name.toTypeName}(
 							..${classDef.getConstructorFields().map( _.tpt ).map( _.resolveType() ).map( read )}
@@ -51,7 +51,7 @@ extends	Context[C]
 		case tpe if tpe <:< typeOf[Boolean] => q"source.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean]"
 		case tpe if tpe <:< typeOf[Byte] => q"source.readByte()"
 		case tpe if tpe <:< typeOf[Double] => q"source.readDouble()"
-		case tpe if tpe <:< typeOf[Exception] => q"source.readException()"
+		case tpe if tpe <:< typeOf[IBinder] => q"source.readStrongBinder()"
 		case tpe if tpe <:< typeOf[FileDescriptor] => q"source.readFileDescriptor()"
 		case tpe if tpe <:< typeOf[Float] => q"source.readFloat()"
 		case tpe if tpe <:< typeOf[Int] => q"source.readInt()"
