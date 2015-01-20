@@ -34,3 +34,15 @@ object Person extends com.taig.android.parcelable.Creator[Person]
   }
 }
 ````
+
+## Installation
+Tested with sbt & [pfn/android-sdk-plugin][1]
+
+````scala
+libraryDependencies ++= Seq(
+  compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
+  "com.taig.android" % "parcelable" % "1.0.0"
+)
+````
+
+[1]: https://github.com/pfn/android-sdk-plugin
