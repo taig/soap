@@ -31,7 +31,7 @@ extends	Context[C]
 					self,
 					body :+
 					q"""
-					val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}]
+					override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}]
 					{
 						override def createFromParcel( source: android.os.Parcel ) = new ${name.toTypeName}(
 							..${classDef.getConstructorFields().map( _.tpt ).map( _.resolveType() ).map( read )}
