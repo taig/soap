@@ -2,12 +2,11 @@ import android.Keys._
 import android.Plugin._
 import sbt.Keys._
 import sbt._
-import xerial.sbt.Sonatype.sonatypeSettings
 
 object	Build
 extends	android.AutoBuild
 {
-	lazy val main = Project( "parcelable", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
+	lazy val main = Project( "parcelable", file( "." ), settings = androidBuildAar )
 		.settings(
 			fork in Test := true,
 			libraryDependencies <++= scalaVersion( version =>
@@ -24,28 +23,6 @@ extends	android.AutoBuild
 			),
 			name := "Parcelable",
 			organization := "com.taig.android",
-			pomExtra :=
-			{
-				<url>https://github.com/taig/parcelable</url>
-					<licenses>
-						<license>
-							<name>MIT</name>
-							<url>https://raw.githubusercontent.com/taig/parcelable/master/LICENSE</url>
-						</license>
-					</licenses>
-					<scm>
-						<connection>scm:git:github.com/taig/parcelable</connection>
-						<developerConnection>scm:git:git@github.com:taig/parcelable</developerConnection>
-						<url>github.com/taig/parcelable</url>
-					</scm>
-					<developers>
-						<developer>
-							<id>taig</id>
-							<name>Niklas Klein</name>
-							<url>http://taig.io</url>
-						</developer>
-					</developers>
-			},
 			publishArtifact in ( Compile, packageDoc ) := false,
 			resolvers ++= Seq(
 				Resolver.sonatypeRepo( "releases" ),
