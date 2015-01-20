@@ -2,7 +2,6 @@ import android.Keys._
 import android.Plugin._
 import sbt.Keys._
 import sbt._
-import xerial.sbt.Sonatype.SonatypeKeys._
 import xerial.sbt.Sonatype.sonatypeSettings
 
 object	Build
