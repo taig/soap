@@ -39,6 +39,8 @@ object Person extends com.taig.android.parcelable.Creator[Person]
 Tested with sbt & [pfn/android-sdk-plugin][1]
 
 ````scala
+resolvers += Resolver.url( "Taig", url( "http://taig.github.io/repository" ) )( ivyStylePatterns )
+
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
   "com.taig.android" %% "parcelable" % "1.0.0"
@@ -80,5 +82,7 @@ Todo
 
 ## Known limitations / issues
 - IntelliJ does not support macro expansion yet, be prepared for red code
+- Same file class declarations can break things, due to [scope issues][2]
 
 [1]: https://github.com/pfn/android-sdk-plugin
+[2]: https://github.com/scalamacros/paradise/issues/14
