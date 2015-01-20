@@ -82,5 +82,7 @@ Todo
 
 ## Known limitations / issues
 - IntelliJ does not support macro expansion yet, be prepared for red code
+- Same file class declarations can break things, due to [scope issues][2]
 
 [1]: https://github.com/pfn/android-sdk-plugin
+[2]: https://github.com/scalamacros/paradise/issues/14
