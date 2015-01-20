@@ -45,4 +45,34 @@ libraryDependencies ++= Seq(
 )
 ````
 
+## Usage
+Todo
+
+## Supported Types
+- Bundle
+- Boolean
+- Byte
+- CharSequence
+- Double
+- FileDescriptor
+- Float
+- Int
+- Long
+- Parcelable
+- PersistableBundle
+- Serializable
+- Short
+- Size
+- SizeF
+- String
+- SparseBooleanArray
+- Array[_]
+- Traversable[_]
+- Map[_, _]
+- Option[_]
+- Tuples
+
+## Known limitations / issues
+- IntelliJ does not support macro expansion yet, be prepared for red code
+
 [1]: https://github.com/pfn/android-sdk-plugin
