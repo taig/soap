@@ -54,6 +54,7 @@ Todo
 - Byte
 - CharSequence
 - Double
+- IBinder
 - FileDescriptor
 - Float
 - Int
@@ -71,6 +72,11 @@ Todo
 - Map[_, _]
 - Option[_]
 - Tuples
+
+## Unsupported Parcel Feautes
+- `writeException` / `readException`
+- `writeInterfaceToken`
+- `writeSparseArray` / `readSparseArray`
 
 ## Known limitations / issues
 - IntelliJ does not support macro expansion yet, be prepared for red code
