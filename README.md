@@ -211,7 +211,7 @@ case class Relative( value: Float ) extends Value with android.os.Parcelable
 
 - IntelliJ does not support macro expansion yet, be prepared for red code
 - Same file class declarations can break things, due to [scope issues][2]
-- Subclassing supported generic types Traversable[_] and Map[_, _] can get you into trouble
+- Subclassing supported generic types `Traversable[_]` and `Map[_, _]` can get you into trouble
 
 [1]: https://github.com/pfn/android-sdk-plugin
 [2]: https://github.com/scalamacros/paradise/issues/14
