@@ -41,8 +41,44 @@ Tested with sbt & [pfn/android-sdk-plugin][1]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "com.taig.android" % "parcelable" % "1.0.0"
+  "com.taig.android" %% "parcelable" % "1.0.0"
 )
 ````
+
+## Usage
+Todo
+
+## Supported Types
+- Bundle
+- Boolean
+- Byte
+- CharSequence
+- Double
+- IBinder
+- FileDescriptor
+- Float
+- Int
+- Long
+- Parcelable
+- PersistableBundle
+- Serializable
+- Short
+- Size
+- SizeF
+- String
+- SparseBooleanArray
+- Array[_]
+- Traversable[_]
+- Map[_, _]
+- Option[_]
+- Tuples
+
+## Unsupported Parcel Feautes
+- `writeException` / `readException`
+- `writeInterfaceToken`
+- `writeSparseArray` / `readSparseArray`
+
+## Known limitations / issues
+- IntelliJ does not support macro expansion yet, be prepared for red code
 
 [1]: https://github.com/pfn/android-sdk-plugin
