@@ -51,7 +51,6 @@ extends	Context[C]
 		case tpe if tpe <:< typeOf[Boolean] => q"source.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean]"
 		case tpe if tpe <:< typeOf[Byte] => q"source.readByte()"
 		case tpe if tpe <:< typeOf[Double] => q"source.readDouble()"
-		case tpe if tpe <:< typeOf[Exception] => q"source.readException()"
 		case tpe if tpe <:< typeOf[FileDescriptor] => q"source.readFileDescriptor()"
 		case tpe if tpe <:< typeOf[Float] => q"source.readFloat()"
 		case tpe if tpe <:< typeOf[Int] => q"source.readInt()"
