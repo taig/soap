@@ -36,6 +36,7 @@ object Person extends com.taig.android.parcelable.Creator[Person]
 ````
 
 ## Installation
+
 Tested with sbt & [pfn/android-sdk-plugin][1]
 
 ````scala
@@ -48,9 +49,134 @@ libraryDependencies ++= Seq(
 ````
 
 ## Usage
-Todo
+
+Using the library basically boils down to annotating classes or traits with the `@com.taig.android.parcelable.annotation.Parcelable` annotation. For more control one can implement the `android.os.Parcelable` interface on the class, or the `com.taig.android.parcelable.Creator[_]` trait on the companion object, in order to disable code generation and providing an own implementation instead.
+
+### Basics
+
+The Parcelable annotation is easy to use on any class or case class. During compile time the library will analyze your constructor fields and use them to generate appropiate Parcel write and read methods. There will be no runtime reflection code insterted to your classes; everything is evaluated to static method calls.
+
+````scala
+@Parcelable
+class Address( val street: String, val zip: Int, val city: String )
+
+@Parcelable
+case class Company( name: String, employees: List[Person], offices: Map[Int, Address] )
+````
+
+````scala
+class Address( val street: String, val zip: Int, val city: String ) extends android.os.Parcelable
+{
+  override def describeContents() = 0
+  
+  override def writeToParcel( destination: Parcel, flags: Int )
+  {
+    destination.writeString( street )
+    destination.writeInt( zip )
+    destination.writeString( city )
+  }
+}
+
+object Address extends com.taig.android.parcelable.Creator[Address]
+{
+  override lazy val CREATOR = new android.os.Parcelable.Creator[Address]
+  {
+    override def createFromParcel( source: android.os.Parcel ) = new Address(
+      source.readString(),
+      source.readInt(),
+      source.readString()
+    )
+
+    override def newArray( size: Int ) = new Array[Address]( size )
+  }
+}
+
+case class Company( name: String, employees: List[Person], offices: Map[Int, Address] ) extends android.os.Parcelable
+{
+  override def describeContents() = 0
+  
+  override def writeToParcel( destination: Parcel, flags: Int )
+  {
+    destination.writeString( name )
+    destination.writeStringArray( employees.toArray )
+    destination.writeIntArray( offices.key.toArray )
+    destination.writeParcelableArray( offices.values.toArray )
+  }
+}
+
+object Company extends com.taig.android.parcelable.Creator[Company]
+{
+  override lazy val CREATOR = new android.os.Parcelable.Creator[Company]
+  {
+    override def createFromParcel( source: android.os.Parcel ) = new Company(
+      source.readString(),
+      source.createStringArray().to[List],
+      {
+        val keys = source.createIntArray()
+        val values = source
+                      .readParcelableArray( classOf[Address].getClassLoader )
+                      .map( _.asInstanceOf[Address] )
+
+        ( keys zip values ).toMap
+      }
+    )
+
+    override def newArray( size: Int ) = new Array[Company]( size )
+  }
+}
+````
+
+### Inheritance
+
+You can also annotate abstarct super types or traits with the Parcelable annotation. They will extend the `android.os.Parcelable` interface, but will not implement the methods. Scala requires a companion object with a `CREATOR` field whenever a class implements Parcelable. Therefore a dummy `CREATOR` is generated. All subclasses that you want to be Parcelable need to be annotated as well!
+
+````scala
+@Parcelable
+trait Value
+
+@Parcelable
+case class Absolute( value: Int ) extends Value
+
+@Parcelable
+case class Relative( value: Float ) extends Value
+````
+
+````scala
+trait Value extends android.os.Parcelable
+
+object Value extends com.taig.android.parcelable.Creator[Value]
+{
+  def CREATOR: android.os.Parcelable.Creator[Value] = sys.error(
+	  "Can not create an abstract type from parcel. Did you forget to annotate a child class?"
+	)
+}
+
+case class Absolute( value: Int ) extends Value with android.os.Parcelable
+{
+  override def describeContents() = 0
+  
+  override def writeToParcel( destination: Parcel, flags: Int )
+  {
+    destination.writeInt( value )
+  }
+}
+
+object Absolute extends com.taig.android.parcelable.Creator[Absolute]
+{
+  override lazy val CREATOR = new android.os.Parcelable.Creator[Absolute]
+  {
+    override def createFromParcel( source: android.os.Parcel ) = new Absolute( source.readInt() )
+
+    override def newArray( size: Int ) = new Array[Absolute]( size )
+  }
+}
+
+case class Relative( value: Float ) extends Value with android.os.Parcelable
+...
+````
 
 ## Supported Types
+
 - Bundle
 - Boolean
 - Byte
@@ -76,13 +202,16 @@ Todo
 - Tuples
 
 ## Unsupported Parcel Feautes
+
 - `writeException` / `readException`
 - `writeInterfaceToken`
 - `writeSparseArray` / `readSparseArray`
 
 ## Known limitations / issues
+
 - IntelliJ does not support macro expansion yet, be prepared for red code
 - Same file class declarations can break things, due to [scope issues][2]
+- Subclassing supported generic types Traversable[_] and Map[_, _] can get you into trouble
 
 [1]: https://github.com/pfn/android-sdk-plugin
 [2]: https://github.com/scalamacros/paradise/issues/14
