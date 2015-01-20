@@ -39,6 +39,8 @@ object Person extends com.taig.android.parcelable.Creator[Person]
 Tested with sbt & [pfn/android-sdk-plugin][1]
 
 ````scala
+resolvers += Resolver.url( "Taig", url( "http://taig.github.io/repository" ) )( ivyStylePatterns )
+
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
   "com.taig.android" %% "parcelable" % "1.0.0"
