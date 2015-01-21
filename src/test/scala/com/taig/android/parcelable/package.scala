@@ -114,6 +114,8 @@ package object parcelable
 	case class Absolute( value: Int ) extends Value
 	@Parcelable
 	case class Relative( value: Float ) extends Value
+	@Parcelable
+	object Auto extends Value
 
 	@Parcelable
 	abstract class Model[M <: Model[M]]
