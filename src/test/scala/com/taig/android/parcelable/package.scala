@@ -123,5 +123,8 @@ package object parcelable
 	case class Address( street: String = "Unter den Linden 1", city: String = "Berlin" ) extends Model[Address]
 
 	@Parcelable
-	case class UseTheSerializable( x: ShouldTriggerAWarning )
+	case class UseTheSerializableIndirectly( x: ShouldTriggerWarning )
+
+	@Parcelable
+	case class UseTheSerializableDirectly( x: ShouldNotTriggerWarning )
 }
