@@ -175,6 +175,39 @@ case class Relative( value: Float ) extends Value with android.os.Parcelable
 ...
 ````
 
+### Singletons
+
+It is possible to anntotate singleton objects as well. But they have to live on their own, it won't work if an actual class is around where the object is the companion. In the above `Value` example this would be a valid usage:
+
+````scala
+@Parcelable
+trait Value
+
+@Parcelable
+object Auto extends Value
+````
+
+````scala
+...
+
+class Auto extends Value with android.os.Parcelable
+{
+	override def describeContents() = 0
+  
+  override def writeToParcel( destination: Parcel, flags: Int ) {}
+}
+
+object Auto extends Auto with com.taig.parcelable.Creator[Auto]
+{
+	override lazy val CREATOR = new android.os.Parcelable.Creator[Auto]
+  {
+    override def createFromParcel( source: android.os.Parcel ) = Auto
+
+    override def newArray( size: Int ) = new Array[Auto]( size )
+  }
+}
+````
+
 ## Supported Types
 
 - Bundle
