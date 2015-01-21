@@ -10,7 +10,7 @@ extends	Context[C]
 {
 	import context.universe._
 
-	def apply( moduleDef: ModuleDef ) =
+	def apply( classDef: ClassDef, moduleDef: ModuleDef ) =
 	{
 		val ModuleDef( modifiers, name, Template( parents, self, body ) ) = moduleDef
 
@@ -24,11 +24,11 @@ extends	Context[C]
 				modifiers,
 				name,
 				Template(
-					parents :+ tq"com.taig.android.parcelable.Creator[${name.toTypeName}]",
+					parents :+ tq"com.taig.android.parcelable.Creator[${classDef.getWildcardedName()}]",
 					self,
 					body :+
 					q"""
-		 			def CREATOR: android.os.Parcelable.Creator[${name.toTypeName}] = sys.error(
+		 			def CREATOR: android.os.Parcelable.Creator[${classDef.getWildcardedName()}] = sys.error(
 						"Can not create an abstract type from parcel. Did you forget to annotate a child class?"
 					)"""
 				)

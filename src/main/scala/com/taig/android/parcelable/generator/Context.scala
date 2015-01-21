@@ -25,10 +25,58 @@ trait Context[C <: whitebox.Context]
 		}
 	}
 
+	implicit class RichClassDef( classDef: ClassDef )
+	{
+		/**
+		 * Retrieve the name, with type arguments
+		 */
+		def getFullName(): Tree =
+		{
+			def discover( name: TypeName, types: List[TypeDef] ): Tree = ( name, types ) match
+			{
+				case ( name: TypeName, Nil ) => tq"$name"
+				case ( name: TypeName, types ) =>
+				{
+					tq"$name[..${types.map{ case TypeDef( _, name, types, _ ) => discover( name, types ) }}]"
+				}
+			}
+
+			discover( classDef.name, classDef.tparams )
+		}
+
+		/**
+		 * Retrieve the name, type arguments replaced with wildcards
+		 */
+		def getWildcardedName(): Tree = classDef match
+		{
+			case ClassDef( _, name, Nil, _ ) => tq"$name"
+			case ClassDef( _, name, types, _ ) => ExistentialTypeTree(
+				AppliedTypeTree(
+					Ident( name ),
+					( 1 to types.length ).map( i => Ident( TypeName( "_$" + i ) ) ).toList
+				),
+				( 1 to types.length ).map( i =>
+				{
+					TypeDef(
+						Modifiers( Flag.DEFERRED | Flag.SYNTHETIC ),
+						TypeName( "_$" + i ),
+						List.empty,
+						TypeBoundsTree( EmptyTree, EmptyTree )
+					)
+				} ).toList
+			)
+		}
+	}
+
 	implicit class RichImplDef( implDef: ImplDef )
 	{
 		private def getSimpleName( name: String ) = name.replaceFirst( "(?:(?:\\w+\\.)*)(\\w+)(?:\\[.+\\])?", "$1" )
 
+		/**
+		 * Does this class extend from T (directly or through its parents)?
+		 * 
+		 * @see hasParent
+		 */
 		def extendsFrom[T: TypeTag]: Boolean = implDef.impl.parents.exists( parent =>
 		{
 			try
@@ -41,6 +89,11 @@ trait Context[C <: whitebox.Context]
 			}
 		} )
 
+		/**
+		 * Does this class directly extend from T?
+		 * 
+		 * @see extendsFrom
+		 */
 		def hasParent[T: TypeTag]: Boolean = implDef.impl.parents.exists( parent =>
 		{
 			try
@@ -53,6 +106,9 @@ trait Context[C <: whitebox.Context]
 			}
 		} )
 
+		/**
+		 * Retrieve all fields that are flagged with [[Flag.PARAMACCESSOR]]
+		 */
 		def getConstructorFields(): List[ValDef] =
 		{
 			implDef.impl.body.collect

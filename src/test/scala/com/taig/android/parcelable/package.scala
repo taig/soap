@@ -1,7 +1,7 @@
 package com.taig.android
 
 import android.graphics.Rect
-import android.os.{Bundle, Parcel}
+import android.os.Parcel
 import com.taig.android.parcelable.annotation.Parcelable
 
 import scala.collection.mutable.ArrayBuffer
@@ -114,4 +114,14 @@ package object parcelable
 	case class Absolute( value: Int ) extends Value
 	@Parcelable
 	case class Relative( value: Float ) extends Value
+	@Parcelable
+	object Auto extends Value
+
+	@Parcelable
+	abstract class Model[M <: Model[M]]
+	@Parcelable
+	case class Address( street: String = "Unter den Linden 1", city: String = "Berlin" ) extends Model[Address]
+
+	@Parcelable
+	case class UseTheSerializable( x: ShouldTriggerAWarning )
 }
