@@ -1,4 +1,0 @@
-package com.taig.android.parcelable
-
-trait SerializableTest extends Serializable
-class ShouldTriggerAWarning extends SerializableTest

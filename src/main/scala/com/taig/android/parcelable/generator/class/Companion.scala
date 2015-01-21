@@ -130,9 +130,10 @@ extends	Context[C]
 			)
 		case tpe if tpe <:< typeOf[Serializable] =>
 		{
-			// TODO Only print this notice, if tpe does not directly extend from Serializable
-			// @see http://stackoverflow.com/questions/28067387/is-there-a-way-to-get-the-direct-parents-of-a-classsymbol-in-macro-context
-			println( s"Notice: Treating type $tpe as Serializable. Please make sure this behavior is intended!" )
+			if( !tpe.typeSymbol.asClass.directBaseClasses().contains( typeOf[Serializable].typeSymbol ) )
+			{
+				println( s"Notice: Treating type $tpe as Serializable. Please make sure this behavior is intended!" )
+			}
 
 			q"source.readSerializable().asInstanceOf[$tpe]"
 		}
