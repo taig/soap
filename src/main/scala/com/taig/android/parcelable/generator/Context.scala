@@ -68,6 +68,19 @@ trait Context[C <: whitebox.Context]
 		}
 	}
 
+	implicit class RichClassSymbol( classSymbol: ClassSymbol )
+	{
+		def directBaseClasses() =
+		{
+			val base = classSymbol.baseClasses.toSet - classSymbol
+			val basebase = base
+				.flatMap{ case x: ClassSymbol => x.baseClasses.toSet - x }
+				.toSet
+
+			base -- basebase
+		}
+	}
+
 	implicit class RichImplDef( implDef: ImplDef )
 	{
 		private def getSimpleName( name: String ) = name.replaceFirst( "(?:(?:\\w+\\.)*)(\\w+)(?:\\[.+\\])?", "$1" )
