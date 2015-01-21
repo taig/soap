@@ -218,14 +218,14 @@ object Auto extends Value
 
 class Auto extends Value with android.os.Parcelable
 {
-	override def describeContents() = 0
+  override def describeContents() = 0
   
   override def writeToParcel( destination: Parcel, flags: Int ) {}
 }
 
 object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 {
-	override lazy val CREATOR = new android.os.Parcelable.Creator[Auto]
+  override lazy val CREATOR = new android.os.Parcelable.Creator[Auto]
   {
     override def createFromParcel( source: android.os.Parcel ) = Auto
 
