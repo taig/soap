@@ -1,6 +1,7 @@
 package com.taig.android.parcelable.generator.`class`
 
 import java.io.FileDescriptor
+import java.lang.Class.forName
 
 import android.os.{IBinder, Bundle, Parcelable, PersistableBundle}
 import android.util.{SparseBooleanArray, Size, SizeF}
@@ -127,7 +128,14 @@ extends	Context[C]
 				Ident( TermName( tpe.typeConstructor.toString) ),
 				tpe.typeArgs.map( arg => read( arg ) )
 			)
-		case tpe if tpe <:< typeOf[Serializable] => q"source.readSerializable().asInstanceOf[$tpe]"
+		case tpe if tpe <:< typeOf[Serializable] =>
+		{
+			// TODO Only print this notice, if tpe does not directly extend from Serializable
+			// @see http://stackoverflow.com/questions/28067387/is-there-a-way-to-get-the-direct-parents-of-a-classsymbol-in-macro-context
+			println( s"Notice: Treating type $tpe as Serializable. Please make sure this behavior is intended!" )
+
+			q"source.readSerializable().asInstanceOf[$tpe]"
+		}
 		case tpe =>
 		{
 			context.abort(

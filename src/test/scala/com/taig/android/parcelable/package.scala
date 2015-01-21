@@ -121,4 +121,7 @@ package object parcelable
 	abstract class Model[M <: Model[M]]
 	@Parcelable
 	case class Address( street: String = "Unter den Linden 1", city: String = "Berlin" ) extends Model[Address]
+
+	@Parcelable
+	case class UseTheSerializable( x: ShouldTriggerAWarning )
 }
