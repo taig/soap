@@ -173,8 +173,8 @@ trait Value extends android.os.Parcelable
 object Value extends com.taig.android.parcelable.Creator[Value]
 {
   def CREATOR: android.os.Parcelable.Creator[Value] = sys.error(
-	  "Can not create an abstract type from parcel. Did you forget to annotate a child class?"
-	)
+    "Can not create an abstract type from parcel. Did you forget to annotate a child class?"
+  )
 }
 
 case class Absolute( value: Int ) extends Value with android.os.Parcelable
