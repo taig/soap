@@ -35,6 +35,32 @@ object Person extends com.taig.android.parcelable.Creator[Person]
 }
 ````
 
+## Supported Types
+
+- Bundle
+- Boolean
+- Byte
+- CharSequence
+- Double
+- IBinder
+- FileDescriptor
+- Float
+- Int
+- Long
+- Parcelable
+- PersistableBundle
+- Serializable
+- Short
+- Size
+- SizeF
+- String
+- SparseBooleanArray
+- Array[_]
+- Traversable[_]
+- Map[_, _]
+- Option[_]
+- Tuples
+
 ## Installation
 
 Tested with sbt & [pfn/android-sdk-plugin][1]
@@ -207,32 +233,6 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
   }
 }
 ````
-
-## Supported Types
-
-- Bundle
-- Boolean
-- Byte
-- CharSequence
-- Double
-- IBinder
-- FileDescriptor
-- Float
-- Int
-- Long
-- Parcelable
-- PersistableBundle
-- Serializable
-- Short
-- Size
-- SizeF
-- String
-- SparseBooleanArray
-- Array[_]
-- Traversable[_]
-- Map[_, _]
-- Option[_]
-- Tuples
 
 ## Unsupported Parcel Feautes
 
