@@ -12,6 +12,17 @@ package object `macro`
 		def create( c: ClassDef, m: ModuleDef ): Expr[Any] = ( c, m ) match
 		{
 			/*
+			 * Object
+			 */
+			case ( null, m: ModuleDef ) =>
+			{
+				context.Expr( q"""
+					${generator.`object`.Class( context )( m )}
+					${generator.`object`.Companion( context )( m )}
+					"""
+				)
+			}
+			/*
 			 * Abstract Class, Trait
 			 */
 			case ( c @ ClassDef( mods, _, _, _ ), m: ModuleDef ) if mods.hasFlag( ABSTRACT ) =>
@@ -38,6 +49,7 @@ package object `macro`
 		annottees.map( _.tree ) match
 		{
 			case ( c: ClassDef ) :: Nil => create( c, q"object ${c.name.toTermName}" )
+			case ( m: ModuleDef ) :: Nil => create( null, m )
 			case ( c: ClassDef ) :: ( m: ModuleDef ) :: Nil => create( c, m )
 			case _ => context.abort( context.enclosingPosition, "Invalid annottee" )
 		}
