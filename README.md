@@ -253,5 +253,10 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 - Same file class declarations can break things, due to [scope issues][2]
 - Subclassing supported generic types `Traversable[_]` and `Map[_, _]` can get you into trouble
 
+## License
+
+MIT, see [LICENSE][3] file for more information
+
 [1]: https://github.com/pfn/android-sdk-plugin
 [2]: https://github.com/scalamacros/paradise/issues/14
+[3]: https://raw.githubusercontent.com/Taig/Parcelable/master/LICENSE
