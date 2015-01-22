@@ -235,7 +235,12 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 
 ## Changelog
 
+#### 1.1.1
+
+- Only print Serializable warning, when the concerned type does not inherit from Serializable directly
+
 #### 1.1.0
+
 - Allow annotating `object`
 - Allow annotating abstract classes and trais with type arguments
 - Print a notice when `writeSerializable` is used, as this may not be intended
