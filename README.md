@@ -91,7 +91,7 @@ case class Company( name: String, employees: List[Person], offices: Map[Int, Add
 ````
 
 ````scala
-class Address( val street: String, val zip: Int, val city: String ) extends android.os.Parcelable
+class Address( val street: String, val zip: Int )( val city: String ) extends android.os.Parcelable
 {
   override def describeContents() = 0
   
@@ -109,9 +109,8 @@ object Address extends com.taig.android.parcelable.Creator[Address]
   {
     override def createFromParcel( source: android.os.Parcel ) = new Address(
       source.readString(),
-      source.readInt(),
-      source.readString()
-    )
+      source.readInt()
+    )( source.readString() )
 
     override def newArray( size: Int ) = new Array[Address]( size )
   }
