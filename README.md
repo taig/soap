@@ -235,6 +235,10 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 
 ## Changelog
 
+#### 1.2.0
+
+- Support for constructor argument groups
+
 #### 1.1.1
 
 - Only print Serializable warning, when the concerned type does not inherit from Serializable directly
