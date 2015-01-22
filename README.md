@@ -70,7 +70,7 @@ resolvers += Resolver.url( "Taig", url( "http://taig.github.io/repository" ) )( 
 
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "com.taig.android" %% "parcelable" % "1.1.0"
+  "com.taig.android" %% "parcelable" % "1.2.0"
 )
 ````
 
@@ -91,7 +91,7 @@ case class Company( name: String, employees: List[Person], offices: Map[Int, Add
 ````
 
 ````scala
-class Address( val street: String, val zip: Int, val city: String ) extends android.os.Parcelable
+class Address( val street: String, val zip: Int )( val city: String ) extends android.os.Parcelable
 {
   override def describeContents() = 0
   
@@ -109,9 +109,8 @@ object Address extends com.taig.android.parcelable.Creator[Address]
   {
     override def createFromParcel( source: android.os.Parcel ) = new Address(
       source.readString(),
-      source.readInt(),
-      source.readString()
-    )
+      source.readInt()
+    )( source.readString() )
 
     override def newArray( size: Int ) = new Array[Address]( size )
   }
@@ -236,7 +235,16 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 
 ## Changelog
 
+#### 1.2.0
+
+- Support for constructor argument groups
+
+#### 1.1.1
+
+- Only print Serializable warning, when the concerned type does not inherit from Serializable directly
+
 #### 1.1.0
+
 - Allow annotating `object`
 - Allow annotating abstract classes and trais with type arguments
 - Print a notice when `writeSerializable` is used, as this may not be intended
