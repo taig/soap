@@ -235,7 +235,7 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 
 ## Changelog
 
-#### 1.2.0
+#### 1.2.1
 
 - Support for constructor argument groups
 
