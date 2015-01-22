@@ -129,5 +129,21 @@ trait Context[C <: whitebox.Context]
 				case valDef: ValDef if valDef.mods.hasFlag( Flag.PARAMACCESSOR ) => valDef
 			}
 		}
+
+		/**
+		 * Retrieve all methods are named as [[termNames.CONSTRUCTOR]]
+		 */
+		def getConstructors(): List[DefDef] =
+		{
+			implDef.impl.body.collect
+			{
+				case defDef: DefDef if defDef.name == termNames.CONSTRUCTOR => defDef
+			}
+		}
+
+		/**
+		 * Retrieve the head of [[getConstructors()]]
+		 */
+		def getPrimaryConstructor(): DefDef = getConstructors().head
 	}
 }

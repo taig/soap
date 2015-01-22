@@ -38,11 +38,13 @@ package object `macro`
 			 */
 			case ( c: ClassDef, m: ModuleDef ) =>
 			{
-				context.Expr( q"""
+				val x = context.Expr( q"""
 					${generator.`class`.Class( context )( c )}
 					${generator.`class`.Companion( context )( c, m )}
 					"""
 				)
+				println( show( x.tree ) )
+				x
 			}
 		}
 
