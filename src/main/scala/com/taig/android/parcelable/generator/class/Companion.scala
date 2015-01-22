@@ -1,10 +1,9 @@
 package com.taig.android.parcelable.generator.`class`
 
 import java.io.FileDescriptor
-import java.lang.Class.forName
 
-import android.os.{IBinder, Bundle, Parcelable, PersistableBundle}
-import android.util.{SparseBooleanArray, Size, SizeF}
+import android.os.{Bundle, IBinder, Parcelable, PersistableBundle}
+import android.util.{Size, SizeF, SparseBooleanArray}
 import com.taig.android.parcelable.generator.Context
 
 import scala.reflect.macros.whitebox
@@ -34,9 +33,7 @@ extends	Context[C]
 					q"""
 					override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}]
 					{
-						override def createFromParcel( source: android.os.Parcel ) = new ${name.toTypeName}(
-							..${classDef.getConstructorFields().map( _.tpt ).map( _.resolveType() ).map( read )}
-						)
+						override def createFromParcel( source: android.os.Parcel ) = ${instantiate( classDef )}
 
 						override def newArray( size: Int ) = new Array[${name.toTypeName}]( size )
 					}
@@ -144,6 +141,24 @@ extends	Context[C]
 				s"No parcel read method available for type $tpe"
 			)
 		}
+	}
+
+	private def instantiate( classDef: ClassDef ) =
+	{
+		def construct( reads: List[List[Tree]] ): Apply = reads match
+		{
+			case List( read ) => Apply( Select( New( Ident( classDef.name ) ), termNames.CONSTRUCTOR ), read )
+			case read :: reads => Apply( construct( reads ), read )
+			case Nil => construct( List( List.empty ) )
+		}
+
+		val reads = classDef
+			.getPrimaryConstructor()
+			.vparamss
+			.map( _.map( _.tpt.resolveType() ) )
+			.map( _.map( read ) )
+
+		construct( reads.reverse )
 	}
 }
 

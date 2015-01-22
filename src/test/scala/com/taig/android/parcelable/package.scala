@@ -127,4 +127,7 @@ package object parcelable
 
 	@Parcelable
 	case class UseTheSerializableDirectly( x: ShouldNotTriggerWarning )
+
+	@Parcelable
+	class ClassWithParameterGroups( x: Int )( y: String )
 }
