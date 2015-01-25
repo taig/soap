@@ -69,25 +69,16 @@ extends	Context[C]
 			q"android.text.TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel( source ).asInstanceOf[$tpe]"
 		}
 		case tpe if tpe <:< typeOf[SparseBooleanArray] => q"source.readSparseBooleanArray()"
-		case tpe if tpe <:< typeOf[Option[Map[_, _]]] =>
+		case tpe if tpe <:< typeOf[Option[_]] =>
 		{
 			q"""
-			val keys = ${read( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.head}]]".resolveType() )}
-			val values = ${read( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.last}]]".resolveType() )}
-
-			for
+			source.readInt() match
 			{
-				k <- keys
-				v <- values
+				case 1 => Some( ${read( tpe.typeArgs.head )} )
+				case -1 => None
 			}
-			yield ( k zip v ).toMap
 			"""
 		}
-		case tpe if tpe <:< typeOf[Option[T[_]]] || tpe <:< typeOf[Option[A[_]]] =>
-		{
-			q"Option( ${collection( tpe.typeArgs.head )} ).map( _.to[${tpe.typeArgs.head.typeConstructor}] )"
-		}
-		case tpe if tpe <:< typeOf[Option[_]] => q"Option( ${read( tpe.typeArgs.head )} )"
 		case tpe if tpe <:< typeOf[Map[_, _]] =>
 		{
 			q"""
@@ -97,7 +88,6 @@ extends	Context[C]
 			"""
 		}
 		case tpe if tpe <:< typeOf[T[_]] || tpe <:< typeOf[A[_]] => q"${collection( tpe )}.to[${tpe.typeConstructor}]"
-		case tpe if tpe <:< typeOf[Tuple1[_]] => q"Tuple1( ${read( tpe.typeArgs.head )} )"
 		case tpe if tpe <:< typeOf[Product] && tpe.typeConstructor.toString.matches( "Tuple\\d+" ) =>
 			Apply(
 				Ident( TermName( tpe.typeConstructor.toString) ),

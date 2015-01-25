@@ -66,20 +66,21 @@ extends	Context[C]
 		case tpe if tpe <:< typeOf[String] => q"destination.writeString( $name )"
 		case tpe if tpe <:< typeOf[CharSequence] => q"android.text.TextUtils.writeToParcel( $name, destination, flags )"
 		case tpe if tpe <:< typeOf[SparseBooleanArray] => q"destination.writeSparseBooleanArray( $name )"
-		case tpe if tpe <:< typeOf[Option[Map[_, _]]] =>
-		{
-			q"""
-			${write( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.head}]]".resolveType(), q"$name.map( _.keys )" )}
-			${write( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.last}]]".resolveType(), q"$name.map( _.values )" )}
-			"""
-		}
-		case tpe if tpe <:< typeOf[Option[Traversable[_]]] || tpe <:< typeOf[Option[Array[_]]] =>
-		{
-			collection( tpe.typeArgs.head, q"$name.map( _.toArray ).getOrElse( null )" )
-		}
 		case tpe if tpe <:< typeOf[Option[_]] =>
 		{
-			write( tpe.typeArgs.head, q"$name.getOrElse( null ).asInstanceOf[${tpe.typeArgs.head}]" )
+			val x = TermName( context.freshName() )
+
+			q"""
+			$name match
+			{
+				case Some( $x ) =>
+				{
+					destination.writeInt( 1 )
+					${write( tpe.typeArgs.head, q"$x" )}
+				}
+				case None => destination.writeInt( -1 )
+			}
+			"""
 		}
 		case tpe if tpe <:< typeOf[Map[_, _]] =>
 		{
@@ -89,7 +90,6 @@ extends	Context[C]
 			"""
 		}
 		case tpe if tpe <:< typeOf[Traversable[_]] || tpe <:< typeOf[Array[_]] => collection( `type`, q"$name.toArray" )
-		case tpe if tpe <:< typeOf[Tuple1[_]] => write( tpe.typeArgs.head, q"$name._1" )
 		case tpe if tpe <:< typeOf[Product] && tpe.typeConstructor.toString.matches( "Tuple\\d+" ) =>
 		{
 			q"..${
