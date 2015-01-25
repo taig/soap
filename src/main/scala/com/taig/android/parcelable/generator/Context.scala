@@ -8,23 +8,6 @@ trait Context[C <: whitebox.Context]
 
 	import context.universe._
 
-	implicit class RichTree( tree: Tree )
-	{
-		def resolveType(): Type =
-		{
-			val check = tree match
-			{
-				case AppliedTypeTree( name, parameters ) => q"null.asInstanceOf[$name[..$parameters]]"
-				case Apply( name, _ ) => q"null.asInstanceOf[$name]"
-				case Ident( name: TypeName ) => q"null.asInstanceOf[$name]"
-				case select: Select => q"null.asInstanceOf[$select]"
-				case _ => sys.error( s"Can't resolve type:\n${showRaw( tree )}" )
-			}
-
-			context.typecheck( check ).tpe
-		}
-	}
-
 	implicit class RichClassDef( classDef: ClassDef )
 	{
 		/**
@@ -145,5 +128,32 @@ trait Context[C <: whitebox.Context]
 		 * Retrieve the head of [[getConstructors()]]
 		 */
 		def getPrimaryConstructor(): DefDef = getConstructors().head
+	}
+
+	implicit class RichTree( tree: Tree )
+	{
+		def resolveType(): Type =
+		{
+			val check = tree match
+			{
+				case AppliedTypeTree( name, parameters ) => q"null.asInstanceOf[$name[..$parameters]]"
+				case Apply( name, _ ) => q"null.asInstanceOf[$name]"
+				case Ident( name: TypeName ) => q"null.asInstanceOf[$name]"
+				case select: Select => q"null.asInstanceOf[$select]"
+				case _ => sys.error( s"Can't resolve type:\n${showRaw( tree )}" )
+			}
+
+			context.typecheck( check ).tpe
+		}
+	}
+
+	implicit class RichType( `type`: Type )
+	{
+		def is[T: TypeTag] = `type` <:< typeOf[T]
+
+		/**
+		 * Check if this Type is a child of Traversable[T] or Array[T] 
+		 */
+		def isCollection[T: TypeTag] = `type` <:< typeOf[Traversable[T]] || `type` <:< typeOf[Array[T]]
 	}
 }
