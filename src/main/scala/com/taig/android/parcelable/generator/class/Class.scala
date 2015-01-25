@@ -66,6 +66,17 @@ extends	Context[C]
 		case tpe if tpe <:< typeOf[String] => q"destination.writeString( $name )"
 		case tpe if tpe <:< typeOf[CharSequence] => q"android.text.TextUtils.writeToParcel( $name, destination, flags )"
 		case tpe if tpe <:< typeOf[SparseBooleanArray] => q"destination.writeSparseBooleanArray( $name )"
+		case tpe if tpe <:< typeOf[Option[Map[_, _]]] =>
+		{
+			q"""
+			${write( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.head}]]".resolveType(), q"$name.map( _.keys )" )}
+			${write( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.last}]]".resolveType(), q"$name.map( _.values )" )}
+			"""
+		}
+		case tpe if tpe <:< typeOf[Option[Traversable[_]]] || tpe <:< typeOf[Option[Array[_]]] =>
+		{
+			collection( tpe.typeArgs.head, q"$name.map( _.toArray ).getOrElse( null )" )
+		}
 		case tpe if tpe <:< typeOf[Option[_]] =>
 		{
 			write( tpe.typeArgs.head, q"$name.getOrElse( null ).asInstanceOf[${tpe.typeArgs.head}]" )
@@ -77,50 +88,7 @@ extends	Context[C]
 			${write( tq"Iterable[${tpe.typeArgs.last}]".resolveType(), q"$name.values" )}
 			"""
 		}
-		case tpe if tpe <:< typeOf[Traversable[Boolean]] || tpe <:< typeOf[Array[Boolean]] =>
-		{
-			q"destination.writeBooleanArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Byte]] || tpe <:< typeOf[Array[Byte]] =>
-		{
-			q"destination.writeByteArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Char]] || tpe <:< typeOf[Array[Char]] =>
-		{
-			q"destination.writeCharArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Double]] || tpe <:< typeOf[Array[Double]] =>
-		{
-			q"destination.writeDoubleArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Float]] || tpe <:< typeOf[Array[Float]] =>
-		{
-			q"destination.writeFloatArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[IBinder]] || tpe <:< typeOf[Array[IBinder]] =>
-		{
-			q"destination.writeBinderArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Int]] || tpe <:< typeOf[Array[Int]] =>
-		{
-			q"destination.writeIntArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Parcelable]] || tpe <:< typeOf[Array[Parcelable]] =>
-		{
-			q"destination.writeParcelableArray( $name.toArray, flags )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Long]] || tpe <:< typeOf[Array[Long]] =>
-		{
-			q"destination.writeLongArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[String]] || tpe <:< typeOf[Array[String]] =>
-		{
-			q"destination.writeStringArray( $name.toArray )"
-		}
-		case tpe if tpe <:< typeOf[Traversable[_]] || tpe <:< typeOf[Array[_]] =>
-		{
-			q"destination.writeArray( $name.toArray )"
-		}
+		case tpe if tpe <:< typeOf[Traversable[_]] || tpe <:< typeOf[Array[_]] => collection( `type`, q"$name.toArray" )
 		case tpe if tpe <:< typeOf[Tuple1[_]] => write( tpe.typeArgs.head, q"$name._1" )
 		case tpe if tpe <:< typeOf[Product] && tpe.typeConstructor.toString.matches( "Tuple\\d+" ) =>
 		{
@@ -138,6 +106,54 @@ extends	Context[C]
 				context.enclosingPosition,
 				s"No parcel write method available for type $tpe"
 			)
+		}
+	}
+
+	private def collection( `type`: Type, array: Tree ): Tree = `type` match
+	{
+		case tpe if tpe <:< typeOf[Traversable[Boolean]] || tpe <:< typeOf[Array[Boolean]] =>
+		{
+			q"destination.writeBooleanArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[Byte]] || tpe <:< typeOf[Array[Byte]] =>
+		{
+			q"destination.writeByteArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[Char]] || tpe <:< typeOf[Array[Char]] =>
+		{
+			q"destination.writeCharArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[Double]] || tpe <:< typeOf[Array[Double]] =>
+		{
+			q"destination.writeDoubleArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[Float]] || tpe <:< typeOf[Array[Float]] =>
+		{
+			q"destination.writeFloatArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[IBinder]] || tpe <:< typeOf[Array[IBinder]] =>
+		{
+			q"destination.writeBinderArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[Int]] || tpe <:< typeOf[Array[Int]] =>
+		{
+			q"destination.writeIntArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[Parcelable]] || tpe <:< typeOf[Array[Parcelable]] =>
+		{
+			q"destination.writeParcelableArray( $array, flags )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[Long]] || tpe <:< typeOf[Array[Long]] =>
+		{
+			q"destination.writeLongArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[String]] || tpe <:< typeOf[Array[String]] =>
+		{
+			q"destination.writeStringArray( $array )"
+		}
+		case tpe if tpe <:< typeOf[Traversable[_]] || tpe <:< typeOf[Array[_]] =>
+		{
+			q"destination.writeArray( $array )"
 		}
 	}
 }

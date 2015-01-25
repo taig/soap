@@ -59,17 +59,24 @@ package object parcelable
 	)
 
 	@Parcelable
-	class ClassWithOptionArray(
+	case class ClassWithOptionArray(
 		x: Option[Array[String]] = Some( Array( "a", "s", "d", "f" ) ),
 		y: Option[Array[String]] = None
 	)
+	{
+		override def equals( o: scala.Any ) = o match 
+		{
+			case c: ClassWithOptionArray => x.map( _.deep ) == c.x.map( _.deep ) && y.map( _.deep ) == c.y.map( _.deep )
+			case _ => false
+		}
+	}
 	@Parcelable
-	class ClassWithOptionTraversable(
+	case class ClassWithOptionTraversable(
 		x: Option[Seq[String]] = Some( Seq( "a", "s", "d", "f" ) ),
 		y: Option[Seq[String]] = None
 	)
 	@Parcelable
-	class ClassWithOptionMap(
+	case class ClassWithOptionMap(
 		x: Option[Map[Int, String]] = Some( Map( 1 -> "a", 2 -> "s", 3 -> "d", 4 -> "f" ) ),
 		y: Option[Map[Int, String]] = None
 	)

@@ -13,6 +13,10 @@ extends	Context[C]
 {
 	import context.universe._
 
+	type T[+X] = Traversable[X]
+
+	type A[X] = Array[X]
+
 	def apply( classDef: ClassDef, moduleDef: ModuleDef ) =
 	{
 		val ModuleDef( modifiers, name, Template( parents, self, body ) ) = moduleDef
@@ -43,7 +47,7 @@ extends	Context[C]
 		}
 	}
 
-	private def read[T]( `type`: Type ): Tree = `type` match
+	private def read( `type`: Type ): Tree = `type` match
 	{
 		case tpe if tpe <:< typeOf[Bundle] => q"source.readBundle()"
 		case tpe if tpe <:< typeOf[Boolean] => q"source.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean]"
@@ -65,60 +69,34 @@ extends	Context[C]
 			q"android.text.TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel( source ).asInstanceOf[$tpe]"
 		}
 		case tpe if tpe <:< typeOf[SparseBooleanArray] => q"source.readSparseBooleanArray()"
+		case tpe if tpe <:< typeOf[Option[Map[_, _]]] =>
+		{
+			q"""
+			val keys = ${read( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.head}]]".resolveType() )}
+			val values = ${read( tq"Option[Iterable[${tpe.typeArgs.head.typeArgs.last}]]".resolveType() )}
+
+			for
+			{
+				k <- keys
+				v <- values
+			}
+			yield ( k zip v ).toMap
+			"""
+		}
+		case tpe if tpe <:< typeOf[Option[T[_]]] || tpe <:< typeOf[Option[A[_]]] =>
+		{
+			q"Option( ${collection( tpe.typeArgs.head )} ).map( _.to[${tpe.typeArgs.head.typeConstructor}] )"
+		}
 		case tpe if tpe <:< typeOf[Option[_]] => q"Option( ${read( tpe.typeArgs.head )} )"
-		case tpe if tpe <:< typeOf[Map[_, _]] => q"""
-			val keys = { ${read( tq"Iterable[${tpe.typeArgs.head}]".resolveType() )} }
-			val values = { ${read( tq"Iterable[${tpe.typeArgs.last}]".resolveType() )} }
+		case tpe if tpe <:< typeOf[Map[_, _]] =>
+		{
+			q"""
+			val keys = ${read( tq"Iterable[${tpe.typeArgs.head}]".resolveType() )}
+			val values = ${read( tq"Iterable[${tpe.typeArgs.last}]".resolveType() )}
 			( keys zip values ).toMap
 			"""
-		case tpe if tpe <:< typeOf[Traversable[Boolean]] || tpe <:< typeOf[Array[Boolean]] =>
-		{
-			q"source.createBooleanArray().to[${tpe.typeConstructor}]"
 		}
-		case tpe if tpe <:< typeOf[Traversable[Byte]] || tpe <:< typeOf[Array[Byte]] =>
-		{
-			q"source.createByteArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Char]] || tpe <:< typeOf[Array[Char]] =>
-		{
-			q"source.createCharArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Double]] || tpe <:< typeOf[Array[Double]] =>
-		{
-			q"source.createDoubleArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Float]] || tpe <:< typeOf[Array[Float]] =>
-		{
-			q"source.createFloatArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[IBinder]] || tpe <:< typeOf[Array[IBinder]] =>
-		{
-			q"source.createBinderArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Int]] || tpe <:< typeOf[Array[Int]] =>
-		{
-			q"source.createIntArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Long]] || tpe <:< typeOf[Array[Long]] =>
-		{
-			q"source.createLongArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[String]] || tpe <:< typeOf[Array[String]] =>
-		{
-			q"source.createStringArray().to[${tpe.typeConstructor}]"
-		}
-		case tpe if tpe <:< typeOf[Traversable[Parcelable]] || tpe <:< typeOf[Array[Parcelable]] => q"""
-			source
-				.readParcelableArray( classOf[${tpe.typeArgs.head}].getClassLoader )
-				.map( _.asInstanceOf[${tpe.typeArgs.head}] )
-				.to[${tpe.typeConstructor}]
-			"""
-		case tpe if tpe <:< typeOf[Traversable[_]] || tpe <:< typeOf[Array[_]] => q"""
-			source
-				.readArray( classOf[${tpe.typeArgs.head}].getClassLoader )
-				.map( _.asInstanceOf[${tpe.typeArgs.head}] )
-				.to[${tpe.typeConstructor}]
-			"""
+		case tpe if tpe <:< typeOf[T[_]] || tpe <:< typeOf[A[_]] => q"${collection( tpe )}.to[${tpe.typeConstructor}]"
 		case tpe if tpe <:< typeOf[Tuple1[_]] => q"Tuple1( ${read( tpe.typeArgs.head )} )"
 		case tpe if tpe <:< typeOf[Product] && tpe.typeConstructor.toString.matches( "Tuple\\d+" ) =>
 			Apply(
@@ -142,6 +120,34 @@ extends	Context[C]
 			)
 		}
 	}
+
+	private def collection( `type`: Type ) = `type` match
+	{
+		case tpe if tpe <:< typeOf[T[Boolean]] || tpe <:< typeOf[A[Boolean]] => q"source.createBooleanArray()"
+		case tpe if tpe <:< typeOf[T[Byte]] || tpe <:< typeOf[A[Byte]] => q"source.createByteArray()"
+		case tpe if tpe <:< typeOf[T[Char]] || tpe <:< typeOf[A[Char]] => q"source.createCharArray()"
+		case tpe if tpe <:< typeOf[T[Double]] || tpe <:< typeOf[A[Double]] => q"source.createDoubleArray()"
+		case tpe if tpe <:< typeOf[T[Float]] || tpe <:< typeOf[A[Float]] => q"source.createFloatArray()"
+		case tpe if tpe <:< typeOf[T[IBinder]] || tpe <:< typeOf[A[IBinder]] => q"source.createBinderArray()"
+		case tpe if tpe <:< typeOf[T[Int]] || tpe <:< typeOf[A[Int]] => q"source.createIntArray()"
+		case tpe if tpe <:< typeOf[T[Long]] || tpe <:< typeOf[A[Long]] => q"source.createLongArray()"
+		case tpe if tpe <:< typeOf[T[String]] || tpe <:< typeOf[A[String]] => q"source.createStringArray()"
+		case tpe if tpe <:< typeOf[T[Parcelable]] || tpe <:< typeOf[A[Parcelable]] => q"""
+			source
+				.readParcelableArray( classOf[${tpe.typeArgs.head}].getClassLoader )
+				.map( _.asInstanceOf[${tpe.typeArgs.head}] )
+			"""
+		case tpe if tpe <:< typeOf[T[_]] || tpe <:< typeOf[A[_]] => q"""
+			source
+				.readArray( classOf[${tpe.typeArgs.head}].getClassLoader )
+				.map( _.asInstanceOf[${tpe.typeArgs.head}] )
+			"""
+	}
+
+//	private def map( `type`: Type ) = `type` match
+//	{
+//		case tpe if tpe <:< typeOf[Map[_, _]] => 
+//	}
 
 	private def instantiate( classDef: ClassDef ) =
 	{
