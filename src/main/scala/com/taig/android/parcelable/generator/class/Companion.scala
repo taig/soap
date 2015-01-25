@@ -13,10 +13,6 @@ extends	Context[C]
 {
 	import context.universe._
 
-	type T[+X] = Traversable[X]
-
-	type A[X] = Array[X]
-
 	def apply( classDef: ClassDef, moduleDef: ModuleDef ) =
 	{
 		val ModuleDef( modifiers, name, Template( parents, self, body ) ) = moduleDef
@@ -49,27 +45,27 @@ extends	Context[C]
 
 	private def read( `type`: Type ): Tree = `type` match
 	{
-		case tpe if tpe <:< typeOf[Bundle] => q"source.readBundle()"
-		case tpe if tpe <:< typeOf[Boolean] => q"source.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean]"
-		case tpe if tpe <:< typeOf[Byte] => q"source.readByte()"
-		case tpe if tpe <:< typeOf[Double] => q"source.readDouble()"
-		case tpe if tpe <:< typeOf[IBinder] => q"source.readStrongBinder()"
-		case tpe if tpe <:< typeOf[FileDescriptor] => q"source.readFileDescriptor()"
-		case tpe if tpe <:< typeOf[Float] => q"source.readFloat()"
-		case tpe if tpe <:< typeOf[Int] => q"source.readInt()"
-		case tpe if tpe <:< typeOf[Long] => q"source.readLong()"
-		case tpe if tpe <:< typeOf[Parcelable] => q"source.readParcelable[$tpe]( classOf[$tpe].getClassLoader )"
-		case tpe if tpe <:< typeOf[PersistableBundle] => q"source.readPersistableBundle()"
-		case tpe if tpe <:< typeOf[Short] => q"source.readValue( classOf[Short].getClassLoader ).asInstanceOf[Short]"
-		case tpe if tpe <:< typeOf[Size] => q"source.readSize()"
-		case tpe if tpe <:< typeOf[SizeF] => q"source.readSizeF()"
-		case tpe if tpe <:< typeOf[String] => q"source.readString()"
-		case tpe if tpe <:< typeOf[CharSequence] =>
+		case tpe if tpe.is[Bundle] => q"source.readBundle()"
+		case tpe if tpe.is[Boolean] => q"source.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean]"
+		case tpe if tpe.is[Byte] => q"source.readByte()"
+		case tpe if tpe.is[Double] => q"source.readDouble()"
+		case tpe if tpe.is[IBinder] => q"source.readStrongBinder()"
+		case tpe if tpe.is[FileDescriptor] => q"source.readFileDescriptor()"
+		case tpe if tpe.is[Float] => q"source.readFloat()"
+		case tpe if tpe.is[Int] => q"source.readInt()"
+		case tpe if tpe.is[Long] => q"source.readLong()"
+		case tpe if tpe.is[Parcelable] => q"source.readParcelable[$tpe]( classOf[$tpe].getClassLoader )"
+		case tpe if tpe.is[PersistableBundle] => q"source.readPersistableBundle()"
+		case tpe if tpe.is[Short] => q"source.readValue( classOf[Short].getClassLoader ).asInstanceOf[Short]"
+		case tpe if tpe.is[Size] => q"source.readSize()"
+		case tpe if tpe.is[SizeF] => q"source.readSizeF()"
+		case tpe if tpe.is[String] => q"source.readString()"
+		case tpe if tpe.is[CharSequence] =>
 		{
 			q"android.text.TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel( source ).asInstanceOf[$tpe]"
 		}
-		case tpe if tpe <:< typeOf[SparseBooleanArray] => q"source.readSparseBooleanArray()"
-		case tpe if tpe <:< typeOf[Option[_]] =>
+		case tpe if tpe.is[SparseBooleanArray] => q"source.readSparseBooleanArray()"
+		case tpe if tpe.is[Option[_]] =>
 		{
 			q"""
 			source.readInt() match
@@ -79,7 +75,7 @@ extends	Context[C]
 			}
 			"""
 		}
-		case tpe if tpe <:< typeOf[Map[_, _]] =>
+		case tpe if tpe.is[Map[_, _]] =>
 		{
 			q"""
 			val keys = ${read( tq"Iterable[${tpe.typeArgs.head}]".resolveType() )}
@@ -87,13 +83,27 @@ extends	Context[C]
 			( keys zip values ).toMap
 			"""
 		}
-		case tpe if tpe <:< typeOf[T[_]] || tpe <:< typeOf[A[_]] => q"${collection( tpe )}.to[${tpe.typeConstructor}]"
-		case tpe if tpe <:< typeOf[Product] && tpe.typeConstructor.toString.matches( "Tuple\\d+" ) =>
+		case tpe if tpe.isCollection[Boolean] => q"source.createBooleanArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[Byte] => q"source.createByteArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[Char] => q"source.createCharArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[Double] => q"source.createDoubleArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[Float] => q"source.createFloatArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[IBinder] => q"source.createBinderArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[Int] => q"source.createIntArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[Long] => q"source.createLongArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.isCollection[Parcelable] => q"""
+			source
+				.readParcelableArray( classOf[${tpe.typeArgs.head}].getClassLoader )
+				.map( _.asInstanceOf[${tpe.typeArgs.head}] )
+				.to[${tpe.typeConstructor}]
+			"""
+		case tpe if tpe.isCollection[String] => q"source.createStringArray().to[${tpe.typeConstructor}]"
+		case tpe if tpe.is[Product] && tpe.typeConstructor.toString.matches( "Tuple\\d+" ) =>
 			Apply(
 				Ident( TermName( tpe.typeConstructor.toString) ),
 				tpe.typeArgs.map( arg => read( arg ) )
 			)
-		case tpe if tpe <:< typeOf[Serializable] =>
+		case tpe if tpe.is[Serializable] =>
 		{
 			if( !tpe.typeSymbol.asClass.directBaseClasses().contains( typeOf[Serializable].typeSymbol ) )
 			{
@@ -110,34 +120,6 @@ extends	Context[C]
 			)
 		}
 	}
-
-	private def collection( `type`: Type ) = `type` match
-	{
-		case tpe if tpe <:< typeOf[T[Boolean]] || tpe <:< typeOf[A[Boolean]] => q"source.createBooleanArray()"
-		case tpe if tpe <:< typeOf[T[Byte]] || tpe <:< typeOf[A[Byte]] => q"source.createByteArray()"
-		case tpe if tpe <:< typeOf[T[Char]] || tpe <:< typeOf[A[Char]] => q"source.createCharArray()"
-		case tpe if tpe <:< typeOf[T[Double]] || tpe <:< typeOf[A[Double]] => q"source.createDoubleArray()"
-		case tpe if tpe <:< typeOf[T[Float]] || tpe <:< typeOf[A[Float]] => q"source.createFloatArray()"
-		case tpe if tpe <:< typeOf[T[IBinder]] || tpe <:< typeOf[A[IBinder]] => q"source.createBinderArray()"
-		case tpe if tpe <:< typeOf[T[Int]] || tpe <:< typeOf[A[Int]] => q"source.createIntArray()"
-		case tpe if tpe <:< typeOf[T[Long]] || tpe <:< typeOf[A[Long]] => q"source.createLongArray()"
-		case tpe if tpe <:< typeOf[T[String]] || tpe <:< typeOf[A[String]] => q"source.createStringArray()"
-		case tpe if tpe <:< typeOf[T[Parcelable]] || tpe <:< typeOf[A[Parcelable]] => q"""
-			source
-				.readParcelableArray( classOf[${tpe.typeArgs.head}].getClassLoader )
-				.map( _.asInstanceOf[${tpe.typeArgs.head}] )
-			"""
-		case tpe if tpe <:< typeOf[T[_]] || tpe <:< typeOf[A[_]] => q"""
-			source
-				.readArray( classOf[${tpe.typeArgs.head}].getClassLoader )
-				.map( _.asInstanceOf[${tpe.typeArgs.head}] )
-			"""
-	}
-
-//	private def map( `type`: Type ) = `type` match
-//	{
-//		case tpe if tpe <:< typeOf[Map[_, _]] => 
-//	}
 
 	private def instantiate( classDef: ClassDef ) =
 	{
