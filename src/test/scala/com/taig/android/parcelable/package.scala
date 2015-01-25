@@ -59,6 +59,22 @@ package object parcelable
 	)
 
 	@Parcelable
+	class ClassWithOptionArray(
+		x: Option[Array[String]] = Some( Array( "a", "s", "d", "f" ) ),
+		y: Option[Array[String]] = None
+	)
+	@Parcelable
+	class ClassWithOptionTraversable(
+		x: Option[Seq[String]] = Some( Seq( "a", "s", "d", "f" ) ),
+		y: Option[Seq[String]] = None
+	)
+	@Parcelable
+	class ClassWithOptionMap(
+		x: Option[Map[Int, String]] = Some( Map( 1 -> "a", 2 -> "s", 3 -> "d", 4 -> "f" ) ),
+		y: Option[Map[Int, String]] = None
+	)
+
+	@Parcelable
 	case class ClassWithOptionArgument( x: Option[Int] = Some( 10 ), y: Option[String] = None )
 
 	@Parcelable
