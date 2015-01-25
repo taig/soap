@@ -132,7 +132,8 @@ with	RobolectricSuite
 		val entities = Seq(
 			( new ClassWithOptionArray(), ClassWithOptionArray.CREATOR ),
 			( new ClassWithOptionMap(), ClassWithOptionMap.CREATOR ),
-			( new ClassWithOptionTraversable(), ClassWithOptionTraversable.CREATOR )
+			( new ClassWithOptionTraversable(), ClassWithOptionTraversable.CREATOR ),
+			( new ClassWithOptionTuple(), ClassWithOptionTuple.CREATOR )
 		)
 
 		entities.foreach
