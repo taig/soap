@@ -70,7 +70,7 @@ resolvers += Resolver.url( "Taig", url( "http://taig.github.io/repository" ) )( 
 
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "com.taig.android" %% "parcelable" % "1.2.1"
+  "com.taig.android" %% "parcelable" % "1.2.2"
 )
 ````
 
