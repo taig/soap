@@ -127,6 +127,28 @@ with	RobolectricSuite
 		entity shouldBe ClassWithArgumentsInherited.CREATOR.createFromParcel( parcel )
 	}
 
+	it should "be able to handle collections within Option" in
+	{
+		val entities = Seq(
+			( new ClassWithOptionArray(), ClassWithOptionArray.CREATOR ),
+			( new ClassWithOptionMap(), ClassWithOptionMap.CREATOR ),
+			( new ClassWithOptionTraversable(), ClassWithOptionTraversable.CREATOR ),
+			( new ClassWithOptionTuple(), ClassWithOptionTuple.CREATOR )
+		)
+
+		entities.foreach
+		{
+			case ( entity, creator ) =>
+			{
+				val parcel = Parcel.obtain()
+				entity.writeToParcel( parcel, 0 )
+				parcel.setDataPosition( 0 )
+
+				entity shouldBe creator.createFromParcel( parcel )
+			}
+		}
+	}
+
 	"@Parcelable annotation at abstract class / trait" should "generate a companion object, if none is present" in
 	{
 		AbstractClassWithoutCompanion shouldBe a [Creator[_]]
