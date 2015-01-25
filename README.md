@@ -235,6 +235,10 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 
 ## Changelog
 
+#### 1.2.2
+
+- Resolved NPE issues with non primitive Option values, such as collections or tuples
+
 #### 1.2.1
 
 - Support for constructor argument groups
