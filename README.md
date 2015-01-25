@@ -70,7 +70,7 @@ resolvers += Resolver.url( "Taig", url( "http://taig.github.io/repository" ) )( 
 
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "com.taig.android" %% "parcelable" % "1.2.1"
+  "com.taig.android" %% "parcelable" % "1.2.2"
 )
 ````
 
@@ -234,6 +234,10 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 ````
 
 ## Changelog
+
+#### 1.2.2
+
+- Resolved NPE issues with non primitive Option values, such as collections or tuples
 
 #### 1.2.1
 
