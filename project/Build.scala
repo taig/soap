@@ -52,14 +52,7 @@ extends	android.AutoBuild
 				"RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/"
 			),
 			scalaVersion := "2.11.5",
-			scalacOptions ++= Seq(
-				"-deprecation",
-				"-feature",
-				"-language:existentials",
-				"-language:implicitConversions",
-				"-language:experimental.macros",
-				"-language:reflectiveCalls"
-			),
+			scalacOptions ++= Seq( "-deprecation", "-feature" ),
 			scmInfo := Some(
 				ScmInfo(
 					url( "https://github.com/taig/parcelable" ),
