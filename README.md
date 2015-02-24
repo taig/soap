@@ -237,10 +237,11 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 
 - Change groupId to `io.taig.android`
 - Publish project via Maven Central
+- Created alias `io.taig.android.parcelable.Parcelable` for `io.taig.android.parcelable.annotation.Parcelable`
 
 #### 1.2.3
 
-- Resolved match error for Array[_ <: Parcelable]
+- Resolved match error for `Array[_ <: Parcelable]`
 
 #### 1.2.2
 
