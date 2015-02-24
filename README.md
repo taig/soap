@@ -66,8 +66,6 @@ object Person extends com.taig.android.parcelable.Creator[Person]
 Tested with sbt & [pfn/android-sdk-plugin][1]
 
 ````scala
-resolvers += Resolver.url( "Taig", url( "http://taig.github.io/repository" ) )( ivyStylePatterns )
-
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
   "com.taig.android" %% "parcelable" % "1.2.4"
@@ -238,6 +236,7 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 #### 1.2.4
 
 - Change groupId to `io.taig.android`
+- Publish project via Maven Central
 
 #### 1.2.3
 
@@ -261,13 +260,13 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 - Allow annotating abstract classes and trais with type arguments
 - Print a notice when `writeSerializable` is used, as this may not be intended
 
-## Unsupported Parcel Feautes
+## Unsupported Parcel Features
 
 - `writeException` / `readException`
 - `writeInterfaceToken`
 - `writeSparseArray` / `readSparseArray`
 
-## Known limitations / issues
+## Known Limitations / Issues
 
 - IntelliJ does not support macro expansion yet, be prepared for red code
 - Same file class declarations can break things, due to [scope issues][2]
