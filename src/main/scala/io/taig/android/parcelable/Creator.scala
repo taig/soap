@@ -1,4 +1,4 @@
-package com.taig.android.parcelable
+package io.taig.android.parcelable
 
 trait Creator[T]
 {

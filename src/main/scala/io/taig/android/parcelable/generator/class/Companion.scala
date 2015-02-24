@@ -1,10 +1,11 @@
-package com.taig.android.parcelable.generator.`class`
+package io.taig.android.parcelable.generator.`class`
 
 import java.io.FileDescriptor
 
 import android.os.{Bundle, IBinder, Parcelable, PersistableBundle}
 import android.util.{Size, SizeF, SparseBooleanArray}
-import com.taig.android.parcelable.generator.Context
+import io.taig.android.parcelable.Creator
+import io.taig.android.parcelable.generator.Context
 
 import scala.reflect.macros.whitebox
 
@@ -17,7 +18,7 @@ extends	Context[C]
 	{
 		val ModuleDef( modifiers, name, Template( parents, self, body ) ) = moduleDef
 
-		if( moduleDef.extendsFrom[com.taig.android.parcelable.Creator[_]] )
+		if( moduleDef.extendsFrom[Creator[_]] )
 		{
 			moduleDef
 		}
@@ -27,7 +28,7 @@ extends	Context[C]
 				modifiers,
 				name,
 				Template(
-					parents :+ tq"com.taig.android.parcelable.Creator[${name.toTypeName}]",
+					parents :+ tq"io.taig.android.parcelable.Creator[${name.toTypeName}]",
 					self,
 					body :+
 					q"""

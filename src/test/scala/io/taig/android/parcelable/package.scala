@@ -1,8 +1,8 @@
-package com.taig.android
+package io.taig.android
 
 import android.graphics.Rect
 import android.os.Parcel
-import com.taig.android.parcelable.annotation.Parcelable
+import io.taig.android.parcelable.annotation.Parcelable
 
 import scala.collection.mutable.ArrayBuffer
 

@@ -1,10 +1,10 @@
-package com.taig.android.parcelable.generator.`class`
+package io.taig.android.parcelable.generator.`class`
 
 import java.io.FileDescriptor
 
 import android.os._
 import android.util.{SparseBooleanArray, Size, SizeF}
-import com.taig.android.parcelable.generator.Context
+import io.taig.android.parcelable.generator.Context
 
 import scala.reflect.macros.whitebox
 

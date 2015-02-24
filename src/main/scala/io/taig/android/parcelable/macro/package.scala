@@ -1,4 +1,6 @@
-package com.taig.android.parcelable
+package io.taig.android.parcelable
+
+import io.taig.android.parcelable.generator._
 
 import scala.reflect.macros.whitebox
 
@@ -17,8 +19,8 @@ package object `macro`
 			case ( null, m: ModuleDef ) =>
 			{
 				context.Expr( q"""
-					${generator.`object`.Class( context )( m )}
-					${generator.`object`.Companion( context )( m )}
+					${`object`.Class( context )( m )}
+					${`object`.Companion( context )( m )}
 					"""
 				)
 			}
@@ -28,8 +30,8 @@ package object `macro`
 			case ( c @ ClassDef( mods, _, _, _ ), m: ModuleDef ) if mods.hasFlag( ABSTRACT ) =>
 			{
 				context.Expr( q"""
-					${generator.`abstract`.Class( context )( c )}
-					${generator.`abstract`.Companion( context )( c, m )}
+					${`abstract`.Class( context )( c )}
+					${`abstract`.Companion( context )( c, m )}
 					"""
 				)
 			}
@@ -39,8 +41,8 @@ package object `macro`
 			case ( c: ClassDef, m: ModuleDef ) =>
 			{
 				context.Expr( q"""
-					${generator.`class`.Class( context )( c )}
-					${generator.`class`.Companion( context )( c, m )}
+					${`class`.Class( context )( c )}
+					${`class`.Companion( context )( c, m )}
 					"""
 				)
 			}

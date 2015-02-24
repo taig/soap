@@ -1,7 +1,7 @@
-package com.taig.android.parcelable.generator.`abstract`
+package io.taig.android.parcelable.generator.`abstract`
 
-import com.taig.android.parcelable.Creator
-import com.taig.android.parcelable.generator.Context
+import io.taig.android.parcelable.Creator
+import io.taig.android.parcelable.generator.Context
 
 import scala.reflect.macros.whitebox
 
@@ -24,7 +24,7 @@ extends	Context[C]
 				modifiers,
 				name,
 				Template(
-					parents :+ tq"com.taig.android.parcelable.Creator[${classDef.getWildcardedName()}]",
+					parents :+ tq"io.taig.android.parcelable.Creator[${classDef.getWildcardedName()}]",
 					self,
 					body :+
 					q"""
