@@ -70,7 +70,7 @@ resolvers += Resolver.url( "Taig", url( "http://taig.github.io/repository" ) )( 
 
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "com.taig.android" %% "parcelable" % "1.2.3"
+  "com.taig.android" %% "parcelable" % "1.2.4"
 )
 ````
 
@@ -218,7 +218,7 @@ object Auto extends Value
 class Auto extends Value with android.os.Parcelable
 {
   override def describeContents() = 0
-  
+
   override def writeToParcel( destination: Parcel, flags: Int ) {}
 }
 
@@ -234,6 +234,10 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 ````
 
 ## Changelog
+
+#### 1.2.4
+
+- Change groupId to `io.taig.android`
 
 #### 1.2.3
 
