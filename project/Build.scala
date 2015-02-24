@@ -22,7 +22,7 @@ extends	android.AutoBuild
 				)
 			),
 			name := "Parcelable",
-			organization := "com.taig.android",
+			organization := "io.taig.android",
 			publishArtifact in ( Compile, packageDoc ) := false,
 			resolvers ++= Seq(
 				Resolver.sonatypeRepo( "releases" ),
@@ -39,7 +39,7 @@ extends	android.AutoBuild
 				"-language:reflectiveCalls"
 			),
 			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
-			version := "1.2.3",
+			version := "1.2.4",
 			minSdkVersion in Android := "4",
 			platformTarget in Android := "android-21",
 			typedResources in Android := false
