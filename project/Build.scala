@@ -1,14 +1,18 @@
+import sbt._
+import sbt.Keys._
 import android.Keys._
 import android.Plugin._
-import sbt.Keys._
-import sbt._
+import xerial.sbt.Sonatype._
+import xerial.sbt.Sonatype.SonatypeKeys._
 
 object	Build
 extends	android.AutoBuild
 {
-	lazy val main = Project( "parcelable", file( "." ), settings = androidBuildAar )
+	lazy val main = Project( "parcelable", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
 		.settings(
+			description := "Parcelable compile time code generation for Scala on Android",
 			fork in Test := true,
+			homepage := Some( url( "https://github.com/taig/parcelable" ) ),
 			libraryDependencies <++= scalaVersion( version =>
 				Seq(
 					compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
@@ -21,9 +25,27 @@ extends	android.AutoBuild
 					"com.geteit" %% "robotest" % "0.7" % "test"
 				)
 			),
+			licenses := Seq( "MIT" -> url( "https://raw.githubusercontent.com/taig/parcelable/master/LICENSE" ) ),
 			name := "Parcelable",
 			organization := "io.taig.android",
-			publishArtifact in ( Compile, packageDoc ) := false,
+			organizationHomepage := Some( url( "http://taig.io" ) ),
+			pomExtra := pom,
+			pomIncludeRepository := { _ => false },
+			publishArtifact in Test := false,
+			publishMavenStyle := true,
+			publishTo <<= version ( version =>
+			{
+				val repository = if( version.endsWith( "SNAPSHOT" ) )
+				{
+					( "snapshot", "/content/repositories/snapshots" )
+				}
+				else
+				{
+					( "release", "/service/local/staging/deploy/maven2" )
+				}
+
+				Some( repository._1 at "https://oss.sonatype.org" + repository._2 )
+			} ),
 			resolvers ++= Seq(
 				Resolver.sonatypeRepo( "releases" ),
 				"Typesafe" at "http://repo.typesafe.com/typesafe/releases/",
@@ -38,10 +60,34 @@ extends	android.AutoBuild
 				"-language:experimental.macros",
 				"-language:reflectiveCalls"
 			),
+			scmInfo := Some(
+				ScmInfo(
+					url( "https://github.com/taig/parcelable" ),
+					"scm:git:git://github.com/taig/parcelable.git",
+					Some( "scm:git:git@github.com:taig/parcelable.git" )
+				)
+			),
 			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
+			startYear := Some( 2015 ),
 			version := "1.2.4",
 			minSdkVersion in Android := "4",
 			platformTarget in Android := "android-21",
 			typedResources in Android := false
 		)
+
+	val pom =
+	{
+		<issueManagement>
+			<url>https://github.com/taig/parcelable/issues</url>
+			<system>GitHub Issues</system>
+		</issueManagement>
+			<developers>
+				<developer>
+					<id>Taig</id>
+					<name>Niklas Klein</name>
+					<email>my.taig@gmail.com</email>
+					<url>http://taig.io/</url>
+				</developer>
+			</developers>
+	}
 }
