@@ -1,6 +1,6 @@
-package com.taig.android.parcelable.generator.`object`
+package io.taig.android.parcelable.generator.`object`
 
-import com.taig.android.parcelable.generator.Context
+import io.taig.android.parcelable.generator.Context
 
 import scala.reflect.macros.whitebox
 
@@ -17,7 +17,7 @@ extends	Context[C]
 			modifiers,
 			name,
 			Template(
-				List( tq"${name.toTypeName}", tq"com.taig.android.parcelable.Creator[${name.toTypeName}]" ),
+				List( tq"${name.toTypeName}", tq"io.taig.android.parcelable.Creator[${name.toTypeName}]" ),
 				self,
 				body :+
 				q"""

@@ -1,8 +1,9 @@
-package com.taig.android.parcelable.annotation
+package io.taig.android.parcelable.annotation
 
-import com.taig.android.parcelable.`macro`._
+import io.taig.android.parcelable.`macro`.parcelable
 
 import scala.annotation.StaticAnnotation
+import scala.language.experimental.macros
 
 class	Parcelable
 extends	StaticAnnotation

@@ -1,6 +1,6 @@
-package com.taig.android.parcelable.generator.`object`
+package io.taig.android.parcelable.generator.`object`
 
-import com.taig.android.parcelable.generator.Context
+import io.taig.android.parcelable.generator.Context
 
 import scala.reflect.macros.whitebox
 

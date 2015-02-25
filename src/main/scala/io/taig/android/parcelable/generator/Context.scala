@@ -1,4 +1,4 @@
-package com.taig.android.parcelable.generator
+package io.taig.android.parcelable.generator
 
 import scala.reflect.macros.{TypecheckException, whitebox}
 

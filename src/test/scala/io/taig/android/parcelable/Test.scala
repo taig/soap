@@ -1,4 +1,4 @@
-package com.taig.android.parcelable
+package io.taig.android.parcelable
 
 import android.os.Parcel
 import org.robolectric.annotation.Config
