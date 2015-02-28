@@ -237,7 +237,6 @@ object Auto extends Auto with io.taig.parcelable.Creator[Auto]
 
 - Change groupId to `io.taig.android`
 - Publish project via Maven Central
-- Created alias `io.taig.android.parcelable.Parcelable` for `io.taig.android.parcelable.annotation.Parcelable`
 
 #### 1.2.3
 
