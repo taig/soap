@@ -26,7 +26,8 @@ extends	android.AutoBuild
 				)
 			),
 			licenses := Seq( "MIT" -> url( "https://raw.githubusercontent.com/taig/parcelable/master/LICENSE" ) ),
-			name := "Parcelable",
+			// see https://github.com/pfn/android-sdk-plugin/issues/151
+			// name := "Parcelable",
 			organization := "io.taig.android",
 			organizationHomepage := Some( url( "http://taig.io" ) ),
 			pomExtra := pom,
@@ -52,7 +53,7 @@ extends	android.AutoBuild
 				"Typesafe" at "http://repo.typesafe.com/typesafe/releases/",
 				"RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/"
 			),
-			scalaVersion := "2.11.5",
+			scalaVersion := "2.11.6",
 			scalacOptions ++= Seq( "-deprecation", "-feature" ),
 			scmInfo := Some(
 				ScmInfo(
@@ -63,7 +64,7 @@ extends	android.AutoBuild
 			),
 			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
 			startYear := Some( 2015 ),
-			version := "1.2.4",
+			version := "1.2.5",
 			minSdkVersion in Android := "4",
 			platformTarget in Android := "android-21",
 			typedResources in Android := false
@@ -75,13 +76,13 @@ extends	android.AutoBuild
 			<url>https://github.com/taig/parcelable/issues</url>
 			<system>GitHub Issues</system>
 		</issueManagement>
-			<developers>
-				<developer>
-					<id>Taig</id>
-					<name>Niklas Klein</name>
-					<email>my.taig@gmail.com</email>
-					<url>http://taig.io/</url>
-				</developer>
-			</developers>
+		<developers>
+			<developer>
+				<id>Taig</id>
+				<name>Niklas Klein</name>
+				<email>mail@taig.io</email>
+				<url>http://taig.io/</url>
+			</developer>
+		</developers>
 	}
 }

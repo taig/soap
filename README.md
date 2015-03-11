@@ -68,7 +68,7 @@ Tested with sbt & [pfn/android-sdk-plugin][1]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "com.taig.android" %% "parcelable" % "1.2.4"
+  "com.taig.android" %% "parcelable" % "1.2.5"
 )
 ````
 
@@ -232,6 +232,11 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 ````
 
 ## Changelog
+
+#### 1.2.5
+
+- Upgrade to Scala 2.11.6 & pfn/android 1.3.18
+- Fix aar package name, making it not resolvable via maven
 
 #### 1.2.4
 
