@@ -64,7 +64,7 @@ extends	android.AutoBuild
 			),
 			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
 			startYear := Some( 2015 ),
-			version := "1.2.4",
+			version := "1.2.5",
 			minSdkVersion in Android := "4",
 			platformTarget in Android := "android-21",
 			typedResources in Android := false
