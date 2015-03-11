@@ -52,7 +52,7 @@ extends	android.AutoBuild
 				"Typesafe" at "http://repo.typesafe.com/typesafe/releases/",
 				"RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/"
 			),
-			scalaVersion := "2.11.5",
+			scalaVersion := "2.11.6",
 			scalacOptions ++= Seq( "-deprecation", "-feature" ),
 			scmInfo := Some(
 				ScmInfo(
@@ -75,13 +75,13 @@ extends	android.AutoBuild
 			<url>https://github.com/taig/parcelable/issues</url>
 			<system>GitHub Issues</system>
 		</issueManagement>
-			<developers>
-				<developer>
-					<id>Taig</id>
-					<name>Niklas Klein</name>
-					<email>my.taig@gmail.com</email>
-					<url>http://taig.io/</url>
-				</developer>
-			</developers>
+		<developers>
+			<developer>
+				<id>Taig</id>
+				<name>Niklas Klein</name>
+				<email>my.taig@gmail.com</email>
+				<url>http://taig.io/</url>
+			</developer>
+		</developers>
 	}
 }
