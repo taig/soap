@@ -1,4 +1,4 @@
-package io.taig.android
+package io.taig.android.parcelable
 
 import android.graphics.Rect
 import android.os.Parcel
@@ -6,7 +6,7 @@ import io.taig.android.Parcelable
 
 import scala.collection.mutable.ArrayBuffer
 
-package object parcelable
+package object test
 {
 	@Parcelable
 	abstract class AbstractClassWithCompanion

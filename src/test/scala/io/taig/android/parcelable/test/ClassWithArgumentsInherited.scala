@@ -1,4 +1,4 @@
-package io.taig.android.parcelable
+package io.taig.android.parcelable.test
 
 import io.taig.android.Parcelable
 
