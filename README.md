@@ -21,7 +21,7 @@ case class Person( name: String, age: Int ) extends android.os.Parcelable
   }
 }
 
-object Person extends com.taig.android.parcelable.Creator[Person]
+object Person extends io.taig.android.parcelable.Creator[Person]
 {
   override lazy val CREATOR = new android.os.Parcelable.Creator[Person]
   {
@@ -68,13 +68,13 @@ Tested with sbt & [pfn/android-sdk-plugin][1]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "com.taig.android" %% "parcelable" % "1.2.5"
+  "io.taig.android" %% "parcelable" % "1.2.5"
 )
 ````
 
 ## Usage
 
-Using the library basically boils down to annotating classes or traits with the `@com.taig.android.parcelable.annotation.Parcelable` annotation. For more control one can implement the `android.os.Parcelable` interface on the class, or the `com.taig.android.parcelable.Creator[_]` trait on the companion object, in order to disable code generation and providing an own implementation instead.
+Using the library basically boils down to annotating classes or traits with the `@io.taig.android.parcelable.annotation.Parcelable` annotation. For more control one can implement the `android.os.Parcelable` interface on the class, or the `io.taig.android.parcelable.Creator[_]` trait on the companion object, in order to disable code generation and providing an own implementation instead.
 
 ### Basics
 
@@ -101,7 +101,7 @@ class Address( val street: String, val zip: Int )( val city: String ) extends an
   }
 }
 
-object Address extends com.taig.android.parcelable.Creator[Address]
+object Address extends io.taig.android.parcelable.Creator[Address]
 {
   override lazy val CREATOR = new android.os.Parcelable.Creator[Address]
   {
@@ -127,7 +127,7 @@ case class Company( name: String, employees: List[Person], offices: Map[Int, Add
   }
 }
 
-object Company extends com.taig.android.parcelable.Creator[Company]
+object Company extends io.taig.android.parcelable.Creator[Company]
 {
   override lazy val CREATOR = new android.os.Parcelable.Creator[Company]
   {
@@ -167,7 +167,7 @@ case class Relative( value: Float ) extends Value
 ````scala
 trait Value extends android.os.Parcelable
 
-object Value extends com.taig.android.parcelable.Creator[Value]
+object Value extends io.taig.android.parcelable.Creator[Value]
 {
   def CREATOR: android.os.Parcelable.Creator[Value] = sys.error(
     "Can not create an abstract type from parcel. Did you forget to annotate a child class?"
@@ -184,7 +184,7 @@ case class Absolute( value: Int ) extends Value with android.os.Parcelable
   }
 }
 
-object Absolute extends com.taig.android.parcelable.Creator[Absolute]
+object Absolute extends io.taig.android.parcelable.Creator[Absolute]
 {
   override lazy val CREATOR = new android.os.Parcelable.Creator[Absolute]
   {
@@ -220,7 +220,7 @@ class Auto extends Value with android.os.Parcelable
   override def writeToParcel( destination: Parcel, flags: Int ) {}
 }
 
-object Auto extends Auto with com.taig.parcelable.Creator[Auto]
+object Auto extends Auto with io.taig.parcelable.Creator[Auto]
 {
   override lazy val CREATOR = new android.os.Parcelable.Creator[Auto]
   {
@@ -242,7 +242,6 @@ object Auto extends Auto with com.taig.parcelable.Creator[Auto]
 
 - Change groupId to `io.taig.android`
 - Publish project via Maven Central
-- Created alias `io.taig.android.parcelable.Parcelable` for `io.taig.android.parcelable.annotation.Parcelable`
 
 #### 1.2.3
 
