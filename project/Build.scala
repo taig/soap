@@ -66,7 +66,7 @@ extends	android.AutoBuild
 			startYear := Some( 2015 ),
 			version := "1.2.5",
 			minSdkVersion in Android := "4",
-			platformTarget in Android := "android-21",
+			platformTarget in Android := "android-22",
 			typedResources in Android := false
 		)
 
