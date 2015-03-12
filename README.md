@@ -74,7 +74,7 @@ libraryDependencies ++= Seq(
 
 ## Usage
 
-Using the library basically boils down to annotating classes or traits with the `@io.taig.android.parcelable.annotation.Parcelable` annotation. For more control one can implement the `android.os.Parcelable` interface on the class, or the `io.taig.android.parcelable.Creator[_]` trait on the companion object, in order to disable code generation and providing an own implementation instead.
+Using the library basically boils down to annotating classes or traits with the `@io.taig.android.Parcelable` annotation. For more control one can implement the `android.os.Parcelable` interface on the class, or the `io.taig.android.parcelable.Creator[_]` trait on the companion object, in order to disable code generation and providing an own implementation instead.
 
 ### Basics
 
