@@ -13,6 +13,7 @@ extends	android.AutoBuild
 			description := "Parcelable compile time code generation for Scala on Android",
 			fork in Test := true,
 			homepage := Some( url( "https://github.com/taig/parcelable" ) ),
+			javacOptions ++= Seq( "-source", "1.7", "-target", "1.7" ),
 			libraryDependencies <++= scalaVersion( version =>
 				Seq(
 					compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
