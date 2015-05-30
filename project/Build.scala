@@ -33,7 +33,7 @@ extends	android.AutoBuild
 			),
 			scalaVersion := "2.11.6",
 			scalacOptions ++= Seq( "-deprecation", "-feature" ),
-			version := "1.2.5"
+			version := "1.2.6"
 		)
 		.settings(
 			minSdkVersion in Android := "4",
@@ -75,7 +75,7 @@ extends	android.AutoBuild
 				}
 				else
 				{
-					url.map( "release" at _ + "service/local/staging/deploy/maven" )
+					url.map( "release" at _ + "service/local/staging/deploy/maven2" )
 				}
 			} ),
 			scmInfo := Some(
