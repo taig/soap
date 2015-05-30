@@ -10,44 +10,22 @@ extends	android.AutoBuild
 {
 	lazy val main = Project( "parcelable", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
 		.settings(
-			description := "Parcelable compile time code generation for Scala on Android",
 			fork in Test := true,
-			homepage := Some( url( "https://github.com/taig/parcelable" ) ),
 			javacOptions ++= Seq( "-source", "1.7", "-target", "1.7" ),
 			libraryDependencies <++= scalaVersion( version =>
 				Seq(
 					compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
+					"com.android.support" % "support-v4" % "22.2.0" % "test",
+					"com.geteit" %% "robotest" % "0.7" % "test",
+					"junit" % "junit" % "4.8.2" % "test",
 					"org.scala-lang" % "scala-compiler" % version,
 					"org.scala-lang" % "scala-reflect" % version,
-					"com.android.support" % "support-v4" % "21.0.0" % "test",
 					"org.robolectric" % "android-all" % "5.0.0_r2-robolectric-0" % "provided",
-					"junit" % "junit" % "4.8.2" % "test",
-					"org.scalatest" %% "scalatest" % "2.1.6" % "test",
-					"com.geteit" %% "robotest" % "0.7" % "test"
+					"org.scalatest" %% "scalatest" % "2.1.6" % "test"
 				)
 			),
-			licenses := Seq( "MIT" -> url( "https://raw.githubusercontent.com/taig/parcelable/master/LICENSE" ) ),
 			name := "Parcelable",
 			organization := "io.taig.android",
-			organizationHomepage := Some( url( "http://taig.io" ) ),
-			pomExtra := pom,
-			pomIncludeRepository := { _ => false },
-			sonatypeProfileName := "io.taig",
-			publishArtifact in Test := false,
-			publishMavenStyle := true,
-			publishTo <<= version ( version =>
-			{
-				val repository = if( version.endsWith( "SNAPSHOT" ) )
-				{
-					( "snapshot", "/content/repositories/snapshots" )
-				}
-				else
-				{
-					( "release", "/service/local/staging/deploy/maven2" )
-				}
-
-				Some( repository._1 at "https://oss.sonatype.org" + repository._2 )
-			} ),
 			resolvers ++= Seq(
 				Resolver.sonatypeRepo( "releases" ),
 				"Typesafe" at "http://repo.typesafe.com/typesafe/releases/",
@@ -55,6 +33,51 @@ extends	android.AutoBuild
 			),
 			scalaVersion := "2.11.6",
 			scalacOptions ++= Seq( "-deprecation", "-feature" ),
+			version := "1.2.5"
+		)
+		.settings(
+			minSdkVersion in Android := "4",
+			platformTarget in Android := "android-22",
+			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
+			typedResources in Android := false
+		)
+		.settings(
+			description := "Parcelable compile time code generation for Scala on Android",
+			homepage := Some( url( "https://github.com/taig/parcelable" ) ),
+			licenses := Seq( "MIT" -> url( "https://raw.githubusercontent.com/taig/parcelable/master/LICENSE" ) ),
+			organizationHomepage := Some( url( "http://taig.io" ) ),
+			pomExtra :=
+			{
+				<issueManagement>
+					<url>https://github.com/taig/parcelable/issues</url>
+					<system>GitHub Issues</system>
+				</issueManagement>
+				<developers>
+					<developer>
+						<id>Taig</id>
+						<name>Niklas Klein</name>
+						<email>mail@taig.io</email>
+						<url>http://taig.io/</url>
+					</developer>
+				</developers>
+			},
+			pomIncludeRepository := { _ => false },
+			sonatypeProfileName := "io.taig",
+			publishArtifact in Test := false,
+			publishMavenStyle := true,
+			publishTo <<= version ( version =>
+			{
+				val url = Some( "https://oss.sonatype.org/" )
+
+				if( version.endsWith( "SNAPSHOT" ) )
+				{
+					url.map( "snapshot" at _ + "content/repositories/snapshots" )
+				}
+				else
+				{
+					url.map( "release" at _ + "service/local/staging/deploy/maven" )
+				}
+			} ),
 			scmInfo := Some(
 				ScmInfo(
 					url( "https://github.com/taig/parcelable" ),
@@ -62,27 +85,6 @@ extends	android.AutoBuild
 					Some( "scm:git:git@github.com:taig/parcelable.git" )
 				)
 			),
-			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
-			startYear := Some( 2015 ),
-			version := "1.2.5",
-			minSdkVersion in Android := "4",
-			platformTarget in Android := "android-22",
-			typedResources in Android := false
+			startYear := Some( 2015 )
 		)
-
-	val pom =
-	{
-		<issueManagement>
-			<url>https://github.com/taig/parcelable/issues</url>
-			<system>GitHub Issues</system>
-		</issueManagement>
-		<developers>
-			<developer>
-				<id>Taig</id>
-				<name>Niklas Klein</name>
-				<email>mail@taig.io</email>
-				<url>http://taig.io/</url>
-			</developer>
-		</developers>
-	}
 }
