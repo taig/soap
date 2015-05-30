@@ -33,7 +33,7 @@ extends	android.AutoBuild
 			),
 			scalaVersion := "2.11.6",
 			scalacOptions ++= Seq( "-deprecation", "-feature" ),
-			version := "1.2.5"
+			version := "1.2.6"
 		)
 		.settings(
 			minSdkVersion in Android := "4",
