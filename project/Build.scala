@@ -32,7 +32,7 @@ extends	android.AutoBuild
 			organizationHomepage := Some( url( "http://taig.io" ) ),
 			pomExtra := pom,
 			pomIncludeRepository := { _ => false },
-			profileName := "io.taig",
+			sonatypeProfileName := "io.taig",
 			publishArtifact in Test := false,
 			publishMavenStyle := true,
 			publishTo <<= version ( version =>
