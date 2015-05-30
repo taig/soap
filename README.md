@@ -68,7 +68,7 @@ Tested with sbt & [pfn/android-sdk-plugin][1]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "io.taig.android" %% "parcelable" % "1.2.5"
+  "io.taig.android" %% "parcelable" % "1.2.6"
 )
 ````
 
@@ -232,6 +232,11 @@ object Auto extends Auto with io.taig.parcelable.Creator[Auto]
 ````
 
 ## Changelog
+
+#### 1.2.6
+
+- Upgrade to sbt 0.13.8
+- Upgrade to android-sdk-plugin 1.3.23
 
 #### 1.2.5
 
