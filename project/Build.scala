@@ -26,8 +26,7 @@ extends	android.AutoBuild
 				)
 			),
 			licenses := Seq( "MIT" -> url( "https://raw.githubusercontent.com/taig/parcelable/master/LICENSE" ) ),
-			// see https://github.com/pfn/android-sdk-plugin/issues/151
-			// name := "Parcelable",
+			name := "Parcelable",
 			organization := "io.taig.android",
 			organizationHomepage := Some( url( "http://taig.io" ) ),
 			pomExtra := pom,
