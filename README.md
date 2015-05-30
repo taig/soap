@@ -68,13 +68,13 @@ Tested with sbt & [pfn/android-sdk-plugin][1]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
-  "io.taig.android" %% "parcelable" % "1.2.5"
+  "io.taig.android" %% "parcelable" % "1.2.6"
 )
 ````
 
 ## Usage
 
-Using the library basically boils down to annotating classes or traits with the `@io.taig.android.parcelable.annotation.Parcelable` annotation. For more control one can implement the `android.os.Parcelable` interface on the class, or the `io.taig.android.parcelable.Creator[_]` trait on the companion object, in order to disable code generation and providing an own implementation instead.
+Using the library basically boils down to annotating classes or traits with the `@io.taig.android.Parcelable` annotation. For more control one can implement the `android.os.Parcelable` interface on the class, or the `io.taig.android.parcelable.Creator[_]` trait on the companion object, in order to disable code generation and providing an own implementation instead.
 
 ### Basics
 
@@ -232,6 +232,11 @@ object Auto extends Auto with io.taig.parcelable.Creator[Auto]
 ````
 
 ## Changelog
+
+#### 1.2.6
+
+- Upgrade to sbt 0.13.8
+- Upgrade to android-sdk-plugin 1.3.23
 
 #### 1.2.5
 

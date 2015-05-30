@@ -1,6 +1,7 @@
-package io.taig.android.parcelable
+package io.taig.android.parcelable.test
 
 import android.os.Parcel
+import io.taig.android.parcelable.Creator
 import org.robolectric.annotation.Config
 import org.scalatest._
 

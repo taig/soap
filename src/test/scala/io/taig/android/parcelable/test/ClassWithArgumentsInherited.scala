@@ -1,6 +1,6 @@
-package io.taig.android.parcelable
+package io.taig.android.parcelable.test
 
-import io.taig.android.parcelable.annotation.Parcelable
+import io.taig.android.Parcelable
 
 @Parcelable
 class	ClassWithArgumentsInherited(val a: Double = 10.10, x: Int = 100, y: String = "ghjk", z: Float = 0.33f )

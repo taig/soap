@@ -4,7 +4,7 @@ import io.taig.android.parcelable.generator._
 
 import scala.reflect.macros.whitebox
 
-package object `macro`
+object Macro
 {
 	def parcelable( context: whitebox.Context )( annottees: context.Expr[Any]* ): context.Expr[Any] =
 	{
