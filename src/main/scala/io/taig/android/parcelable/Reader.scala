@@ -1,6 +1,8 @@
 package io.taig.android.parcelable
 
-import android.os.Parcel
+import android.os.{Bundle, Parcel}
+
+import scala.language.implicitConversions
 
 trait	Reader[T]
 extends	( Parcel => T )
@@ -10,9 +12,17 @@ extends	( Parcel => T )
 
 object Reader
 {
-	implicit object	String
-	extends			Reader[String]
+	implicit def `Parcel => T -> Reader[T]`[T]( reader: ( Parcel ) => T ): Reader[T] =
 	{
-		override def apply( source: Parcel ) = source.readString()
+		new Reader[T]
+		{
+			override def apply( source: Parcel ) = reader( source )
+		}
 	}
+
+	implicit val bundle: Reader[Bundle] = ( source: Parcel ) => source.readBundle()
+
+	implicit val int: Reader[Int] = ( source: Parcel ) => source.readInt()
+
+	implicit val string: Reader[String] = ( source: Parcel ) => source.readString()
 }
