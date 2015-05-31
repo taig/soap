@@ -39,6 +39,7 @@ extends	android.AutoBuild
 			minSdkVersion in Android := "4",
 			platformTarget in Android := "android-22",
 			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
+			targetSdkVersion in Android := "18",
 			typedResources in Android := false
 		)
 		.settings(

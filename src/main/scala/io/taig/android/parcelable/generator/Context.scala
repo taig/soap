@@ -156,8 +156,7 @@ trait Context[C <: whitebox.Context]
 		 */
 		def isCollection[T: TypeTag] =
 		{
-			`type` <:< typeOf[Traversable[T]] ||
-			( `type` <:< typeOf[Array[_]] && `type`.typeArgs.head <:< typeOf[T] )
+			`type` <:< typeOf[Traversable[T]] || ( `type` <:< typeOf[Array[_]] && `type`.typeArgs.head <:< typeOf[T] )
 		}
 	}
 }
