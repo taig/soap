@@ -53,7 +53,7 @@ extends	Context[C]
 			.getPrimaryConstructor()
 			.vparamss
 			.map( _.map( _.tpt.resolveType() ) )
-			.map( _.map( tpe => q"implicitly[io.taig.android.parcelable.Reader[$tpe]].apply( source )" ) )
+			.map( _.map( tpe => q"implicitly[io.taig.android.parcelable.Transformer[$tpe]].read( source )" ) )
 
 		construct( reads.reverse )
 	}

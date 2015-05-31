@@ -36,7 +36,7 @@ extends	Context[C]
 							{
 								case ValDef( _, name, tpe, _ ) =>
 								{
-									q"implicitly[io.taig.android.parcelable.Writer[$tpe]].apply( $name, destination )"
+									q"implicitly[io.taig.android.parcelable.Transformer[$tpe]].write( $name, destination )"
 								}
 							}
 						}
