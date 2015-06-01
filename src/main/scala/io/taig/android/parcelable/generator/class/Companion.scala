@@ -1,6 +1,5 @@
 package io.taig.android.parcelable.generator.`class`
 
-import android.os.Parcelable
 import io.taig.android.parcelable.Creator
 import io.taig.android.parcelable.generator.Context
 
