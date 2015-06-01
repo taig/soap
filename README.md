@@ -112,6 +112,6 @@ object Auto extends Value
 
 MIT, see [LICENSE][3] file for more information
 
-[1]: https://github.com/Taig/Parcelable/blob/develop-2.0.0/src/main/scala/io/taig/android/parcelable/Transformer.scala
+[1]: https://github.com/Taig/Parcelable/blob/master/src/main/scala/io/taig/android/parcelable/Transformer.scala
 [2]: https://github.com/scalamacros/paradise/issues/14
 [3]: https://raw.githubusercontent.com/Taig/Parcelable/master/LICENSE
