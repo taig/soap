@@ -25,6 +25,13 @@ package object test
 
 	@Parcelable
 	case class ParcelableArrayArgument( x: Array[Primitive] )
+	{
+		override def equals( o: scala.Any ) = o match
+		{
+			case p: ParcelableArrayArgument => x.sameElements( p.x )
+			case _ => false
+		}
+	}
 
 	@Parcelable
 	case class PrimitiveTraversableArguments( x: Seq[Int], y: List[Double] )

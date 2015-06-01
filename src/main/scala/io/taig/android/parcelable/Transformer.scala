@@ -39,31 +39,11 @@ object Transformer
 		override def write( value: Boolean, destination: Parcel, flags: Int ) = destination.writeValue( value )
 	}
 
-	implicit val booleanArray = new Transformer[Array[Boolean]]
-	{
-		override def read( source: Parcel ) = source.createBooleanArray()
-
-		override def write( value: Array[Boolean], destination: Parcel, flags: Int ) =
-		{
-			destination.writeBooleanArray( value )
-		}
-	}
-
 	implicit val byte = new Transformer[Byte]
 	{
 		override def read( source: Parcel ) = source.readByte()
 
 		override def write( value: Byte, destination: Parcel, flags: Int ) = destination.writeByte( value )
-	}
-
-	implicit val byteArray = new Transformer[Array[Byte]]
-	{
-		override def read( source: Parcel ) = source.createByteArray()
-
-		override def write( value: Array[Byte], destination: Parcel, flags: Int ) =
-		{
-			destination.writeByteArray( value )
-		}
 	}
 
 	implicit val char = new Transformer[Char]
@@ -90,16 +70,6 @@ object Transformer
 		override def write( value: Double, destination: Parcel, flags: Int ) = destination.writeDouble( value )
 	}
 
-	implicit val doubleArray = new Transformer[Array[Double]]
-	{
-		override def read( source: Parcel ) = source.createDoubleArray()
-
-		override def write( value: Array[Double], destination: Parcel, flags: Int ) =
-		{
-			destination.writeDoubleArray( value )
-		}
-	}
-
 	implicit val fileDescriptor = new Transformer[FileDescriptor]
 	{
 		override def read( source: Parcel ) = source.readFileDescriptor().getFileDescriptor
@@ -114,31 +84,11 @@ object Transformer
 		override def write( value: Float, destination: Parcel, flags: Int ) = destination.writeFloat( value )
 	}
 
-	implicit val floatArray = new Transformer[Array[Float]]
-	{
-		override def read( source: Parcel ) = source.createFloatArray()
-
-		override def write( value: Array[Float], destination: Parcel, flags: Int ) =
-		{
-			destination.writeFloatArray( value )
-		}
-	}
-
 	implicit val iBinder = new Transformer[IBinder]
 	{
 		override def read( source: Parcel ) = source.readStrongBinder()
 
 		override def write( value: IBinder, destination: Parcel, flags: Int ) = destination.writeStrongBinder( value )
-	}
-
-	implicit val iBinderArray = new Transformer[Array[IBinder]]
-	{
-		override def read( source: Parcel ) = source.createBinderArray()
-
-		override def write( value: Array[IBinder], destination: Parcel, flags: Int ) =
-		{
-			destination.writeBinderArray( value )
-		}
 	}
 
 	implicit val int = new Transformer[Int]
@@ -148,28 +98,11 @@ object Transformer
 		override def write( value: Int, destination: Parcel, flags: Int ) = destination.writeInt( value )
 	}
 
-	implicit val intArray = new Transformer[Array[Int]]
-	{
-		override def read( source: Parcel ) = source.createIntArray()
-
-		override def write( value: Array[Int], destination: Parcel, flags: Int ) =
-		{
-			destination.writeIntArray( value )
-		}
-	}
-
 	implicit val long = new Transformer[Long]
 	{
 		override def read( source: Parcel ) = source.readInt()
 
 		override def write( value: Long, destination: Parcel, flags: Int ) = destination.writeLong( value )
-	}
-
-	implicit val longArray = new Transformer[Array[Long]]
-	{
-		override def read( source: Parcel ) = source.createLongArray()
-
-		override def write( value: Array[Long], destination: Parcel, flags: Int ) = destination.writeLongArray( value )
 	}
 
 	implicit val persistableBundle = new Transformer[PersistableBundle]
@@ -220,16 +153,6 @@ object Transformer
 		override def write( value: String, destination: Parcel, flags: Int ) = destination.writeString( value )
 	}
 
-	implicit val stringArray = new Transformer[Array[String]]
-	{
-		override def read( source: Parcel ) = source.createStringArray()
-
-		override def write( value: Array[String], destination: Parcel, flags: Int ) =
-		{
-			destination.writeStringArray( value )
-		}
-	}
-
 	implicit def option[T: Transformer] = new Transformer[Option[T]]
 	{
 		val transformer = implicitly[Transformer[T]]
@@ -259,6 +182,22 @@ object Transformer
 		}
 
 		override def write( value: T, destination: Parcel, flags: Int ) = destination.writeParcelable( value, flags )
+	}
+
+	implicit def array[T: Transformer]( implicit tag: ClassTag[T] ) = new Transformer[Array[T]]
+	{
+		val transformer = implicitly[Transformer[T]]
+
+		override def read( source: Parcel ) =
+		{
+			( 0 until source.readInt() ).map( _ => transformer.read( source ) ).toArray
+		}
+
+		override def write( value: Array[T], destination: Parcel, flags: Int ) =
+		{
+			destination.writeInt( value.size )
+			value.foreach( transformer.write( _, destination, flags ) )
+		}
 	}
 
 	implicit def traversable[L[B] <: Traversable[B], T: Transformer]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = new Transformer[L[T]]
