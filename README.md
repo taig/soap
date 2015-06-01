@@ -63,6 +63,8 @@ libraryDependencies ++= Seq(
 - Option[_]
 - Tuples
 
+The Serialization type is not supported and discouraged to use. You can still create a simple Serialization transformer though.
+
 ## Usage
 
 Using the library basically boils down to annotating classes or traits with the `@io.taig.android.Parcelable` annotation. During compile time the library will analyze your constructor fields and use them to generate appropiate Parcel write and read methods. For every supported type there is an implicit `Transformer` implementation available that knows how to parcel and unparcel an object of that type.
