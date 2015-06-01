@@ -11,6 +11,8 @@ import scala.collection.breakOut
 import scala.collection.generic.CanBuildFrom
 import scala.language.{higherKinds, reflectiveCalls}
 import scala.reflect._
+import scala.reflect.runtime.currentMirror
+import scala.reflect.runtime.universe._
 
 /**
  * Instructions on how to parcel and unparcel an object of type T
@@ -182,6 +184,20 @@ object Transformer
 		}
 
 		override def write( value: T, destination: Parcel, flags: Int ) = destination.writeParcelable( value, flags )
+	}
+
+	implicit def enumeration[S <: Enumeration]( implicit tag: TypeTag[S] ) = new Transformer[S#Value]
+	{
+		override def read( source: Parcel ) =
+		{
+			currentMirror
+				.reflectModule( typeTag[S].tpe.termSymbol.asModule )
+				.instance
+				.asInstanceOf[S]
+				.apply( source.readInt() )
+		}
+
+		override def write( value: S#Value, destination: Parcel, flags: Int ) = destination.writeInt( value.id )
 	}
 
 	implicit def array[T: Transformer]( implicit tag: ClassTag[T] ) = new Transformer[Array[T]]

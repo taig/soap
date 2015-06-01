@@ -86,4 +86,10 @@ with	RobolectricSuite
 	{
 		validate( PrimitiveTupleArgument( ( 3, "asdf", Primitive.default ) ) )
 	}
+
+	it should "support Enumerations" in
+	{
+		validate( EnumerationArgument( Enum.a ) )
+		validate( EnumerationArgument( Enum.b ) )
+	}
 }
