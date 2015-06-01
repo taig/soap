@@ -14,7 +14,7 @@ extends	android.AutoBuild
 			javacOptions ++= Seq( "-source", "1.7", "-target", "1.7" ),
 			libraryDependencies <++= scalaVersion( version =>
 				Seq(
-					compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
+					compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ),
 					"com.android.support" % "support-v4" % "22.2.0" % "test",
 					"com.geteit" %% "robotest" % "0.7" % "test",
 					"junit" % "junit" % "4.8.2" % "test",
