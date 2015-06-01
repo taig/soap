@@ -14,7 +14,7 @@ extends	android.AutoBuild
 			javacOptions ++= Seq( "-source", "1.7", "-target", "1.7" ),
 			libraryDependencies <++= scalaVersion( version =>
 				Seq(
-					compilerPlugin( "org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full ),
+					compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ),
 					"com.android.support" % "support-v4" % "22.2.0" % "test",
 					"com.geteit" %% "robotest" % "0.7" % "test",
 					"junit" % "junit" % "4.8.2" % "test",
@@ -33,12 +33,13 @@ extends	android.AutoBuild
 			),
 			scalaVersion := "2.11.6",
 			scalacOptions ++= Seq( "-deprecation", "-feature" ),
-			version := "1.2.6"
+			version := "2.0.0"
 		)
 		.settings(
 			minSdkVersion in Android := "4",
 			platformTarget in Android := "android-22",
 			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
+			targetSdkVersion in Android := "18",
 			typedResources in Android := false
 		)
 		.settings(
