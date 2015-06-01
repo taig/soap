@@ -30,7 +30,13 @@ package object test
 	case class PrimitiveTraversableArguments( x: Seq[Int], y: List[Double] )
 
 	@Parcelable
+	case class ParcelableTraversableArgument( x: Seq[Primitive] )
+
+	@Parcelable
 	case class PrimitiveMapArgument( x: Map[Int, String] )
+
+	@Parcelable
+	case class ParcelableMapArgument( x: Map[Int, Primitive] )
 
 	@Parcelable
 	case class PrimitiveTupleArgument( x: ( Int, String, Primitive ) )

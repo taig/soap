@@ -67,9 +67,19 @@ with	RobolectricSuite
 		validate( PrimitiveTraversableArguments( Seq( 1, 2, 3 ), List( 2.9, 2.7, 2.6 ) ) )
 	}
 
+	it should "support parcelable Traversables" in
+	{
+		validate( ParcelableTraversableArgument( Seq( Primitive.default, Primitive.default ) ) )
+	}
+
 	it should "support Maps" in
 	{
 		validate( PrimitiveMapArgument( Map( 1 -> "a", 2 -> "b" ) ) )
+	}
+
+	it should "support parcelable Maps" in
+	{
+		validate( ParcelableMapArgument( Map( 1 -> Primitive.default, 2 -> Primitive.default ) ) )
 	}
 
 	it should "support Tuples" in
