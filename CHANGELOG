@@ -1,0 +1,40 @@
+2.0.0
+
+- Switched to a type class approach, making the parcel/unparcel process much more accessible and also easier to modify and improve
+
+1.2.6
+
+- Upgrade to sbt 0.13.8
+- Upgrade to android-sdk-plugin 1.3.23
+
+1.2.5
+
+- Upgrade to Scala 2.11.6 & pfn/android 1.3.18
+- Fix aar package name, making it not resolvable via maven
+
+1.2.4
+
+- Change groupId to `io.taig.android`
+- Publish project via Maven Central
+
+1.2.3
+
+- Resolved match error for `Array[_ <: Parcelable]`
+
+1.2.2
+
+- Resolved NPE issues with non primitive Option values, such as collections or tuples
+
+1.2.1
+
+- Support for constructor argument groups
+
+1.1.1
+
+- Only print Serializable warning, when the concerned type does not inherit from Serializable directly
+
+1.1.0
+
+- Allow annotating `object`
+- Allow annotating abstract classes and trais with type arguments
+- Print a notice when `writeSerializable` is used, as this may not be intended
