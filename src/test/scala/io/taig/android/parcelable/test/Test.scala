@@ -57,6 +57,11 @@ with	RobolectricSuite
 		validate( PrimitiveArrayArgument( Array( 1, 2, 3 ) ) )
 	}
 
+	it should "support parcelable Arrays" in
+	{
+		validate( ParcelableArrayArgument( Array( Primitive.default, Primitive.default ) ) )
+	}
+
 	it should "support Traversables" in
 	{
 		validate( PrimitiveTraversableArguments( Seq( 1, 2, 3 ), List( 2.9, 2.7, 2.6 ) ) )

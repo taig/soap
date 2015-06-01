@@ -24,6 +24,9 @@ package object test
 	}
 
 	@Parcelable
+	case class ParcelableArrayArgument( x: Array[Primitive] )
+
+	@Parcelable
 	case class PrimitiveTraversableArguments( x: Seq[Int], y: List[Double] )
 
 	@Parcelable
