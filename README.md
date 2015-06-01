@@ -52,7 +52,6 @@ libraryDependencies ++= Seq(
 - Long
 - Parcelable
 - PersistableBundle
-- Serializable
 - Short
 - Size
 - SizeF
