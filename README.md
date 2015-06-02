@@ -40,12 +40,12 @@ libraryDependencies ++= Seq(
 ## Supported Types
 
 - Bundle
-- Boolean
+- **Boolean**
 - Byte
 - Char
 - CharSequence
 - Double
-- Enumeration
+- **Enumeration**
 - IBinder
 - FileDescriptor
 - Float
@@ -58,11 +58,11 @@ libraryDependencies ++= Seq(
 - SizeF
 - String
 - SparseBooleanArray
-- Array[_]
-- Traversable[_]
-- Map[_, _]
-- Option[_]
-- Tuples
+- **Array[_]**
+- **Traversable[_]**
+- **Map[_, _]**
+- **Option[_]**
+- **Tuples**
 
 The Serialization type is not supported and discouraged to use. You can still create a simple Serialization transformer though.
 
