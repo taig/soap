@@ -1,3 +1,7 @@
+2.1.0
+
+- Added Enumeration support
+
 2.0.0
 
 - Switched to a type class approach, making the parcel/unparcel process much more accessible and also easier to modify and improve
