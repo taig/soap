@@ -64,6 +64,8 @@ libraryDependencies ++= Seq(
 - **Option[_]**
 - **Tuples**
 
+Supported types with generic arguments (e.g. Array[_]) work with every supported type (e.g. Array[Int] or Array[Option[( String, Int )]]).
+
 The Serialization type is not supported and discouraged to use. You can still create a simple Serialization transformer though.
 
 ## Usage
