@@ -45,6 +45,7 @@ libraryDependencies ++= Seq(
 - Char
 - CharSequence
 - Double
+- Enumeration
 - IBinder
 - FileDescriptor
 - Float
