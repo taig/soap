@@ -47,4 +47,7 @@ package object test
 
 	@Parcelable
 	case class PrimitiveTupleArgument( x: ( Int, String, Primitive ) )
+
+	@Parcelable
+	case class EnumerationArgument( x: Enum.Value )
 }

@@ -56,9 +56,7 @@ trait Context[C <: whitebox.Context]
 		def directBaseClasses() =
 		{
 			val base = classSymbol.baseClasses.toSet - classSymbol
-			val basebase = base
-				.flatMap{ case x: ClassSymbol => x.baseClasses.toSet - x }
-				.toSet
+			val basebase = base.flatMap{ case x: ClassSymbol => x.baseClasses.toSet - x }
 
 			base -- basebase
 		}
