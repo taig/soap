@@ -1,5 +1,7 @@
 package io.taig.android.parcelable
 
+import java.net.URL
+
 import io.taig.android.Parcelable
 
 package object test
@@ -50,4 +52,7 @@ package object test
 
 	@Parcelable
 	case class EnumerationArgument( x: Enum.Value )
+
+	@Parcelable
+	case class URLArgument( x: URL )
 }
