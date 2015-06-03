@@ -1,6 +1,7 @@
 package io.taig.android.parcelable
 
 import java.io.FileDescriptor
+import java.net.URL
 
 import android.annotation.TargetApi
 import android.os._
@@ -160,6 +161,16 @@ object Transformer
 		override def read( source: Parcel ) = source.readString()
 
 		override def write( value: String, destination: Parcel, flags: Int ) = destination.writeString( value )
+	}
+
+	implicit val url = new Transformer[URL]
+	{
+		override def read( source: Parcel ) = new URL( source.readString() )
+
+		override def write( value: URL, destination: Parcel, flags: Int ) =
+		{
+			destination.writeString( value.toExternalForm )
+		}
 	}
 
 	implicit def option[T: Transformer] = new Transformer[Option[T]]
