@@ -1,5 +1,7 @@
 package io.taig.android.parcelable.test
 
+import java.net.URL
+
 import android.os.Parcel
 import io.taig.android.parcelable.Creator
 import org.robolectric.annotation.Config
@@ -91,5 +93,10 @@ with	RobolectricSuite
 	{
 		validate( EnumerationArgument( Enum.a ) )
 		validate( EnumerationArgument( Enum.b ) )
+	}
+
+	it should "support URLs" in
+	{
+		validate( URLArgument( new URL( "http://google.com/" ) ) )
 	}
 }

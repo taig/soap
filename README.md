@@ -33,19 +33,19 @@ object Person extends io.taig.android.parcelable.Creator[Person]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ),
-  "io.taig.android" %% "parcelable" % "2.1.0"
+  "io.taig.android" %% "parcelable" % "2.1.1-SNAPSHOT"
 )
 ````
 
 ## Supported Types
 
 - Bundle
-- Boolean
+- **Boolean**
 - Byte
 - Char
 - CharSequence
 - Double
-- Enumeration
+- **Enumeration**
 - IBinder
 - FileDescriptor
 - Float
@@ -58,11 +58,13 @@ libraryDependencies ++= Seq(
 - SizeF
 - String
 - SparseBooleanArray
-- Array[_]
-- Traversable[_]
-- Map[_, _]
-- Option[_]
-- Tuples
+- **Array[_]**
+- **Traversable[_]**
+- **Map[_, _]**
+- **Option[_]**
+- **Tuples**
+
+Supported types with generic arguments (e.g. Array[_]) work with every supported type (e.g. Array[Int] or Array[Option[( String, Int )]]).
 
 The Serialization type is not supported and discouraged to use. You can still create a simple Serialization transformer though.
 

@@ -1,7 +1,9 @@
 package io.taig.android.parcelable
 
 import java.io.FileDescriptor
+import java.net.URL
 
+import android.annotation.TargetApi
 import android.os._
 import android.text.TextUtils
 import android.util.{Size, SizeF, SparseBooleanArray}
@@ -107,10 +109,12 @@ object Transformer
 		override def write( value: Long, destination: Parcel, flags: Int ) = destination.writeLong( value )
 	}
 
-	implicit val persistableBundle = new Transformer[PersistableBundle]
+	implicit val persistableBundle = new Transformer[PersistableBundle]()
 	{
+		@TargetApi( 21 )
 		override def read( source: Parcel ) = source.readPersistableBundle()
 
+		@TargetApi( 21 )
 		override def write( value: PersistableBundle, destination: Parcel, flags: Int ) =
 		{
 			destination.writePersistableBundle( value )
@@ -126,15 +130,19 @@ object Transformer
 
 	implicit val size = new Transformer[Size]
 	{
+		@TargetApi( 21 )
 		override def read( source: Parcel ) = source.readSize()
 
+		@TargetApi( 21 )
 		override def write( value: Size, destination: Parcel, flags: Int ) = destination.writeSize( value )
 	}
 
 	implicit val sizeF = new Transformer[SizeF]
 	{
+		@TargetApi( 21 )
 		override def read( source: Parcel ) = source.readSizeF()
 
+		@TargetApi( 21 )
 		override def write( value: SizeF, destination: Parcel, flags: Int ) = destination.writeSizeF( value )
 	}
 
@@ -153,6 +161,16 @@ object Transformer
 		override def read( source: Parcel ) = source.readString()
 
 		override def write( value: String, destination: Parcel, flags: Int ) = destination.writeString( value )
+	}
+
+	implicit val url = new Transformer[URL]
+	{
+		override def read( source: Parcel ) = new URL( source.readString() )
+
+		override def write( value: URL, destination: Parcel, flags: Int ) =
+		{
+			destination.writeString( value.toExternalForm )
+		}
 	}
 
 	implicit def option[T: Transformer] = new Transformer[Option[T]]

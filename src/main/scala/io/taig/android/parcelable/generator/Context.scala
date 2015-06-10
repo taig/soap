@@ -132,8 +132,20 @@ trait Context[C <: whitebox.Context]
 	{
 		def resolveType(): Type =
 		{
+			// Hack around recursive self typing
+			// @see http://stackoverflow.com/questions/19954776/scala-macro-annotations-c-typecheck-of-annotated-type-causes-stackoverflowerror
+			val recursion = context.openMacros.count( check =>
+			{
+				context.macroApplication.toString == check.macroApplication.toString &&
+				context.enclosingPosition.toString == check.enclosingPosition.toString
+			} )
+
 			val check = tree match
 			{
+				case AppliedTypeTree( name, parameters ) if recursion > 2 =>
+				{
+					q"null.asInstanceOf[$name[..${( 1 to parameters.length ).map( i => Ident( TypeName( "_$" + i ) ) ).toList}]]"
+				}
 				case AppliedTypeTree( name, parameters ) => q"null.asInstanceOf[$name[..$parameters]]"
 				case Apply( name, _ ) => q"null.asInstanceOf[$name]"
 				case Ident( name: TypeName ) => q"null.asInstanceOf[$name]"
