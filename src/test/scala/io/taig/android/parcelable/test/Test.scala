@@ -9,7 +9,7 @@ import org.scalatest._
 
 import scala.reflect.runtime.universe
 
-@Config( manifest = "src/main/AndroidManifest.xml" )
+@Config( manifest = "src/test/AndroidManifest.xml" )
 class	Test
 extends	FlatSpec
 with	Matchers
