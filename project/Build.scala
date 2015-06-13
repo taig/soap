@@ -24,7 +24,7 @@ extends	android.AutoBuild
 				"org.scala-lang" % "scala-compiler" % version ::
 				"org.scala-lang" % "scala-reflect" % version ::
 				"org.robolectric" % "android-all" % "5.0.0_r2-robolectric-0" % "provided" ::
-				"org.scalatest" %% "scalatest" % "2.1.6" % "test" ::
+				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
 				Nil
 			),
 			name := "Parcelable",
