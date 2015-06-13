@@ -29,12 +29,7 @@ extends	android.AutoBuild
 			),
 			name := "Parcelable",
 			organization := "io.taig.android",
-			resolvers ++= (
-				Resolver.sonatypeRepo( "releases" ) ::
-				( "Typesafe" at "http://repo.typesafe.com/typesafe/releases/" ) ::
-				( "RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/" ) ::
-				Nil
-			),
+			resolvers += "RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/",
 			scalaVersion := "2.11.6",
 			scalacOptions ++= (
 				"-deprecation" ::
