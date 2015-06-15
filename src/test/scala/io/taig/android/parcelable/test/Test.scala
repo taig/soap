@@ -99,4 +99,10 @@ with	RobolectricSuite
 	{
 		validate( URLArgument( new URL( "http://google.com/" ) ) )
 	}
+
+	it should "support Eithers" in
+	{
+		validate( EitherArgument( Left( "asdf" ) ) )
+		validate( EitherArgument( Right( ( 5, Primitive.default ) ) ) )
+	}
 }
