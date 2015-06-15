@@ -9,7 +9,7 @@ import org.scalatest._
 
 import scala.reflect.runtime.universe
 
-@Config( manifest = "src/main/AndroidManifest.xml" )
+@Config( manifest = "src/test/AndroidManifest.xml" )
 class	Test
 extends	FlatSpec
 with	Matchers
@@ -98,5 +98,11 @@ with	RobolectricSuite
 	it should "support URLs" in
 	{
 		validate( URLArgument( new URL( "http://google.com/" ) ) )
+	}
+
+	it should "support Eithers" in
+	{
+		validate( EitherArgument( Left( "asdf" ) ) )
+		validate( EitherArgument( Right( ( 5, Primitive.default ) ) ) )
 	}
 }

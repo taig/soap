@@ -173,6 +173,33 @@ object Transformer
 		}
 	}
 
+	implicit def either[L: Transformer, R: Transformer] = new Transformer[Either[L, R]]
+	{
+		val transformerL = implicitly[Transformer[L]]
+
+		val transformerR = implicitly[Transformer[R]]
+
+		override def read( source: Parcel ) = source.readInt() match
+		{
+			case 0 => Left( transformerL.read( source ) )
+			case 1 => Right( transformerR.read( source ) )
+		}
+
+		override def write( value: Either[L, R], destination: Parcel, flags: Int ) = value match
+		{
+			case Left( value ) =>
+			{
+				destination.writeInt( 0 )
+				transformerL.write( value, destination, flags )
+			}
+			case Right( value ) =>
+			{
+				destination.writeInt( 1 )
+				transformerR.write( value, destination, flags )
+			}
+		}
+	}
+
 	implicit def option[T: Transformer] = new Transformer[Option[T]]
 	{
 		val transformer = implicitly[Transformer[T]]

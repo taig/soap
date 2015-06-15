@@ -55,4 +55,7 @@ package object test
 
 	@Parcelable
 	case class URLArgument( x: URL )
+
+	@Parcelable
+	case class EitherArgument( either: Either[String, ( Int, Primitive )] )
 }
