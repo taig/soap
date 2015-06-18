@@ -4,6 +4,8 @@ import java.net.URL
 
 import io.taig.android.Parcelable
 
+import scala.util.Try
+
 package object test
 {
 	@Parcelable
@@ -58,4 +60,7 @@ package object test
 
 	@Parcelable
 	case class EitherArgument( either: Either[String, ( Int, Primitive )] )
+
+	@Parcelable
+	case class TryArgument( arg: Try[String] )
 }
