@@ -58,6 +58,7 @@ libraryDependencies ++= Seq(
 - SizeF
 - String
 - SparseBooleanArray
+- **URL**
 - **Array[_]**
 - **Traversable[_]**
 - **Map[_, _]**
