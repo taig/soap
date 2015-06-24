@@ -19,7 +19,6 @@ extends	android.AutoBuild
 			libraryDependencies <++= scalaVersion( version =>
 				compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ) ::
 				"com.android.support" % "support-v4" % "22.2.0" % "test" ::
-				"org.scala-lang" % "scala-compiler" % version ::
 				"org.scala-lang" % "scala-reflect" % version ::
 				"com.geteit" %% "robotest" % "0.10" % "test" ::
 				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
