@@ -1,0 +1,14 @@
+language: scala
+
+before_install:
+  # Install base Android SDK
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
+  - export COMPONENTS=build-tools-22.0.1,android-22,sysimg-22,extra-android-support
+  - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS
+  - source ~/.android-sdk-installer/env
+
+  # Install required Android components
+  - android update sdk --filter platform-tools,android-22,extra-android-support --no-ui --force
+
+script: wget https://raw.github.com/paulp/sbt-extras/master/sbt && chmod u+x ./sbt && ./sbt test && ./sbt scripted
