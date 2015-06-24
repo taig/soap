@@ -66,7 +66,6 @@ extends	android.AutoBuild
 				</developers>
 			},
 			pomIncludeRepository := { _ => false },
-			sonatypeProfileName := "io.taig",
 			publishArtifact in Test := false,
 			publishMavenStyle := true,
 			publishTo <<= version ( version =>
@@ -89,6 +88,7 @@ extends	android.AutoBuild
 					Some( "scm:git:git@github.com:taig/parcelable.git" )
 				)
 			),
+			sonatypeProfileName := "io.taig",
 			startYear := Some( 2015 )
 		)
 }

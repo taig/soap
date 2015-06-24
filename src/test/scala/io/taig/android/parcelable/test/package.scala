@@ -4,7 +4,7 @@ import java.net.URL
 
 import io.taig.android.Parcelable
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 package object test
 {
@@ -63,4 +63,12 @@ package object test
 
 	@Parcelable
 	case class TryArgument( arg: Try[String] )
+	{
+		override def equals( o: scala.Any ) = ( arg, o ) match
+		{
+			case ( Success( a ), Success( b ) ) => a == b
+			case ( Failure( a ), Failure( b ) ) => a.getClass == b.getClass
+			case _ => false
+		}
+	}
 }
