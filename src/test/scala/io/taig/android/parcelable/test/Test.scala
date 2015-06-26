@@ -109,7 +109,7 @@ with	RobolectricSuite
 
 	it should "support Trys" in
 	{
-		validate( TryArgument( Success( "asdf" ) ) )
 		validate( TryArgument( Failure( new IllegalArgumentException ) ) )
+		validate( TryArgument( Success( "asdf" ) ) )
 	}
 }

@@ -66,8 +66,8 @@ package object test
 	{
 		override def equals( o: scala.Any ) = ( arg, o ) match
 		{
-			case ( Success( a ), Success( b ) ) => a == b
-			case ( Failure( a ), Failure( b ) ) => a.getClass == b.getClass
+			case ( Success( arg0 ), TryArgument( Success( arg1 ) ) ) => arg0 == arg1
+			case ( Failure( arg0 ), TryArgument( Failure( arg1 ) ) ) => arg0.getClass == arg1.getClass
 			case _ => false
 		}
 	}
