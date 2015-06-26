@@ -1,12 +1,14 @@
 language: android
+
 scala:
   - "2.11.7"
+
 android:
   components:
-    - platform-tools
-    - tools
     - android-22
     - extra
+    - platform-tools
+    - tools
 
 before_script:
   - wget http://www.scala-lang.org/files/archive/scala-2.11.7.deb
@@ -17,4 +19,5 @@ before_script:
   - sudo apt-get install scala
   - sudo apt-get install sbt
 
-script: sbt test
+#script: sbt test
+script: wget https://raw.github.com/paulp/sbt-extras/master/sbt && chmod u+x ./sbt && ./sbt test
