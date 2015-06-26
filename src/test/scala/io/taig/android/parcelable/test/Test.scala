@@ -8,6 +8,7 @@ import org.robolectric.annotation.Config
 import org.scalatest._
 
 import scala.reflect.runtime.universe
+import scala.util.{Failure, Success}
 
 @Config( manifest = "src/test/AndroidManifest.xml" )
 class	Test
@@ -104,5 +105,11 @@ with	RobolectricSuite
 	{
 		validate( EitherArgument( Left( "asdf" ) ) )
 		validate( EitherArgument( Right( ( 5, Primitive.default ) ) ) )
+	}
+
+	it should "support Trys" in
+	{
+		validate( TryArgument( Failure( new IllegalArgumentException ) ) )
+		validate( TryArgument( Success( "asdf" ) ) )
 	}
 }

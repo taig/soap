@@ -15,6 +15,7 @@ import scala.language.{higherKinds, reflectiveCalls}
 import scala.reflect._
 import scala.reflect.runtime.currentMirror
 import scala.reflect.runtime.universe._
+import scala.util.{Success, Failure, Try}
 
 /**
  * Instructions on how to parcel and unparcel an object of type T
@@ -229,6 +230,31 @@ object Transformer
 		}
 
 		override def write( value: T, destination: Parcel, flags: Int ) = destination.writeParcelable( value, flags )
+	}
+
+	implicit def Try[T: Transformer] = new Transformer[Try[T]]
+	{
+		val transformer = implicitly[Transformer[T]]
+
+		override def read( source: Parcel ) = source.readInt() match
+		{
+			case 0 => Failure( source.readSerializable().asInstanceOf[Throwable] )
+			case 1 => Success( transformer.read( source ) )
+		}
+
+		override def write( value: Try[T], destination: Parcel, flags: Int ) = value match
+		{
+			case Failure( exception ) =>
+			{
+				destination.writeInt( 0 )
+				destination.writeSerializable( exception )
+			}
+			case Success( value ) =>
+			{
+				destination.writeInt( 1 )
+				transformer.write( value, destination, flags )
+			}
+		}
 	}
 
 	implicit def enumeration[S <: Enumeration]( implicit tag: TypeTag[S] ) = new Transformer[S#Value]
