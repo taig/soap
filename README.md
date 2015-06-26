@@ -35,7 +35,7 @@ object Person extends io.taig.android.parcelable.Creator[Person]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ),
-  "io.taig.android" %% "parcelable" % "2.2.0"
+  "io.taig.android" %% "parcelable" % "2.3.0"
 )
 ````
 
@@ -66,6 +66,7 @@ libraryDependencies ++= Seq(
 - **Map[_, _]**
 - **Option[_]**
 - **Either**
+- **Try[_]**
 - **Tuple1 - Tuple22**
 
 Supported types with generic arguments (e.g. Array[_]) work with every supported type (e.g. Array[Int] or Array[Option[( String, Int )]]).
