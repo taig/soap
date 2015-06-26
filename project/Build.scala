@@ -31,7 +31,7 @@ extends	android.AutoBuild
 				( "RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/" ) ::
 				Nil
 			),
-			scalaVersion := "2.11.6",
+			scalaVersion := "2.11.7",
 			scalacOptions ++= (
 				"-deprecation" ::
 				"-feature" ::
