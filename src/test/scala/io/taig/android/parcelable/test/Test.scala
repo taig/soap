@@ -2,6 +2,7 @@ package io.taig.android.parcelable.test
 
 import java.net.URL
 
+import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.os.Parcel
 import io.taig.android.parcelable.Creator
 import org.robolectric.annotation.Config
@@ -10,7 +11,7 @@ import org.scalatest._
 import scala.reflect.runtime.universe
 import scala.util.{Failure, Success}
 
-@Config( manifest = "src/test/AndroidManifest.xml" )
+@Config( sdk = Array( LOLLIPOP ) )
 class	Test
 extends	FlatSpec
 with	Matchers
