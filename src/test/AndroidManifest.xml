@@ -3,8 +3,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		  package="io.taig.android.parcelable">
 
-	<uses-sdk android:targetSdkVersion="18" />
-
 	<application />
 
 </manifest>

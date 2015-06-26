@@ -1,5 +1,7 @@
 # Parcelable (***Scala on Android***)
 
+[![Build Status](https://travis-ci.org/Taig/Parcelable.svg?branch=develop)](https://travis-ci.org/Taig/Parcelable)
+
 Parcelable is Android's serialization tool for inter-process communication (IPC). The emphasis on performance is the prominent difference to the Java Serialization framework (which the developer is discouraged to use for this very reason). Unfortunately, Parcelable requires the developer to implement a vast portion of boilerplate code in order to work. This project combines the performance of Parcelable with the ease of Java's Serializable interface.
 
 With the help of macros, the project will expand all your `@Parcelable` annotated classes and traits in this fashion:
@@ -33,7 +35,7 @@ object Person extends io.taig.android.parcelable.Creator[Person]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ),
-  "io.taig.android" %% "parcelable" % "2.2.0"
+  "io.taig.android" %% "parcelable" % "2.3.0"
 )
 ````
 
@@ -58,11 +60,13 @@ libraryDependencies ++= Seq(
 - SizeF
 - String
 - SparseBooleanArray
+- **URL**
 - **Array[_]**
 - **Traversable[_]**
 - **Map[_, _]**
 - **Option[_]**
 - **Either**
+- **Try[_]**
 - **Tuple1 - Tuple22**
 
 Supported types with generic arguments (e.g. Array[_]) work with every supported type (e.g. Array[Int] or Array[Option[( String, Int )]]).

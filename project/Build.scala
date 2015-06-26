@@ -18,25 +18,26 @@ extends	android.AutoBuild
 			),
 			libraryDependencies <++= scalaVersion( version =>
 				compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ) ::
-				"com.android.support" % "support-v4" % "22.2.0" % "test" ::
-				"com.geteit" %% "robotest" % "0.7" % "test" ::
-				"junit" % "junit" % "4.12" % "test" ::
-				"org.scala-lang" % "scala-compiler" % version ::
 				"org.scala-lang" % "scala-reflect" % version ::
-				"org.robolectric" % "android-all" % "5.0.0_r2-robolectric-0" % "provided" ::
+				"com.android.support" % "support-v4" % "22.2.0" % "test" ::
+				"com.geteit" %% "robotest" % "0.10" % "test" ::
 				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
 				Nil
 			),
 			name := "Parcelable",
 			organization := "io.taig.android",
-			resolvers += "RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/",
-			scalaVersion := "2.11.6",
+			resolvers ++= (
+				Resolver.sonatypeRepo( "snapshots" ) ::
+				( "RoboTest" at "https://raw.github.com/zbsz/mvn-repo/master/releases/" ) ::
+				Nil
+			),
+			scalaVersion := "2.11.7",
 			scalacOptions ++= (
 				"-deprecation" ::
 				"-feature" ::
 				Nil
 			),
-			version := "2.2.0"
+			version := "2.3.0"
 		)
 		.settings(
 			minSdkVersion in Android := "4",
@@ -66,7 +67,6 @@ extends	android.AutoBuild
 				</developers>
 			},
 			pomIncludeRepository := { _ => false },
-			sonatypeProfileName := "io.taig",
 			publishArtifact in Test := false,
 			publishMavenStyle := true,
 			publishTo <<= version ( version =>
@@ -89,6 +89,7 @@ extends	android.AutoBuild
 					Some( "scm:git:git@github.com:taig/parcelable.git" )
 				)
 			),
+			sonatypeProfileName := "io.taig",
 			startYear := Some( 2015 )
 		)
 }

@@ -1,3 +1,7 @@
+2.3.0
+
+- Added Try[_] support (exceptions are serialized via runtime reflection)
+
 2.2.0
 
 - Added Either[Left, Right] support
@@ -8,7 +12,7 @@
 
 2.1.0
 
-- Added Enumeration support
+- Added Enumeration support (runtime reflection)
 
 2.0.0
 
