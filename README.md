@@ -66,6 +66,7 @@ libraryDependencies ++= Seq(
 - **Map[_, _]**
 - **Option[_]**
 - **Either**
+- **Try[_]**
 - **Tuple1 - Tuple22**
 
 Supported types with generic arguments (e.g. Array[_]) work with every supported type (e.g. Array[Int] or Array[Option[( String, Int )]]).
