@@ -1,5 +1,7 @@
 # Parcelable (***Scala on Android***)
 
+[![Build Status](https://travis-ci.org/Taig/Parcelable.svg?branch=develop)](https://travis-ci.org/Taig/Parcelable)
+
 Parcelable is Android's serialization tool for inter-process communication (IPC). The emphasis on performance is the prominent difference to the Java Serialization framework (which the developer is discouraged to use for this very reason). Unfortunately, Parcelable requires the developer to implement a vast portion of boilerplate code in order to work. This project combines the performance of Parcelable with the ease of Java's Serializable interface.
 
 With the help of macros, the project will expand all your `@Parcelable` annotated classes and traits in this fashion:
@@ -58,6 +60,7 @@ libraryDependencies ++= Seq(
 - SizeF
 - String
 - SparseBooleanArray
+- **URL**
 - **Array[_]**
 - **Traversable[_]**
 - **Map[_, _]**
