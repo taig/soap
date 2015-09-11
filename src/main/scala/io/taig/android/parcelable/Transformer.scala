@@ -11,8 +11,7 @@ import android.util.{ Size, SizeF, SparseBooleanArray }
 import scala.annotation.implicitNotFound
 import scala.collection.breakOut
 import scala.collection.generic.CanBuildFrom
-import scala.language.higherKinds
-import scala.language.reflectiveCalls
+import scala.language.{ higherKinds, reflectiveCalls }
 import scala.reflect._
 
 /**
