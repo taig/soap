@@ -22,15 +22,20 @@ class Class[C <: whitebox.Context]( val context: C ) extends Context[C] {
                     self,
                     body :+ q"override def describeContents(): Int = 0" :+ q"""
                     override def writeToParcel( destination: android.os.Parcel, flags: Int ): Unit = {
-                        ..${classDef.getConstructorFields().map{ case ValDef( _, name, tpe, _ ) ⇒ write( tpe.resolveType(), q"$name" ) }}
+                        import shapeless._
+                        import io.taig.android.parcelable._
+
+                        object write extends shapeless.Poly1 {
+                            implicit def default[T: Transformer] = at[T]( value => {
+                                implicitly[Transformer[T]].write( value, destination, flags )
+                            } )
+                        }
+
+                        Generic[${name.toTypeName}].to( this ).map( write )
                     }"""
                 )
             )
         }
-    }
-
-    private def write( tpe: Type, name: Tree ): Tree = {
-        q"implicitly[io.taig.android.parcelable.Transformer[$tpe]].write( $name, destination, flags )"
     }
 }
 

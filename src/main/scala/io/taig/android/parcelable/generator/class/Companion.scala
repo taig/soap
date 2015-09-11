@@ -33,22 +33,21 @@ class Companion[C <: whitebox.Context]( val context: C )
             }
         }
 
-    private def instantiate( classDef: ClassDef ) =
-        {
-            def construct( reads: List[List[Tree]] ): Apply = reads match {
-                case List( read )  ⇒ Apply( Select( New( Ident( classDef.name ) ), termNames.CONSTRUCTOR ), read )
-                case read :: reads ⇒ Apply( construct( reads ), read )
-                case Nil           ⇒ construct( List( List.empty ) )
-            }
-
-            val reads = classDef
-                .getPrimaryConstructor()
-                .vparamss
-                .map( _.map( _.tpt.resolveType() ) )
-                .map( _.map( tpe ⇒ q"implicitly[io.taig.android.parcelable.Transformer[$tpe]].read( source )" ) )
-
-            construct( reads.reverse )
+    private def instantiate( classDef: ClassDef ) = {
+        def construct( reads: List[List[Tree]] ): Apply = reads match {
+            case List( read )  ⇒ Apply( Select( New( Ident( classDef.name ) ), termNames.CONSTRUCTOR ), read )
+            case read :: reads ⇒ Apply( construct( reads ), read )
+            case Nil           ⇒ construct( List( List.empty ) )
         }
+
+        val reads = classDef
+            .getPrimaryConstructor()
+            .vparamss
+            .map( _.map( _.tpt.resolveType() ) )
+            .map( _.map( tpe ⇒ q"implicitly[io.taig.android.parcelable.Transformer[$tpe]].read( source )" ) )
+
+        construct( reads.reverse )
+    }
 }
 
 object Companion {
