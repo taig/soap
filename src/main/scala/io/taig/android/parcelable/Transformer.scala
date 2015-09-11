@@ -194,36 +194,6 @@ object Transformer {
         override def write( value: T, destination: Parcel, flags: Int ) = destination.writeParcelable( value, flags )
     }
 
-    implicit def Try[T: Transformer] = new Transformer[Try[T]] {
-        val transformer = implicitly[Transformer[T]]
-
-        override def read( source: Parcel ) = source.readInt() match {
-            case 0 ⇒ Failure( source.readSerializable().asInstanceOf[Throwable] )
-            case 1 ⇒ Success( transformer.read( source ) )
-        }
-
-        override def write( value: Try[T], destination: Parcel, flags: Int ) = value match {
-            case Failure( exception ) ⇒
-                destination.writeInt( 0 )
-                destination.writeSerializable( exception )
-            case Success( value ) ⇒
-                destination.writeInt( 1 )
-                transformer.write( value, destination, flags )
-        }
-    }
-
-    implicit def enumeration[S <: Enumeration]( implicit tag: TypeTag[S] ) = new Transformer[S#Value] {
-        override def read( source: Parcel ) = {
-            currentMirror
-                .reflectModule( typeTag[S].tpe.termSymbol.asModule )
-                .instance
-                .asInstanceOf[S]
-                .apply( source.readInt() )
-        }
-
-        override def write( value: S#Value, destination: Parcel, flags: Int ) = destination.writeInt( value.id )
-    }
-
     implicit def array[T: Transformer]( implicit tag: ClassTag[T] ) = new Transformer[Array[T]] {
         val transformer = implicitly[Transformer[T]]
 

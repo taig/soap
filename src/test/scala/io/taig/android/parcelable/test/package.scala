@@ -48,20 +48,8 @@ package object test {
     case class PrimitiveTupleArgument( x: ( Int, String, Primitive ) )
 
     @Parcelable
-    case class EnumerationArgument( x: Enum.Value )
-
-    @Parcelable
     case class URLArgument( x: URL )
 
     @Parcelable
     case class EitherArgument( either: Either[String, ( Int, Primitive )] )
-
-    @Parcelable
-    case class TryArgument( arg: Try[String] ) {
-        override def equals( o: scala.Any ) = ( arg, o ) match {
-            case ( Success( arg0 ), TryArgument( Success( arg1 ) ) ) ⇒ arg0 == arg1
-            case ( Failure( arg0 ), TryArgument( Failure( arg1 ) ) ) ⇒ arg0.getClass == arg1.getClass
-            case _ ⇒ false
-        }
-    }
 }

@@ -79,11 +79,6 @@ class Test
         validate( PrimitiveTupleArgument( ( 3, "asdf", Primitive.default ) ) )
     }
 
-    it should "support Enumerations" in {
-        validate( EnumerationArgument( Enum.a ) )
-        validate( EnumerationArgument( Enum.b ) )
-    }
-
     it should "support URLs" in {
         validate( URLArgument( new URL( "http://google.com/" ) ) )
     }
@@ -91,10 +86,5 @@ class Test
     it should "support Eithers" in {
         validate( EitherArgument( Left( "asdf" ) ) )
         validate( EitherArgument( Right( ( 5, Primitive.default ) ) ) )
-    }
-
-    it should "support Trys" in {
-        validate( TryArgument( Failure( new IllegalArgumentException ) ) )
-        validate( TryArgument( Success( "asdf" ) ) )
     }
 }
