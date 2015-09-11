@@ -11,11 +11,8 @@ import android.util.{ Size, SizeF, SparseBooleanArray }
 import scala.annotation.implicitNotFound
 import scala.collection.breakOut
 import scala.collection.generic.CanBuildFrom
-import scala.language.{ higherKinds, reflectiveCalls }
+import scala.language.higherKinds
 import scala.reflect._
-import scala.reflect.runtime.currentMirror
-import scala.reflect.runtime.universe._
-import scala.util.{ Success, Failure, Try }
 
 /**
  * Instructions on how to parcel and unparcel an object of type T
@@ -27,7 +24,7 @@ trait Transformer[T] {
     def write( value: T, destination: Parcel, flags: Int ): Unit
 }
 
-object Transformer {
+object Transformer extends TupleTransformations {
     implicit val bundle = new Transformer[Bundle] {
         override def read( source: Parcel ) = source.readBundle()
 
@@ -219,36 +216,4 @@ object Transformer {
             value.foreach( transformer.write( _, destination, flags ) )
         }
     }
-
-    implicit def map[M[A, B] <: Map[A, B], S: Transformer, T: Transformer]( implicit cbf: CanBuildFrom[Nothing, ( S, T ), M[S, T]] ) = new Transformer[M[S, T]] {
-        val transformer = new {
-            val key = implicitly[Transformer[S]]
-
-            val value = implicitly[Transformer[T]]
-        }
-
-        override def read( source: Parcel ) = {
-            ( 0 until source.readInt() )
-                .map( _ ⇒ transformer.key.read( source ) )
-                .map( ( _, transformer.value.read( source ) ) )( breakOut )
-        }
-
-        override def write( value: M[S, T], destination: Parcel, flags: Int ) = {
-            destination.writeInt( value.size )
-            value.keys.foreach( transformer.key.write( _, destination, flags ) )
-            value.values.foreach( transformer.value.write( _, destination, flags ) )
-        }
-    }
-        
-    [2..#implicit def tuple1[[#T1: Transformer#]] = new Transformer[( [#T1#] )] {
-        override def read( source: Parcel ) = Tuple1(
-                [#implicitly[Transformer[T1]].read( source )#]
-        )
-            
-        override def write( value: ( [#T1#] ), destination: Parcel, flags: Int ) = {
-            [#implicitly[Transformer[T1]].write( value._1, destination, flags )#
-            ]
-        }
-    }#
-    ]
 }
