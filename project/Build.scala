@@ -38,7 +38,7 @@ extends	android.AutoBuild
 				"-feature" ::
 				Nil
 			),
-			version := "2.3.0"
+			version := "2.4.0-SNAPSHOT"
 		)
 		.settings(
 			minSdkVersion in Android := "4",
