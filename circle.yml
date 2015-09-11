@@ -1,0 +1,18 @@
+machine:
+  java:
+    version: oraclejdk7
+
+dependencies:
+  pre:
+    - wget -q https://dl.bintray.com/sbt/debian/sbt-0.13.9.deb
+    - sudo dpkg -i sbt-0.13.9.deb
+    - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.1,android-23,extra-android-support,extra-google-google_play_services,extra-google-m2repository,extra-android-m2repository"
+  cache_directories:
+    - "~/.ivy2"
+    - "~/.sbt"
+  override:
+    - sbt test:compile
+
+test:
+  override:
+    - sbt test
