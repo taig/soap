@@ -20,7 +20,8 @@ class Class[C <: whitebox.Context]( val context: C ) extends Context[C] {
                 Template(
                     parents :+ tq"android.os.Parcelable",
                     self,
-                    body :+ q"override def describeContents(): Int = 0" :+ q"""
+                    body :+ q"""
+                    override def describeContents(): Int = 0""" :+ q"""
                     override def writeToParcel( destination: android.os.Parcel, flags: Int ): Unit = {
                         import shapeless._
                         import io.taig.android.parcelable._

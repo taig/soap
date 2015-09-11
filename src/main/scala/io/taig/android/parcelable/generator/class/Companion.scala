@@ -9,29 +9,28 @@ class Companion[C <: whitebox.Context]( val context: C )
         extends Context[C] {
     import context.universe._
 
-    def apply( classDef: ClassDef, moduleDef: ModuleDef ) =
-        {
-            val ModuleDef( modifiers, name, Template( parents, self, body ) ) = moduleDef
+    def apply( classDef: ClassDef, moduleDef: ModuleDef ) = {
+        val ModuleDef( modifiers, name, Template( parents, self, body ) ) = moduleDef
 
-            if ( moduleDef.extendsFrom[Creator[_]] ) {
-                moduleDef
-            } else {
-                ModuleDef(
-                    modifiers,
-                    name,
-                    Template(
-                        parents :+ tq"io.taig.android.parcelable.Creator[${name.toTypeName}]",
-                        self,
-                        body :+ q"""
-                        override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}] {
-                            override def createFromParcel( source: android.os.Parcel ) = ${instantiate( classDef )}
+        if ( moduleDef.extendsFrom[Creator[_]] ) {
+            moduleDef
+        } else {
+            ModuleDef(
+                modifiers,
+                name,
+                Template(
+                    parents :+ tq"io.taig.android.parcelable.Creator[${name.toTypeName}]",
+                    self,
+                    body :+ q"""
+                    override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}] {
+                        override def createFromParcel( source: android.os.Parcel ) = ${instantiate( classDef )}
 
-                            override def newArray( size: Int ) = new Array[${name.toTypeName}]( size )
-                        }"""
-                    )
+                        override def newArray( size: Int ) = new Array[${name.toTypeName}]( size )
+                    }"""
                 )
-            }
+            )
         }
+    }
 
     private def instantiate( classDef: ClassDef ) = {
         def construct( reads: List[List[Tree]] ): Apply = reads match {
