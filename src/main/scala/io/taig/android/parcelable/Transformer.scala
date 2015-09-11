@@ -12,6 +12,7 @@ import scala.annotation.implicitNotFound
 import scala.collection.breakOut
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
+import scala.language.reflectiveCalls
 import scala.reflect._
 
 /**
@@ -214,6 +215,26 @@ object Transformer extends TupleTransformations {
         override def write( value: L[T], destination: Parcel, flags: Int ) = {
             destination.writeInt( value.size )
             value.foreach( transformer.write( _, destination, flags ) )
+        }
+    }
+
+    implicit def map[M[A, B] <: Map[A, B], S: Transformer, T: Transformer]( implicit cbf: CanBuildFrom[Nothing, ( S, T ), M[S, T]] ) = new Transformer[M[S, T]] {
+        val transformer = new {
+            val key = implicitly[Transformer[S]]
+
+            val value = implicitly[Transformer[T]]
+        }
+
+        override def read( source: Parcel ) = {
+            ( 0 until source.readInt() )
+                .map( _ ⇒ transformer.key.read( source ) )
+                .map( ( _, transformer.value.read( source ) ) )( breakOut )
+        }
+
+        override def write( value: M[S, T], destination: Parcel, flags: Int ) = {
+            destination.writeInt( value.size )
+            value.keys.foreach( transformer.key.write( _, destination, flags ) )
+            value.values.foreach( transformer.value.write( _, destination, flags ) )
         }
     }
 }
