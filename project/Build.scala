@@ -20,8 +20,8 @@ extends	android.AutoBuild
 				compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ) ::
 				"com.chuusai" %% "shapeless" % "2.2.5" ::
 				"org.scala-lang" % "scala-reflect" % version ::
-				"com.android.support" % "support-v4" % "22.2.1" % "test" ::
-				"com.geteit" %% "robotest" % "0.11" % "test" ::
+				"com.android.support" % "support-v4" % "23.0.1" % "test" ::
+				"com.geteit" %% "robotest" % "0.12" % "test" ::
 				"org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
 				Nil
 			),
