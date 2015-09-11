@@ -6,9 +6,9 @@ import xerial.sbt.Sonatype._
 import xerial.sbt.Sonatype.SonatypeKeys._
 
 object	Build
-extends	android.AutoBuild
+extends	sbt.Build
 {
-	lazy val main = Project( "parcelable", file( "." ), settings = androidBuildAar ++ sonatypeSettings )
+	lazy val main = Project( "parcelable", file( "." ), settings = sonatypeSettings )
 		.settings(
 			fork in Test := true,
 			javacOptions ++= (
@@ -39,13 +39,6 @@ extends	android.AutoBuild
 				Nil
 			),
 			version := "2.4.0-SNAPSHOT"
-		)
-		.settings(
-			minSdkVersion in Android := "4",
-			platformTarget in Android := "android-22",
-			sourceGenerators in Compile <<= ( sourceGenerators in Compile ) ( generators => Seq( generators.last ) ),
-			targetSdkVersion in Android := "22",
-			typedResources in Android := false
 		)
 		.settings(
 			description := "Parcelable compile time code generation for Scala on Android",
