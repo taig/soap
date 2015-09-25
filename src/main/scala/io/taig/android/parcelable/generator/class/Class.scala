@@ -27,8 +27,8 @@ class Class[C <: whitebox.Context]( val context: C ) extends Context[C] {
                         import io.taig.android.parcelable._
 
                         object write extends shapeless.Poly1 {
-                            implicit def default[T: Transformer] = at[T]( value => {
-                                implicitly[Transformer[T]].write( value, destination, flags )
+                            implicit def default[T: Parcelize] = at[T]( value => {
+                                implicitly[Parcelize[T]].write( value, destination, flags )
                             } )
                         }
 

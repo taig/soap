@@ -8,7 +8,6 @@ import android.os._
 import android.text.TextUtils
 import android.util.{ Size, SizeF, SparseBooleanArray }
 
-import scala.annotation.implicitNotFound
 import scala.collection.breakOut
 import scala.collection.generic.CanBuildFrom
 import scala.language.{ higherKinds, reflectiveCalls }
@@ -17,39 +16,38 @@ import scala.reflect._
 /**
  * Instructions on how to parcel and unparcel an object of type T
  */
-@implicitNotFound( "No implicit Transformer for type ${T} in scope" )
-trait Transformer[T] {
+trait Parcelize[T] {
     def read( source: Parcel ): T
 
     def write( value: T, destination: Parcel, flags: Int ): Unit
 }
 
-object Transformer extends TupleTransformations {
-    implicit val bundle = new Transformer[Bundle] {
+object Parcelize extends TupleParcelize {
+    implicit val `Parcelize[Bundle]` = new Parcelize[Bundle] {
         override def read( source: Parcel ) = source.readBundle()
 
         override def write( value: Bundle, destination: Parcel, flags: Int ) = destination.writeBundle( value )
     }
 
-    implicit val boolean = new Transformer[Boolean] {
+    implicit val `Parcelize[Boolean]` = new Parcelize[Boolean] {
         override def read( source: Parcel ) = source.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean]
 
         override def write( value: Boolean, destination: Parcel, flags: Int ) = destination.writeValue( value )
     }
 
-    implicit val byte = new Transformer[Byte] {
+    implicit val `Parcelize[Byte]` = new Parcelize[Byte] {
         override def read( source: Parcel ) = source.readByte()
 
         override def write( value: Byte, destination: Parcel, flags: Int ) = destination.writeByte( value )
     }
 
-    implicit val char = new Transformer[Char] {
+    implicit val `Parcelize[Char]` = new Parcelize[Char] {
         override def read( source: Parcel ) = source.readInt().toChar
 
         override def write( value: Char, destination: Parcel, flags: Int ) = destination.writeInt( value.toInt )
     }
 
-    implicit val charSequence = new Transformer[CharSequence] {
+    implicit val `Parcelize[CharSequence]` = new Parcelize[CharSequence] {
         override def read( source: Parcel ) = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel( source )
 
         override def write( value: CharSequence, destination: Parcel, flags: Int ) = {
@@ -57,43 +55,43 @@ object Transformer extends TupleTransformations {
         }
     }
 
-    implicit val double = new Transformer[Double] {
+    implicit val `Parcelize[Double]` = new Parcelize[Double] {
         override def read( source: Parcel ) = source.readDouble()
 
         override def write( value: Double, destination: Parcel, flags: Int ) = destination.writeDouble( value )
     }
 
-    implicit val fileDescriptor = new Transformer[FileDescriptor] {
+    implicit val `Parcelize[FileDescriptor]` = new Parcelize[FileDescriptor] {
         override def read( source: Parcel ) = source.readFileDescriptor().getFileDescriptor
 
         override def write( value: FileDescriptor, destination: Parcel, flags: Int ) = destination.writeFileDescriptor( value )
     }
 
-    implicit val float = new Transformer[Float] {
+    implicit val `Parcelize[Float]` = new Parcelize[Float] {
         override def read( source: Parcel ) = source.readFloat()
 
         override def write( value: Float, destination: Parcel, flags: Int ) = destination.writeFloat( value )
     }
 
-    implicit val iBinder = new Transformer[IBinder] {
+    implicit val `Parcelize[IBinder]` = new Parcelize[IBinder] {
         override def read( source: Parcel ) = source.readStrongBinder()
 
         override def write( value: IBinder, destination: Parcel, flags: Int ) = destination.writeStrongBinder( value )
     }
 
-    implicit val int = new Transformer[Int] {
+    implicit val `Parcelize[Int]` = new Parcelize[Int] {
         override def read( source: Parcel ) = source.readInt()
 
         override def write( value: Int, destination: Parcel, flags: Int ) = destination.writeInt( value )
     }
 
-    implicit val long = new Transformer[Long] {
+    implicit val `Parcelize[Long]` = new Parcelize[Long] {
         override def read( source: Parcel ) = source.readInt()
 
         override def write( value: Long, destination: Parcel, flags: Int ) = destination.writeLong( value )
     }
 
-    implicit val persistableBundle = new Transformer[PersistableBundle]() {
+    implicit val `Parcelize[PersistableBundle]` = new Parcelize[PersistableBundle] {
         @TargetApi( 21 )
         override def read( source: Parcel ) = source.readPersistableBundle()
 
@@ -103,13 +101,13 @@ object Transformer extends TupleTransformations {
         }
     }
 
-    implicit val short = new Transformer[Short] {
+    implicit val `Parcelize[Short]` = new Parcelize[Short] {
         override def read( source: Parcel ) = source.readValue( classOf[Short].getClassLoader ).asInstanceOf[Short]
 
         override def write( value: Short, destination: Parcel, flags: Int ) = destination.writeValue( value )
     }
 
-    implicit val size = new Transformer[Size] {
+    implicit val `Parcelize[Size]` = new Parcelize[Size] {
         @TargetApi( 21 )
         override def read( source: Parcel ) = source.readSize()
 
@@ -117,7 +115,7 @@ object Transformer extends TupleTransformations {
         override def write( value: Size, destination: Parcel, flags: Int ) = destination.writeSize( value )
     }
 
-    implicit val sizeF = new Transformer[SizeF] {
+    implicit val `Parcelize[SizeF]` = new Parcelize[SizeF] {
         @TargetApi( 21 )
         override def read( source: Parcel ) = source.readSizeF()
 
@@ -125,7 +123,7 @@ object Transformer extends TupleTransformations {
         override def write( value: SizeF, destination: Parcel, flags: Int ) = destination.writeSizeF( value )
     }
 
-    implicit val sparseBooleanArray = new Transformer[SparseBooleanArray] {
+    implicit val `Parcelize[SparceBooleanArray]` = new Parcelize[SparseBooleanArray] {
         override def read( source: Parcel ) = source.readSparseBooleanArray()
 
         override def write( value: SparseBooleanArray, destination: Parcel, flags: Int ) = {
@@ -133,13 +131,13 @@ object Transformer extends TupleTransformations {
         }
     }
 
-    implicit val string = new Transformer[String] {
+    implicit val `Parcelize[String]` = new Parcelize[String] {
         override def read( source: Parcel ) = source.readString()
 
         override def write( value: String, destination: Parcel, flags: Int ) = destination.writeString( value )
     }
 
-    implicit val url = new Transformer[URL] {
+    implicit val `Parcelize[URL]` = new Parcelize[URL] {
         override def read( source: Parcel ) = new URL( source.readString() )
 
         override def write( value: URL, destination: Parcel, flags: Int ) = {
@@ -147,43 +145,43 @@ object Transformer extends TupleTransformations {
         }
     }
 
-    implicit def either[L: Transformer, R: Transformer] = new Transformer[Either[L, R]] {
-        val transformerL = implicitly[Transformer[L]]
+    implicit def `Parcelize[Either]`[L: Parcelize, R: Parcelize] = new Parcelize[Either[L, R]] {
+        val left = implicitly[Parcelize[L]]
 
-        val transformerR = implicitly[Transformer[R]]
+        val right = implicitly[Parcelize[R]]
 
         override def read( source: Parcel ) = source.readInt() match {
-            case 0 ⇒ Left( transformerL.read( source ) )
-            case 1 ⇒ Right( transformerR.read( source ) )
+            case 0 ⇒ Left( left.read( source ) )
+            case 1 ⇒ Right( right.read( source ) )
         }
 
         override def write( value: Either[L, R], destination: Parcel, flags: Int ) = value match {
             case Left( value ) ⇒
                 destination.writeInt( 0 )
-                transformerL.write( value, destination, flags )
+                left.write( value, destination, flags )
             case Right( value ) ⇒
                 destination.writeInt( 1 )
-                transformerR.write( value, destination, flags )
+                right.write( value, destination, flags )
         }
     }
 
-    implicit def option[T: Transformer] = new Transformer[Option[T]] {
-        val transformer = implicitly[Transformer[T]]
+    implicit def `Parcelize[Option]`[T: Parcelize] = new Parcelize[Option[T]] {
+        val parcelize = implicitly[Parcelize[T]]
 
         override def read( source: Parcel ) = source.readInt() match {
-            case 1  ⇒ Some( transformer.read( source ) )
+            case 1  ⇒ Some( parcelize.read( source ) )
             case -1 ⇒ None
         }
 
         override def write( value: Option[T], destination: Parcel, flags: Int ) = value match {
             case Some( value ) ⇒
                 destination.writeInt( 1 )
-                transformer.write( value, destination, flags )
+                parcelize.write( value, destination, flags )
             case None ⇒ destination.writeInt( -1 )
         }
     }
 
-    implicit def parcelable[T <: Parcelable: ClassTag] = new Transformer[T] {
+    implicit def `Parcelize[Parcelable]`[T <: Parcelable: ClassTag] = new Parcelize[T] {
         override def read( source: Parcel ) = {
             source.readParcelable[T]( classTag[T].runtimeClass.getClassLoader )
         }
@@ -191,49 +189,49 @@ object Transformer extends TupleTransformations {
         override def write( value: T, destination: Parcel, flags: Int ) = destination.writeParcelable( value, flags )
     }
 
-    implicit def array[T: Transformer]( implicit tag: ClassTag[T] ) = new Transformer[Array[T]] {
-        val transformer = implicitly[Transformer[T]]
+    implicit def `Parcelize[Array]`[T: Parcelize]( implicit tag: ClassTag[T] ) = new Parcelize[Array[T]] {
+        val parcelize = implicitly[Parcelize[T]]
 
         override def read( source: Parcel ) = {
-            ( 0 until source.readInt() ).map( _ ⇒ transformer.read( source ) ).toArray
+            ( 0 until source.readInt() ).map( _ ⇒ parcelize.read( source ) ).toArray
         }
 
         override def write( value: Array[T], destination: Parcel, flags: Int ) = {
             destination.writeInt( value.size )
-            value.foreach( transformer.write( _, destination, flags ) )
+            value.foreach( parcelize.write( _, destination, flags ) )
         }
     }
 
-    implicit def traversable[L[B] <: Traversable[B], T: Transformer]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = new Transformer[L[T]] {
-        val transformer = implicitly[Transformer[T]]
+    implicit def `Parcelize[Traversable]`[L[B] <: Traversable[B], T: Parcelize]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = new Parcelize[L[T]] {
+        val parcelize = implicitly[Parcelize[T]]
 
         override def read( source: Parcel ) = {
-            ( 0 until source.readInt() ).map( _ ⇒ transformer.read( source ) )( breakOut )
+            ( 0 until source.readInt() ).map( _ ⇒ parcelize.read( source ) )( breakOut )
         }
 
         override def write( value: L[T], destination: Parcel, flags: Int ) = {
             destination.writeInt( value.size )
-            value.foreach( transformer.write( _, destination, flags ) )
+            value.foreach( parcelize.write( _, destination, flags ) )
         }
     }
 
-    implicit def map[M[A, B] <: Map[A, B], S: Transformer, T: Transformer]( implicit cbf: CanBuildFrom[Nothing, ( S, T ), M[S, T]] ) = new Transformer[M[S, T]] {
-        val transformer = new {
-            val key = implicitly[Transformer[S]]
+    implicit def `Parcelize[Map]`[M[A, B] <: Map[A, B], S: Parcelize, T: Parcelize]( implicit cbf: CanBuildFrom[Nothing, ( S, T ), M[S, T]] ) = new Parcelize[M[S, T]] {
+        val parcelize = new {
+            val key = implicitly[Parcelize[S]]
 
-            val value = implicitly[Transformer[T]]
+            val value = implicitly[Parcelize[T]]
         }
 
         override def read( source: Parcel ) = {
             ( 0 until source.readInt() )
-                .map( _ ⇒ transformer.key.read( source ) )
-                .map( ( _, transformer.value.read( source ) ) )( breakOut )
+                .map( _ ⇒ parcelize.key.read( source ) )
+                .map( ( _, parcelize.value.read( source ) ) )( breakOut )
         }
 
         override def write( value: M[S, T], destination: Parcel, flags: Int ) = {
             destination.writeInt( value.size )
-            value.keys.foreach( transformer.key.write( _, destination, flags ) )
-            value.values.foreach( transformer.value.write( _, destination, flags ) )
+            value.keys.foreach( parcelize.key.write( _, destination, flags ) )
+            value.values.foreach( parcelize.value.write( _, destination, flags ) )
         }
     }
 }

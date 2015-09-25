@@ -43,7 +43,7 @@ class Companion[C <: whitebox.Context]( val context: C )
             .getPrimaryConstructor()
             .vparamss
             .map( _.map( _.tpt.resolveType() ) )
-            .map( _.map( tpe ⇒ q"implicitly[io.taig.android.parcelable.Transformer[$tpe]].read( source )" ) )
+            .map( _.map( tpe ⇒ q"implicitly[io.taig.android.parcelable.Parcelize[$tpe]].read( source )" ) )
 
         construct( reads.reverse )
     }
