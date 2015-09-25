@@ -10,16 +10,16 @@ import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 trait Bundleize[T] {
-    def get( key: String, bundle: Bundle ): T
+    def read( key: String, bundle: Bundle ): T
 
-    def put( key: String, value: T, bundle: Bundle ): Unit
+    def write( key: String, value: T, bundle: Bundle ): Unit
 }
 
 object Bundleize {
-    def apply[T]( g: ( Bundle, String ) ⇒ T, p: ( Bundle, String, T ) ⇒ Unit ): Bundleize[T] = new Bundleize[T] {
-        override def get( key: String, bundle: Bundle ) = g( bundle, key )
+    def apply[T]( r: ( Bundle, String ) ⇒ T, w: ( Bundle, String, T ) ⇒ Unit ): Bundleize[T] = new Bundleize[T] {
+        override def read( key: String, bundle: Bundle ) = r( bundle, key )
 
-        override def put( key: String, value: T, bundle: Bundle ) = p( bundle, key, value )
+        override def write( key: String, value: T, bundle: Bundle ) = w( bundle, key, value )
     }
 
     implicit val `Bundleize[Boolean]` = Bundleize[Boolean]( _.getBoolean( _ ), _.putBoolean( _, _ ) )
@@ -36,10 +36,10 @@ object Bundleize {
 
     implicit val `Bundleize[IBinder]` = new Bundleize[IBinder] {
         @TargetApi( 18 )
-        override def get( key: String, bundle: Bundle ) = bundle.getBinder( key )
+        override def read( key: String, bundle: Bundle ) = bundle.getBinder( key )
 
         @TargetApi( 18 )
-        override def put( key: String, value: IBinder, bundle: Bundle ) = bundle.putBinder( key, value )
+        override def write( key: String, value: IBinder, bundle: Bundle ) = bundle.putBinder( key, value )
     }
 
     implicit val `Bundleize[Float]` = Bundleize[Float]( _.getFloat( _ ), _.putFloat( _, _ ) )
@@ -56,18 +56,18 @@ object Bundleize {
 
     implicit val `Bundleize[Size]` = new Bundleize[Size] {
         @TargetApi( 21 )
-        override def get( key: String, bundle: Bundle ) = bundle.getSize( key )
+        override def read( key: String, bundle: Bundle ) = bundle.getSize( key )
 
         @TargetApi( 21 )
-        override def put( key: String, value: Size, bundle: Bundle ) = bundle.putSize( key, value )
+        override def write( key: String, value: Size, bundle: Bundle ) = bundle.putSize( key, value )
     }
 
     implicit val `Bundleize[SizeF]` = new Bundleize[SizeF] {
         @TargetApi( 21 )
-        override def get( key: String, bundle: Bundle ) = bundle.getSizeF( key )
+        override def read( key: String, bundle: Bundle ) = bundle.getSizeF( key )
 
         @TargetApi( 21 )
-        override def put( key: String, value: SizeF, bundle: Bundle ) = bundle.putSizeF( key, value )
+        override def write( key: String, value: SizeF, bundle: Bundle ) = bundle.putSizeF( key, value )
     }
 
     implicit val `Bundleize[String]` = Bundleize[String]( _.getString( _ ), _.putString( _, _ ) )
@@ -75,10 +75,10 @@ object Bundleize {
     implicit def `Bundleize[Option]`[T: Bundleize] = new Bundleize[Option[T]] {
         val bundleize = implicitly[Bundleize[T]]
 
-        override def get( key: String, bundle: Bundle ) = Option( bundleize.get( key, bundle ) )
+        override def read( key: String, bundle: Bundle ) = Option( bundleize.read( key, bundle ) )
 
-        override def put( key: String, value: Option[T], bundle: Bundle ) = {
-            bundleize.put( key, value.getOrElse( null.asInstanceOf[T] ), bundle )
+        override def write( key: String, value: Option[T], bundle: Bundle ) = {
+            bundleize.write( key, value.getOrElse( null.asInstanceOf[T] ), bundle )
         }
     }
 
@@ -88,26 +88,26 @@ object Bundleize {
         new Bundleize[L[T]] {
             val bundleize = implicitly[Bundleize[T]]
 
-            override def get( key: String, bundle: Bundle ) = {
+            override def read( key: String, bundle: Bundle ) = {
                 val listBundle = bundle.getBundle( key )
-                listBundle.keySet().map( i ⇒ bundleize.get( i, listBundle ) )( breakOut )
+                listBundle.keySet().map( i ⇒ bundleize.read( i, listBundle ) )( breakOut )
             }
 
-            override def put( key: String, value: L[T], bundle: Bundle ) = {
+            override def write( key: String, value: L[T], bundle: Bundle ) = {
                 val seq = value.toSeq.zipWithIndex
                 val listBundle = new Bundle( seq.length )
 
-                seq.foreach { case ( value, index ) ⇒ bundleize.put( index.toString, value, listBundle ) }
+                seq.foreach { case ( value, index ) ⇒ bundleize.write( index.toString, value, listBundle ) }
                 bundle.putAll( listBundle )
             }
         }
     }
 
     implicit def `Bundleize[Array]`[T: Bundleize: ClassTag] = new Bundleize[Array[T]] {
-        override def get( key: String, bundle: Bundle ) = `Bundleize[Traversable]`[Seq, T].get( key, bundle ).toArray
+        override def read( key: String, bundle: Bundle ) = `Bundleize[Traversable]`[Seq, T].read( key, bundle ).toArray
 
-        override def put( key: String, value: Array[T], bundle: Bundle ) = {
-            `Bundleize[Traversable]`[Seq, T].put( key, value.toSeq, bundle )
+        override def write( key: String, value: Array[T], bundle: Bundle ) = {
+            `Bundleize[Traversable]`[Seq, T].write( key, value.toSeq, bundle )
         }
     }
 }
