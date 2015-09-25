@@ -16,6 +16,7 @@ libraryDependencies <++= scalaVersion( version =>
     "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
     Nil
 )
+
 name := "Parcelable"
 
 organization := "io.taig.android"
