@@ -1,12 +1,10 @@
-package io.taig.android.parcelable
+package test.io.taig.android
 
 import java.net.URL
 
-import io.taig.android.Parcelable
+package object parcelable {
+    import io.taig.android.Parcelable
 
-import scala.util.{ Failure, Success, Try }
-
-package object test {
     @Parcelable
     case class OptionArgument( x: Option[String] )
 

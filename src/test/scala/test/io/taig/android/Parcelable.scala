@@ -1,4 +1,4 @@
-package io.taig.android.parcelable.test
+package test.io.taig.android
 
 import java.net.URL
 
@@ -7,12 +7,12 @@ import android.os.Parcel
 import io.taig.android.parcelable.Creator
 import org.robolectric.annotation.Config
 import org.scalatest._
+import test.io.taig.android.parcelable._
 
 import scala.reflect.runtime.universe
-import scala.util.{ Failure, Success }
 
 @Config( sdk = Array( LOLLIPOP ) )
-class Test
+class Parcelable
         extends FlatSpec
         with Matchers
         with RobolectricSuite {
@@ -33,7 +33,7 @@ class Test
         entity shouldBe result
     }
 
-    "@Parcelable annotation" should "support \"primitives\"" in {
+    it should "support \"primitives\"" in {
         validate( Primitive.default )
     }
 
