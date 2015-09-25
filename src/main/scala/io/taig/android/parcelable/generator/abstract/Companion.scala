@@ -1,7 +1,6 @@
 package io.taig.android.parcelable.generator.`abstract`
 
-import io.taig.android.parcelable.Creator
-import io.taig.android.parcelable.generator.Context
+import io.taig.android.parcelable.generator.{ Creator, Context }
 
 import scala.reflect.macros.whitebox
 
@@ -18,7 +17,7 @@ class Companion[C <: whitebox.Context]( val context: C ) extends Context[C] {
                 modifiers,
                 name,
                 Template(
-                    parents :+ tq"io.taig.android.parcelable.Creator[${classDef.getWildcardedName()}]",
+                    parents :+ tq"io.taig.android.parcelable.generator.Creator[${classDef.getWildcardedName()}]",
                     self,
                     body :+ q"""
                         def CREATOR: android.os.Parcelable.Creator[${classDef.getWildcardedName()}] = sys.error(

@@ -1,6 +1,6 @@
-package io.taig.android
+package io.taig.android.parcelable
 
-import io.taig.android.parcelable.Macro
+import io.taig.android.parcelable.generator.Macro
 
 import scala.annotation.StaticAnnotation
 import scala.language.experimental.macros

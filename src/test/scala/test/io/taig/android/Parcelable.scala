@@ -4,7 +4,7 @@ import java.net.URL
 
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.os.Parcel
-import io.taig.android.parcelable.Creator
+import io.taig.android.parcelable.generator.Creator
 import org.robolectric.annotation.Config
 import org.scalatest._
 import test.io.taig.android.parcelable._

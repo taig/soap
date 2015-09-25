@@ -1,7 +1,6 @@
 package io.taig.android.parcelable.generator.`class`
 
-import io.taig.android.parcelable.Creator
-import io.taig.android.parcelable.generator.Context
+import io.taig.android.parcelable.generator.{ Creator, Context }
 
 import scala.reflect.macros.whitebox
 
@@ -19,7 +18,7 @@ class Companion[C <: whitebox.Context]( val context: C )
                 modifiers,
                 name,
                 Template(
-                    parents :+ tq"io.taig.android.parcelable.Creator[${name.toTypeName}]",
+                    parents :+ tq"io.taig.android.parcelable.generator.Creator[${name.toTypeName}]",
                     self,
                     body :+ q"""
                     override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}] {

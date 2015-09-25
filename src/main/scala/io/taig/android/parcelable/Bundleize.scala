@@ -1,7 +1,7 @@
 package io.taig.android.parcelable
 
 import android.annotation.TargetApi
-import android.os.{ Parcelable, IBinder, Bundle }
+import android.os.{ IBinder, Bundle }
 import android.util.{ SizeF, Size }
 
 import scala.collection._
@@ -48,7 +48,7 @@ object Bundleize {
 
     implicit val `Bundleize[Long]` = Bundleize[Long]( _.getLong( _ ), _.putLong( _, _ ) )
 
-    implicit def `Bundleize[Parcelable]`[T <: Parcelable] = {
+    implicit def `Bundleize[Parcelable]`[T <: android.os.Parcelable] = {
         Bundleize[T]( _.getParcelable[T]( _ ), _.putParcelable( _, _ ) )
     }
 

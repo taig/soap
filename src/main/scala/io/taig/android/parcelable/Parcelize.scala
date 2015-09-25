@@ -181,7 +181,7 @@ object Parcelize extends TupleParcelize {
         }
     }
 
-    implicit def `Parcelize[Parcelable]`[T <: Parcelable: ClassTag] = new Parcelize[T] {
+    implicit def `Parcelize[Parcelable]`[T <: android.os.Parcelable: ClassTag] = new Parcelize[T] {
         override def read( source: Parcel ) = {
             source.readParcelable[T]( classTag[T].runtimeClass.getClassLoader )
         }

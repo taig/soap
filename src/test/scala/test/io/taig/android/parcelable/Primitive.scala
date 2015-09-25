@@ -1,6 +1,6 @@
 package test.io.taig.android.parcelable
 
-import io.taig.android.Parcelable
+import io.taig.android.parcelable.Parcelable
 
 @Parcelable
 case class Primitive( a: String, b: Int, c: Double ) extends Parent[String]

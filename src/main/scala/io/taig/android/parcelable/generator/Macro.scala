@@ -1,6 +1,4 @@
-package io.taig.android.parcelable
-
-import io.taig.android.parcelable.generator._
+package io.taig.android.parcelable.generator
 
 import scala.reflect.macros.whitebox
 

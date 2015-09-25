@@ -3,7 +3,8 @@ package test.io.taig.android
 import java.net.URL
 
 package object parcelable {
-    import io.taig.android.Parcelable
+
+    import io.taig.android.parcelable.Parcelable
 
     @Parcelable
     case class OptionArgument( x: Option[String] )

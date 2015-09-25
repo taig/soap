@@ -16,7 +16,7 @@ class Companion[C <: whitebox.Context]( val context: C )
                 modifiers,
                 name,
                 Template(
-                    List( tq"${name.toTypeName}", tq"io.taig.android.parcelable.Creator[${name.toTypeName}]" ),
+                    List( tq"${name.toTypeName}", tq"io.taig.android.parcelable.generator.Creator[${name.toTypeName}]" ),
                     self,
                     body :+ q"""
                     override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}] {

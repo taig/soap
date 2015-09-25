@@ -1,9 +1,8 @@
-package io.taig
+package io.taig.android
 
 import _root_.android.os.Bundle
-import io.taig.android.parcelable.Bundleize
 
-package object android {
+package object parcelable {
     implicit class RichBundle( bundle: Bundle ) {
         def get[T: Bundleize]( key: String ) = implicitly[Bundleize[T]].get( key, bundle )
 
