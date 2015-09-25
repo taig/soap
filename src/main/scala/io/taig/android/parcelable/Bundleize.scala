@@ -89,8 +89,8 @@ object Bundleize {
             val bundleize = implicitly[Bundleize[T]]
 
             override def read( key: String, bundle: Bundle ) = {
-                val listBundle = bundle.getBundle( key )
-                listBundle.keySet().map( i ⇒ bundleize.read( i, listBundle ) )( breakOut )
+                val listBundle = bundle.read[Bundle]( key )
+                listBundle.keySet().map( bundleize.read( _, listBundle ) )( breakOut )
             }
 
             override def write( key: String, value: L[T], bundle: Bundle ) = {
@@ -98,7 +98,7 @@ object Bundleize {
                 val listBundle = new Bundle( seq.length )
 
                 seq.foreach { case ( value, index ) ⇒ bundleize.write( index.toString, value, listBundle ) }
-                bundle.putAll( listBundle )
+                bundle.write( key, listBundle )
             }
         }
     }
