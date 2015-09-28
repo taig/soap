@@ -8,8 +8,6 @@ import android.os._
 import android.text.TextUtils
 import android.util.{ Size, SizeF, SparseBooleanArray }
 
-import scala.collection.breakOut
-import scala.collection.generic.CanBuildFrom
 import scala.language.{ higherKinds, reflectiveCalls }
 import scala.reflect._
 
@@ -22,7 +20,7 @@ trait Parcelize[T] {
     def write( value: T, destination: Parcel, flags: Int ): Unit
 }
 
-object Parcelize extends TupleParcelize {
+object Parcelize extends TupleParcelize with TraversableParcelize {
     /*
      def apply[T]( r: ( Bundle, String ) ⇒ T, w: ( Bundle, String, T ) ⇒ Unit ): Bundleize[T] = new Bundleize[T] {
         override def read( key: String, bundle: Bundle ) = r( bundle, key )
@@ -164,44 +162,11 @@ object Parcelize extends TupleParcelize {
         override def write( value: T, destination: Parcel, flags: Int ) = destination.writeParcelable( value, flags )
     }
 
-    implicit def `Parcelize[Traversable]`[L[B] <: Traversable[B], T: Parcelize]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = new Parcelize[L[T]] {
-        val parcelize = implicitly[Parcelize[T]]
-
-        override def read( source: Parcel ) = {
-            ( 0 until source.readInt() ).map( _ ⇒ parcelize.read( source ) )( breakOut )
-        }
-
-        override def write( value: L[T], destination: Parcel, flags: Int ) = {
-            destination.writeInt( value.size )
-            value.foreach( parcelize.write( _, destination, flags ) )
-        }
-    }
-
     implicit def `Parcelize[Array]`[T: Parcelize]( implicit tag: ClassTag[T] ) = new Parcelize[Array[T]] {
-        override def read( source: Parcel ) = `Parcelize[Traversable]`[Seq, T].read( source ).toArray
+        override def read( source: Parcel ) = implicitly[Parcelize[Seq[T]]].read( source ).toArray
 
         override def write( value: Array[T], destination: Parcel, flags: Int ) = {
-            `Parcelize[Traversable]`[Seq, T].write( value.toSeq, destination, flags )
-        }
-    }
-
-    implicit def `Parcelize[Map]`[M[A, B] <: Map[A, B], S: Parcelize, T: Parcelize]( implicit cbf: CanBuildFrom[Nothing, ( S, T ), M[S, T]] ) = new Parcelize[M[S, T]] {
-        val parcelize = new {
-            val key = implicitly[Parcelize[S]]
-
-            val value = implicitly[Parcelize[T]]
-        }
-
-        override def read( source: Parcel ) = {
-            ( 0 until source.readInt() )
-                .map( _ ⇒ parcelize.key.read( source ) )
-                .map( ( _, parcelize.value.read( source ) ) )( breakOut )
-        }
-
-        override def write( value: M[S, T], destination: Parcel, flags: Int ) = {
-            destination.writeInt( value.size )
-            value.keys.foreach( parcelize.key.write( _, destination, flags ) )
-            value.values.foreach( parcelize.value.write( _, destination, flags ) )
+            implicitly[Parcelize[Seq[T]]].write( value.toSeq, destination, flags )
         }
     }
 }
