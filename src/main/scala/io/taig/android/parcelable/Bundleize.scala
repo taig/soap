@@ -83,6 +83,32 @@ object Bundleize {
         }
     }
 
+    implicit def `Bundleize[Either]`[A: Bundleize, B: Bundleize] = new Bundleize[Either[A, B]] {
+        override def read( key: String, bundle: Bundle ) = {
+            val nested = bundle.read[Bundle]( key )
+
+            nested.read[Int]( "either" ) match {
+                case 0 ⇒ Left( nested.read[A]( "value" ) )
+                case 1 ⇒ Right( nested.read[B]( "value" ) )
+            }
+        }
+
+        override def write( key: String, value: Either[A, B], bundle: Bundle ) = {
+            val nested = new Bundle( 2 )
+
+            value match {
+                case Left( value ) ⇒
+                    nested.write( "either", 0 )
+                    nested.write( "value", value )
+                case Right( value ) ⇒
+                    nested.write( "either", 1 )
+                    nested.write( "value", value )
+            }
+
+            bundle.write( key, nested )
+        }
+    }
+
     implicit def `Bundleize[Traversable]`[L[B] <: Traversable[B], T: Bundleize: ClassTag]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = {
         new Bundleize[L[T]] {
             override def read( key: String, bundle: Bundle ) = `Bundleize[Array]`[T].read( key, bundle ).to[L]
@@ -114,8 +140,8 @@ object Bundleize {
                 case _ ⇒
                     import scala.collection.JavaConversions._
 
-                    val listBundle = bundle.read[Bundle]( key )
-                    listBundle.keySet().map( bundleize.read( _, listBundle ) )( breakOut )
+                    val nested = bundle.read[Bundle]( key )
+                    nested.keySet().map( bundleize.read( _, nested ) )( breakOut )
             }
         }
 
@@ -136,10 +162,10 @@ object Bundleize {
                     put[android.os.Parcelable]( bundle.putParcelableArray( key, _ ) )
                 case _ ⇒
                     val array = value.zipWithIndex
-                    val listBundle = new Bundle( array.length )
+                    val nested = new Bundle( array.length )
 
-                    array.foreach { case ( value, index ) ⇒ bundleize.write( index.toString, value, listBundle ) }
-                    bundle.write( key, listBundle )
+                    array.foreach { case ( value, index ) ⇒ bundleize.write( index.toString, value, nested ) }
+                    bundle.write( key, nested )
             }
         }
     }
