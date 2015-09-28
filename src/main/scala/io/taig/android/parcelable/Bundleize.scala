@@ -8,6 +8,7 @@ import scala.collection._
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
 import scala.reflect.ClassTag
+import scala.reflect.classTag
 
 trait Bundleize[T] {
     def read( key: String, bundle: Bundle ): T
@@ -82,32 +83,64 @@ object Bundleize {
         }
     }
 
-    implicit def `Bundleize[Traversable]`[L[B] <: Traversable[B], T: Bundleize]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = {
-        import scala.collection.JavaConversions._
-
+    implicit def `Bundleize[Traversable]`[L[B] <: Traversable[B], T: Bundleize: ClassTag]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = {
         new Bundleize[L[T]] {
-            val bundleize = implicitly[Bundleize[T]]
-
-            override def read( key: String, bundle: Bundle ) = {
-                val listBundle = bundle.read[Bundle]( key )
-                listBundle.keySet().map( bundleize.read( _, listBundle ) )( breakOut )
-            }
+            override def read( key: String, bundle: Bundle ) = `Bundleize[Array]`[T].read( key, bundle ).to[L]
 
             override def write( key: String, value: L[T], bundle: Bundle ) = {
-                val seq = value.toSeq.zipWithIndex
-                val listBundle = new Bundle( seq.length )
-
-                seq.foreach { case ( value, index ) ⇒ bundleize.write( index.toString, value, listBundle ) }
-                bundle.write( key, listBundle )
+                `Bundleize[Array]`[T].write( key, value.toArray, bundle )
             }
         }
     }
 
     implicit def `Bundleize[Array]`[T: Bundleize: ClassTag] = new Bundleize[Array[T]] {
-        override def read( key: String, bundle: Bundle ) = `Bundleize[Traversable]`[Seq, T].read( key, bundle ).toArray
+        val bundleize = implicitly[Bundleize[T]]
+
+        override def read( key: String, bundle: Bundle ) = {
+            def get[S]( array: Array[S] ) = array.asInstanceOf[Array[T]]
+
+            classTag[T].runtimeClass match {
+                case tag if tag == classOf[Boolean] ⇒ get( bundle.getBooleanArray( key ) )
+                case tag if tag == classOf[Byte]    ⇒ get( bundle.getByteArray( key ) )
+                case tag if tag == classOf[Char]    ⇒ get( bundle.getCharArray( key ) )
+                case tag if tag == classOf[Double]  ⇒ get( bundle.getDoubleArray( key ) )
+                case tag if tag == classOf[Float]   ⇒ get( bundle.getFloatArray( key ) )
+                case tag if tag == classOf[Int]     ⇒ get( bundle.getIntArray( key ) )
+                case tag if tag == classOf[Long]    ⇒ get( bundle.getLongArray( key ) )
+                case tag if tag == classOf[Short]   ⇒ get( bundle.getShortArray( key ) )
+                case tag if tag == classOf[String]  ⇒ get( bundle.getStringArray( key ) )
+                case tag if classOf[android.os.Parcelable].isAssignableFrom( tag ) ⇒
+                    get( bundle.getParcelableArray( key ) )
+                case _ ⇒
+                    import scala.collection.JavaConversions._
+
+                    val listBundle = bundle.read[Bundle]( key )
+                    listBundle.keySet().map( bundleize.read( _, listBundle ) )( breakOut )
+            }
+        }
 
         override def write( key: String, value: Array[T], bundle: Bundle ) = {
-            `Bundleize[Traversable]`[Seq, T].write( key, value.toSeq, bundle )
+            def put[S]( f: Array[S] ⇒ Unit ) = f( value.asInstanceOf[Array[S]] )
+
+            classTag[T].runtimeClass match {
+                case tag if tag == classOf[Boolean] ⇒ put[Boolean]( bundle.putBooleanArray( key, _ ) )
+                case tag if tag == classOf[Byte]    ⇒ put[Byte]( bundle.putByteArray( key, _ ) )
+                case tag if tag == classOf[Char]    ⇒ put[Char]( bundle.putCharArray( key, _ ) )
+                case tag if tag == classOf[Double]  ⇒ put[Double]( bundle.putDoubleArray( key, _ ) )
+                case tag if tag == classOf[Float]   ⇒ put[Float]( bundle.putFloatArray( key, _ ) )
+                case tag if tag == classOf[Int]     ⇒ put[Int]( bundle.putIntArray( key, _ ) )
+                case tag if tag == classOf[Long]    ⇒ put[Long]( bundle.putLongArray( key, _ ) )
+                case tag if tag == classOf[Short]   ⇒ put[Short]( bundle.putShortArray( key, _ ) )
+                case tag if tag == classOf[String]  ⇒ put[String]( bundle.putStringArray( key, _ ) )
+                case tag if classOf[android.os.Parcelable].isAssignableFrom( tag ) ⇒
+                    put[android.os.Parcelable]( bundle.putParcelableArray( key, _ ) )
+                case _ ⇒
+                    val array = value.zipWithIndex
+                    val listBundle = new Bundle( array.length )
+
+                    array.foreach { case ( value, index ) ⇒ bundleize.write( index.toString, value, listBundle ) }
+                    bundle.write( key, listBundle )
+            }
         }
     }
 }
