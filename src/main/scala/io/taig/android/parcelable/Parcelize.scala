@@ -23,23 +23,27 @@ trait Parcelize[T] {
 }
 
 object Parcelize extends TupleParcelize {
-    implicit val `Parcelize[Bundle]` = new Parcelize[Bundle] {
-        override def read( source: Parcel ) = source.readBundle()
+    /*
+     def apply[T]( r: ( Bundle, String ) ⇒ T, w: ( Bundle, String, T ) ⇒ Unit ): Bundleize[T] = new Bundleize[T] {
+        override def read( key: String, bundle: Bundle ) = r( bundle, key )
 
-        override def write( value: Bundle, destination: Parcel, flags: Int ) = destination.writeBundle( value )
+        override def write( key: String, value: T, bundle: Bundle ) = w( bundle, key, value )
+    }
+     */
+    def apply[T]( r: Parcel ⇒ T, w: Parcel ⇒ T ⇒ Unit ): Parcelize[T] = new Parcelize[T] {
+        override def read( source: Parcel ) = r( source )
+
+        override def write( value: T, destination: Parcel, flags: Int ) = w( destination )( value )
     }
 
-    implicit val `Parcelize[Boolean]` = new Parcelize[Boolean] {
-        override def read( source: Parcel ) = source.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean]
+    implicit val `Parcelize[Bundle]` = Parcelize[Bundle]( _.readBundle(), _.writeBundle )
 
-        override def write( value: Boolean, destination: Parcel, flags: Int ) = destination.writeValue( value )
-    }
+    implicit val `Parcelize[Boolean]` = Parcelize[Boolean](
+        _.readValue( classOf[Boolean].getClassLoader ).asInstanceOf[Boolean],
+        _.writeValue
+    )
 
-    implicit val `Parcelize[Byte]` = new Parcelize[Byte] {
-        override def read( source: Parcel ) = source.readByte()
-
-        override def write( value: Byte, destination: Parcel, flags: Int ) = destination.writeByte( value )
-    }
+    implicit val `Parcelize[Byte]` = Parcelize[Byte]( _.readByte(), _.writeByte )
 
     implicit val `Parcelize[Char]` = new Parcelize[Char] {
         override def read( source: Parcel ) = source.readInt().toChar
@@ -55,41 +59,20 @@ object Parcelize extends TupleParcelize {
         }
     }
 
-    implicit val `Parcelize[Double]` = new Parcelize[Double] {
-        override def read( source: Parcel ) = source.readDouble()
+    implicit val `Parcelize[Double]` = Parcelize[Double]( _.readDouble(), _.writeDouble )
 
-        override def write( value: Double, destination: Parcel, flags: Int ) = destination.writeDouble( value )
-    }
+    implicit val `Parcelize[FileDescriptor]` = Parcelize[FileDescriptor](
+        _.readFileDescriptor().getFileDescriptor,
+        _.writeFileDescriptor
+    )
 
-    implicit val `Parcelize[FileDescriptor]` = new Parcelize[FileDescriptor] {
-        override def read( source: Parcel ) = source.readFileDescriptor().getFileDescriptor
+    implicit val `Parcelize[Float]` = Parcelize[Float]( _.readFloat(), _.writeFloat )
 
-        override def write( value: FileDescriptor, destination: Parcel, flags: Int ) = destination.writeFileDescriptor( value )
-    }
+    implicit val `Parcelize[IBinder]` = Parcelize[IBinder]( _.readStrongBinder(), _.writeStrongBinder )
 
-    implicit val `Parcelize[Float]` = new Parcelize[Float] {
-        override def read( source: Parcel ) = source.readFloat()
+    implicit val `Parcelize[Int]` = Parcelize[Int]( _.readInt(), _.writeInt )
 
-        override def write( value: Float, destination: Parcel, flags: Int ) = destination.writeFloat( value )
-    }
-
-    implicit val `Parcelize[IBinder]` = new Parcelize[IBinder] {
-        override def read( source: Parcel ) = source.readStrongBinder()
-
-        override def write( value: IBinder, destination: Parcel, flags: Int ) = destination.writeStrongBinder( value )
-    }
-
-    implicit val `Parcelize[Int]` = new Parcelize[Int] {
-        override def read( source: Parcel ) = source.readInt()
-
-        override def write( value: Int, destination: Parcel, flags: Int ) = destination.writeInt( value )
-    }
-
-    implicit val `Parcelize[Long]` = new Parcelize[Long] {
-        override def read( source: Parcel ) = source.readInt()
-
-        override def write( value: Long, destination: Parcel, flags: Int ) = destination.writeLong( value )
-    }
+    implicit val `Parcelize[Long]` = Parcelize[Long]( _.readLong(), _.writeLong )
 
     implicit val `Parcelize[PersistableBundle]` = new Parcelize[PersistableBundle] {
         @TargetApi( 21 )
@@ -101,11 +84,10 @@ object Parcelize extends TupleParcelize {
         }
     }
 
-    implicit val `Parcelize[Short]` = new Parcelize[Short] {
-        override def read( source: Parcel ) = source.readValue( classOf[Short].getClassLoader ).asInstanceOf[Short]
-
-        override def write( value: Short, destination: Parcel, flags: Int ) = destination.writeValue( value )
-    }
+    implicit val `Parcelize[Short]` = Parcelize[Short](
+        _.readValue( classOf[Short].getClassLoader ).asInstanceOf[Short],
+        _.writeValue
+    )
 
     implicit val `Parcelize[Size]` = new Parcelize[Size] {
         @TargetApi( 21 )
@@ -123,19 +105,12 @@ object Parcelize extends TupleParcelize {
         override def write( value: SizeF, destination: Parcel, flags: Int ) = destination.writeSizeF( value )
     }
 
-    implicit val `Parcelize[SparceBooleanArray]` = new Parcelize[SparseBooleanArray] {
-        override def read( source: Parcel ) = source.readSparseBooleanArray()
+    implicit val `Parcelize[SparceBooleanArray]` = Parcelize[SparseBooleanArray](
+        _.readSparseBooleanArray(),
+        _.writeSparseBooleanArray
+    )
 
-        override def write( value: SparseBooleanArray, destination: Parcel, flags: Int ) = {
-            destination.writeSparseBooleanArray( value )
-        }
-    }
-
-    implicit val `Parcelize[String]` = new Parcelize[String] {
-        override def read( source: Parcel ) = source.readString()
-
-        override def write( value: String, destination: Parcel, flags: Int ) = destination.writeString( value )
-    }
+    implicit val `Parcelize[String]` = Parcelize[String]( _.readString(), _.writeString )
 
     implicit val `Parcelize[URL]` = new Parcelize[URL] {
         override def read( source: Parcel ) = new URL( source.readString() )
@@ -189,19 +164,6 @@ object Parcelize extends TupleParcelize {
         override def write( value: T, destination: Parcel, flags: Int ) = destination.writeParcelable( value, flags )
     }
 
-    implicit def `Parcelize[Array]`[T: Parcelize]( implicit tag: ClassTag[T] ) = new Parcelize[Array[T]] {
-        val parcelize = implicitly[Parcelize[T]]
-
-        override def read( source: Parcel ) = {
-            ( 0 until source.readInt() ).map( _ ⇒ parcelize.read( source ) ).toArray
-        }
-
-        override def write( value: Array[T], destination: Parcel, flags: Int ) = {
-            destination.writeInt( value.size )
-            value.foreach( parcelize.write( _, destination, flags ) )
-        }
-    }
-
     implicit def `Parcelize[Traversable]`[L[B] <: Traversable[B], T: Parcelize]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = new Parcelize[L[T]] {
         val parcelize = implicitly[Parcelize[T]]
 
@@ -212,6 +174,14 @@ object Parcelize extends TupleParcelize {
         override def write( value: L[T], destination: Parcel, flags: Int ) = {
             destination.writeInt( value.size )
             value.foreach( parcelize.write( _, destination, flags ) )
+        }
+    }
+
+    implicit def `Parcelize[Array]`[T: Parcelize]( implicit tag: ClassTag[T] ) = new Parcelize[Array[T]] {
+        override def read( source: Parcel ) = `Parcelize[Traversable]`[Seq, T].read( source ).toArray
+
+        override def write( value: Array[T], destination: Parcel, flags: Int ) = {
+            `Parcelize[Traversable]`[Seq, T].write( value.toSeq, destination, flags )
         }
     }
 
