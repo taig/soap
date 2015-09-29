@@ -1,27 +1,32 @@
 package io.taig.android
 
-import _root_.android.os.Bundle
+import android.os.Bundle
 import android.content.Intent
 
 package object parcelable {
     implicit class ParcelableBundle( val bundle: Bundle ) {
         def read[T: Bundleize]( key: String ) = implicitly[Bundleize[T]].read( key, bundle )
 
-        def write[T: Bundleize]( key: String, value: T ): bundle.type = {
+        def write[T: Bundleize]( key: String, value: T ): Bundle = {
             implicitly[Bundleize[T]].write( key, value, bundle )
             bundle
         }
     }
 
     implicit class ParcelableIntent( val intent: Intent ) {
-        def read[T: Bundleize]( key: String ) = intent.getExtras.read[T]( key )
+        val field = classOf[Intent].getDeclaredField( "mExtras" )
+        field.setAccessible( true )
+        var bundle = field.get( intent ).asInstanceOf[Bundle]
 
-        def write[T: Bundleize]( key: String, value: T ): intent.type = {
-            if ( intent.getExtras == null ) {
-                intent.putExtras( new Bundle() )
+        def read[T: Bundleize]( key: String ) = bundle.read[T]( key )
+
+        def write[T: Bundleize]( key: String, value: T ): Intent = {
+            if ( bundle == null ) {
+                bundle = new Bundle()
+                field.set( intent, bundle )
             }
 
-            intent.getExtras.write( key, value )
+            bundle.write( key, value )
             intent
         }
     }
