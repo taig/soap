@@ -78,8 +78,9 @@ object Bundleize {
 
         override def read( key: String, bundle: Bundle ) = Option( bundleize.read( key, bundle ) )
 
-        override def write( key: String, value: Option[T], bundle: Bundle ) = {
-            bundleize.write( key, value.getOrElse( null.asInstanceOf[T] ), bundle )
+        override def write( key: String, value: Option[T], bundle: Bundle ) = value match {
+            case Some( value ) => bundleize.write( key, value, bundle )
+            case None => //
         }
     }
 
