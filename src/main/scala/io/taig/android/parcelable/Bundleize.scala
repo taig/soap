@@ -74,23 +74,35 @@ object Bundleize {
     implicit val `Bundleize[String]` = Bundleize[String]( _.getString( _ ), _.putString( _, _ ) )
 
     implicit def `Bundleize[Option]`[T: Bundleize] = new Bundleize[Option[T]] {
-        val bundleize = implicitly[Bundleize[T]]
+        override def read( key: String, bundle: Bundle ) = {
+            val nested = bundle.read[Bundle]( key )
 
-        override def read( key: String, bundle: Bundle ) = Option( bundleize.read( key, bundle ) )
-
-        override def write( key: String, value: Option[T], bundle: Bundle ) = value match {
-                case Some( value ) ⇒ bundleize.write( key, value, bundle )
-                case None ⇒ //
+            nested.read[Int]( "option" ) match {
+                case 1  ⇒ Some( nested.read[T]( "value" ) )
+                case -1 ⇒ None
             }
         }
+
+        override def write( key: String, value: Option[T], bundle: Bundle ) = {
+            val nested = value match {
+                case Some( value ) ⇒
+                    new Bundle( 2 )
+                        .write( "option", 1 )
+                        .write( "value", value )
+                case None ⇒ new Bundle( 1 ).write( "option", -1 )
+            }
+
+            bundle.write( key, nested )
+        }
+    }
 
     implicit def `Bundleize[Either]`[A: Bundleize, B: Bundleize] = new Bundleize[Either[A, B]] {
         override def read( key: String, bundle: Bundle ) = {
             val nested = bundle.read[Bundle]( key )
 
             nested.read[Int]( "either" ) match {
-                case 0 ⇒ Left( nested.read[A]( "value" ) )
-                case 1 ⇒ Right( nested.read[B]( "value" ) )
+                case -1 ⇒ Left( nested.read[A]( "value" ) )
+                case 1  ⇒ Right( nested.read[B]( "value" ) )
             }
         }
 
@@ -99,7 +111,7 @@ object Bundleize {
 
             value match {
                 case Left( value ) ⇒
-                    nested.write( "either", 0 )
+                    nested.write( "either", -1 )
                     nested.write( "value", value )
                 case Right( value ) ⇒
                     nested.write( "either", 1 )
