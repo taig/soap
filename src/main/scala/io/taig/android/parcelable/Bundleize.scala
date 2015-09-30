@@ -79,10 +79,10 @@ object Bundleize {
         override def read( key: String, bundle: Bundle ) = Option( bundleize.read( key, bundle ) )
 
         override def write( key: String, value: Option[T], bundle: Bundle ) = value match {
-            case Some( value ) => bundleize.write( key, value, bundle )
-            case None => //
+                case Some( value ) ⇒ bundleize.write( key, value, bundle )
+                case None ⇒ //
+            }
         }
-    }
 
     implicit def `Bundleize[Either]`[A: Bundleize, B: Bundleize] = new Bundleize[Either[A, B]] {
         override def read( key: String, bundle: Bundle ) = {
