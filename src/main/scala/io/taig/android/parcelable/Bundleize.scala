@@ -19,81 +19,58 @@ trait Bundleize[T] {
 
 object Bundleize {
     def apply[T]( r: ( Bundle, String ) ⇒ T, w: ( Bundle, String, T ) ⇒ Unit ): Bundleize[T] = new Bundleize[T] {
-        override def read( key: String, bundle: Bundle ) = r( bundle, key )
+        override def read( key: String, bundle: Bundle ) = {
+            if ( bundle.containsKey( key ) ) {
+                r( bundle, key )
+            } else {
+                throw new IllegalStateException(
+                    s"Key '$key' does not exist, use Option instead or get your shit together"
+                )
+            }
+        }
 
         override def write( key: String, value: T, bundle: Bundle ) = w( bundle, key, value )
     }
 
-    private def bailOut( key: String ) = throw new IllegalStateException(
-        s"Key '$key' does not exist, use Option instead or get your shit together"
-    )
+    implicit val `Bundleize[Boolean]` = Bundleize[Boolean]( _.getBoolean( _ ), _.putBoolean( _, _ ) )
 
-    implicit val `Bundleize[Boolean]` = Bundleize[Boolean](
-        ( bundle, key ) ⇒ bundle.getBoolean( key, bailOut( key ) ),
-        _.putBoolean( _, _ )
-    )
+    implicit val `Bundleize[Bundle]` = Bundleize[Bundle]( _.getBundle( _ ), _.putBundle( _, _ ) )
 
-    implicit val `Bundleize[Bundle]` = Bundleize[Bundle](
-        ( bundle, key ) ⇒ Option( bundle.getBundle( key ) ).getOrElse( bailOut( key ) ),
-        _.putBundle( _, _ )
-    )
+    implicit val `Bundleize[Byte]` = Bundleize[Byte]( _.getByte( _ ), _.putByte( _, _ ) )
 
-    implicit val `Bundleize[Byte]` = Bundleize[Byte](
-        ( bundle, key ) ⇒ bundle.getByte( key, bailOut( key ) ),
-        _.putByte( _, _ )
-    )
-
-    implicit val `Bundleize[Char]` = Bundleize[Char](
-        ( bundle, key ) ⇒ bundle.getChar( key, bailOut( key ) ),
-        _.putChar( _, _ )
-    )
+    implicit val `Bundleize[Char]` = Bundleize[Char]( _.getChar( _ ), _.putChar( _, _ ) )
 
     implicit val `Bundleize[CharSequence]` = Bundleize[CharSequence](
-        ( bundle, key ) ⇒ bundle.getCharSequence( key, bailOut( key ) ),
+        _.getCharSequence( _ ),
         _.putCharSequence( _, _ )
     )
 
-    implicit val `Bundleize[Double]` = Bundleize[Double](
-        ( bundle, key ) ⇒ bundle.getDouble( key, bailOut( key ) ),
-        _.putDouble( _, _ )
-    )
+    implicit val `Bundleize[Double]` = Bundleize[Double]( _.getDouble( _ ), _.putDouble( _, _ ) )
 
     implicit val `Bundleize[IBinder]` = new Bundleize[IBinder] {
         @TargetApi( 18 )
-        override def read( key: String, bundle: Bundle ) = Option( bundle.getBinder( key ) ).getOrElse( bailOut( key ) )
+        override def read( key: String, bundle: Bundle ) = bundle.getBinder( key )
 
         @TargetApi( 18 )
         override def write( key: String, value: IBinder, bundle: Bundle ) = bundle.putBinder( key, value )
     }
 
-    implicit val `Bundleize[Float]` = Bundleize[Float](
-        ( bundle, key ) ⇒ bundle.getFloat( key, bailOut( key ) ),
-        _.putFloat( _, _ )
-    )
+    implicit val `Bundleize[Float]` = Bundleize[Float]( _.getFloat( _ ), _.putFloat( _, _ ) )
 
-    implicit val `Bundleize[Int]` = Bundleize[Int](
-        ( bundle, key ) ⇒ bundle.getInt( key, bailOut( key ) ),
-        _.putInt( _, _ )
-    )
+    implicit val `Bundleize[Int]` = Bundleize[Int]( _.getInt( _ ), _.putInt( _, _ ) )
 
-    implicit val `Bundleize[Long]` = Bundleize[Long](
-        ( bundle, key ) ⇒ bundle.getLong( key, bailOut( key ) ),
-        _.putLong( _, _ )
-    )
+    implicit val `Bundleize[Long]` = Bundleize[Long]( _.getLong( _ ), _.putLong( _, _ ) )
 
     implicit def `Bundleize[Parcelable]`[T <: android.os.Parcelable] = Bundleize[T](
-        ( bundle, key ) ⇒ Option( bundle.getParcelable[T]( key ) ).getOrElse( bailOut( key ) ),
+        _.getParcelable[T]( _ ),
         _.putParcelable( _, _ )
     )
 
-    implicit val `Bundleize[Short]` = Bundleize[Short](
-        ( bundle, key ) ⇒ bundle.getShort( key, bailOut( key ) ),
-        _.putShort( _, _ )
-    )
+    implicit val `Bundleize[Short]` = Bundleize[Short]( _.getShort( _ ), _.putShort( _, _ ) )
 
     implicit val `Bundleize[Size]` = new Bundleize[Size] {
         @TargetApi( 21 )
-        override def read( key: String, bundle: Bundle ) = Option( bundle.getSize( key ) ).getOrElse( bailOut( key ) )
+        override def read( key: String, bundle: Bundle ) = bundle.getSize( key )
 
         @TargetApi( 21 )
         override def write( key: String, value: Size, bundle: Bundle ) = bundle.putSize( key, value )
@@ -101,27 +78,28 @@ object Bundleize {
 
     implicit val `Bundleize[SizeF]` = new Bundleize[SizeF] {
         @TargetApi( 21 )
-        override def read( key: String, bundle: Bundle ) = Option( bundle.getSizeF( key ) ).getOrElse( bailOut( key ) )
+        override def read( key: String, bundle: Bundle ) = bundle.getSizeF( key )
 
         @TargetApi( 21 )
         override def write( key: String, value: SizeF, bundle: Bundle ) = bundle.putSizeF( key, value )
     }
 
-    implicit val `Bundleize[String]` = Bundleize[String](
-        ( bundle, key ) ⇒ bundle.getString( key, bailOut( key ) ),
-        _.putString( _, _ )
-    )
+    implicit val `Bundleize[String]` = Bundleize[String]( _.getString( _ ), _.putString( _, _ ) )
 
     implicit def `Bundleize[Option]`[T: Bundleize] = new Bundleize[Option[T]] {
         override def read( key: String, bundle: Bundle ) = {
-            bundle.get( key ) match {
-                case bundle: Bundle if bundle.containsKey( "option" ) ⇒
-                    bundle.read[Int]( "option" ) match {
-                        case 1  ⇒ Some( bundle.read[T]( "value" ) )
-                        case -1 ⇒ None
-                    }
-                case null ⇒ None
-                case _    ⇒ Try( Some( bundle.read[T]( key ) ) ).getOrElse( None )
+            if ( bundle.containsKey( key ) ) {
+                bundle.get( key ) match {
+                    case bundle: Bundle if bundle.containsKey( "option" ) ⇒
+                        bundle.read[Int]( "option" ) match {
+                            case 1  ⇒ Some( bundle.read[T]( "value" ) )
+                            case -1 ⇒ None
+                        }
+                    case null ⇒ None
+                    case _    ⇒ Try( Some( bundle.read[T]( key ) ) ).getOrElse( None )
+                }
+            } else {
+                None
             }
         }
 
@@ -178,7 +156,7 @@ object Bundleize {
         val bundleize = implicitly[Bundleize[T]]
 
         override def read( key: String, bundle: Bundle ) = {
-            def get[S]( array: Array[S] ) = Option( array.asInstanceOf[Array[T]] ).getOrElse( bailOut( key ) )
+            def get[S]( array: Array[S] ) = array.asInstanceOf[Array[T]]
 
             classTag[T].runtimeClass match {
                 case tag if tag == classOf[Boolean] ⇒ get( bundle.getBooleanArray( key ) )
