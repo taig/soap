@@ -75,11 +75,15 @@ object Bundleize {
 
     implicit def `Bundleize[Option]`[T: Bundleize] = new Bundleize[Option[T]] {
         override def read( key: String, bundle: Bundle ) = {
-            val nested = bundle.read[Bundle]( key )
-
-            nested.read[Int]( "option" ) match {
-                case 1  ⇒ Some( nested.read[T]( "value" ) )
-                case -1 ⇒ None
+            val nested = bundle.getBundle( key )
+            
+            nested match {
+                case null => None
+                case _ if !nested.containsKey( "option" ) => None
+                case _ => nested.read[Int]( "option" ) match {
+                    case 1  ⇒ Some( nested.read[T]( "value" ) )
+                    case -1 ⇒ None
+                }
             }
         }
 
