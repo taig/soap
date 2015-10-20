@@ -77,6 +77,16 @@ Using the library basically boils down to annotating classes or traits with the 
 
 To add support for custom types, all you have to do is implement a `Transformer` and have it in implicit scope. [See the source][1] on how to implement.
 
+### Bundles & Intents
+
+Bundles and Intents now have `read` and `write` methods to provide a consistent and easy to use API. Missing type support can be added via the `Bundleize` typeclass.
+
+````scala
+val bundle = new Bundle()
+bundle.write( "myInt", 3 )
+val myInt = bundle.read[Int]( "myInt" )
+````
+
 ### Inheritance
 
 You can also annotate abstract super types or traits with the Parcelable annotation. They will extend the `android.os.Parcelable` interface, but will not implement the methods. Scala requires a companion object with a `CREATOR` field whenever a class implements Parcelable. Therefore a dummy `CREATOR` is generated. All subclasses that you want to be Parcelable need to be annotated as well!

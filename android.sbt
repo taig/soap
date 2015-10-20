@@ -1,9 +1,9 @@
 androidBuildAar
 
-minSdkVersion in Android := "4"
+minSdkVersion := "4"
 
-platformTarget in Android := "android-23"
+platformTarget := "android-23"
 
-targetSdkVersion in Android := "23"
+targetSdkVersion := "23"
 
-typedResources in Android := false
+typedResources := false
