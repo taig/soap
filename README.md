@@ -1,6 +1,6 @@
 # Parcelable (***Scala on Android***)
 
-[![Build Status](https://travis-ci.org/Taig/Parcelable.svg?branch=develop)](https://travis-ci.org/Taig/Parcelable)
+[![Circle CI](https://circleci.com/gh/Taig/Parcelable/tree/develop.svg?style=svg)](https://circleci.com/gh/Taig/Parcelable/tree/develop)
 
 Parcelable is Android's serialization tool for inter-process communication (IPC). The emphasis on performance is the prominent difference to the Java Serialization framework (which the developer is discouraged to use for this very reason). Unfortunately, Parcelable requires the developer to implement a vast portion of boilerplate code in order to work. This project combines the performance of Parcelable with the ease of Java's Serializable interface.
 
@@ -35,7 +35,7 @@ object Person extends io.taig.android.parcelable.Creator[Person]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ),
-  "io.taig.android" %% "parcelable" % "2.3.0"
+  "io.taig.android" %% "parcelable" % "2.4.0-SNAPSHOT"
 )
 ````
 
@@ -47,7 +47,6 @@ libraryDependencies ++= Seq(
 - Char
 - CharSequence
 - Double
-- **Enumeration**
 - IBinder
 - FileDescriptor
 - Float
@@ -66,7 +65,6 @@ libraryDependencies ++= Seq(
 - **Map[_, _]**
 - **Option[_]**
 - **Either**
-- **Try[_]**
 - **Tuple1 - Tuple22**
 
 Supported types with generic arguments (e.g. Array[_]) work with every supported type (e.g. Array[Int] or Array[Option[( String, Int )]]).
@@ -78,6 +76,16 @@ The Serialization type is not supported and discouraged to use. You can still cr
 Using the library basically boils down to annotating classes or traits with the `@io.taig.android.Parcelable` annotation. During compile time the library will analyze your constructor fields and use them to generate appropriate Parcel write and read methods. For every supported type there is an implicit `Transformer` implementation available that knows how to parcel and unparcel an object of that type.
 
 To add support for custom types, all you have to do is implement a `Transformer` and have it in implicit scope. [See the source][1] on how to implement.
+
+### Bundles & Intents
+
+Bundles and Intents now have `read` and `write` methods to provide a consistent and easy to use API. Missing type support can be added via the `Bundleize` typeclass.
+
+````scala
+val bundle = new Bundle()
+bundle.write( "myInt", 3 )
+val myInt = bundle.read[Int]( "myInt" )
+````
 
 ### Inheritance
 
