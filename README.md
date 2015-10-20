@@ -35,7 +35,7 @@ object Person extends io.taig.android.parcelable.Creator[Person]
 ````scala
 libraryDependencies ++= Seq(
   compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full ),
-  "io.taig.android" %% "parcelable" % "2.4.0-SNAPSHOT"
+  "io.taig.android" %% "parcelable" % "2.4.0"
 )
 ````
 
