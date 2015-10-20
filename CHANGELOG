@@ -1,3 +1,7 @@
+2.4.0
+
+- Added read/write methods for Bundles and Intents
+
 2.3.0
 
 - Added Try[_] support (exceptions are serialized via runtime reflection)
