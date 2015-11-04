@@ -28,7 +28,7 @@ class Class[C <: whitebox.Context]( val context: C ) extends Context[C] {
 
                         object write extends shapeless.Poly1 {
                             implicit def default[T: Parcelize] = at[T]( value => {
-                                implicitly[Parcelize[T]].write( value, destination, flags )
+                                destination.write( value, flags )
                             } )
                         }
 

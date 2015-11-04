@@ -21,8 +21,12 @@ class Companion[C <: whitebox.Context]( val context: C )
                     parents :+ tq"io.taig.android.parcelable.generator.Creator[${name.toTypeName}]",
                     self,
                     body :+ q"""
-                    override lazy val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}] {
-                        override def createFromParcel( source: android.os.Parcel ) = ${instantiate( classDef )}
+                    override val CREATOR = new android.os.Parcelable.Creator[${name.toTypeName}] {
+                        override def createFromParcel( source: android.os.Parcel ) = {
+                            import io.taig.android.parcelable._
+
+                            ${instantiate( classDef )}
+                        }
 
                         override def newArray( size: Int ) = new Array[${name.toTypeName}]( size )
                     }"""
@@ -42,7 +46,7 @@ class Companion[C <: whitebox.Context]( val context: C )
             .getPrimaryConstructor()
             .vparamss
             .map( _.map( _.tpt.resolveType() ) )
-            .map( _.map( tpe ⇒ q"implicitly[io.taig.android.parcelable.Parcelize[$tpe]].read( source )" ) )
+            .map( _.map( tpe ⇒ q"source.read[$tpe]" ) )
 
         construct( reads.reverse )
     }
