@@ -1,6 +1,6 @@
 package io.taig.android
 
-import android.os.Bundle
+import android.os.{ Parcel, Bundle }
 import android.content.Intent
 
 package object parcelable {
@@ -29,5 +29,11 @@ package object parcelable {
             bundle.write( key, value )
             intent
         }
+    }
+
+    implicit class ParcelableParcel( val parcel: Parcel ) {
+        def read[T: Parcelize] = implicitly[Parcelize[T]].read( parcel )
+
+        def write[T: Parcelize]( value: T, flags: Int = 0 ) = implicitly[Parcelize[T]].write( value, parcel, flags )
     }
 }

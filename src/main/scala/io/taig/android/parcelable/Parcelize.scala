@@ -21,13 +21,6 @@ trait Parcelize[T] {
 }
 
 object Parcelize extends TupleParcelize with TraversableParcelize {
-    /*
-     def apply[T]( r: ( Bundle, String ) ⇒ T, w: ( Bundle, String, T ) ⇒ Unit ): Bundleize[T] = new Bundleize[T] {
-        override def read( key: String, bundle: Bundle ) = r( bundle, key )
-
-        override def write( key: String, value: T, bundle: Bundle ) = w( bundle, key, value )
-    }
-     */
     def apply[T]( r: Parcel ⇒ T, w: Parcel ⇒ T ⇒ Unit ): Parcelize[T] = new Parcelize[T] {
         override def read( source: Parcel ) = r( source )
 

@@ -12,13 +12,13 @@ pomExtra := {
         <system>GitHub Issues</system>
     </issueManagement>
     <developers>
-        <developer>
-            <id>Taig</id>
-            <name>Niklas Klein</name>
-            <email>mail@taig.io</email>
-            <url>http://taig.io/</url>
-        </developer>
-    </developers>
+    <developer>
+        <id>Taig</id>
+        <name>Niklas Klein</name>
+        <email>mail@taig.io</email>
+        <url>http://taig.io/</url>
+    </developer>
+</developers>
 }
 
 pomIncludeRepository := { _ => false }
