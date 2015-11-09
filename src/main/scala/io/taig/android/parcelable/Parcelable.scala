@@ -6,5 +6,5 @@ import scala.annotation.StaticAnnotation
 import scala.language.experimental.macros
 
 class Parcelable extends StaticAnnotation {
-    def macroTransform( annottees: Any* ): Any = macro Macro.parcelable
+    def macroTransform( annottees: Any* ): Any = macro Macro.annotation
 }

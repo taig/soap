@@ -1,9 +1,10 @@
 package io.taig.android.parcelable.generator
 
+import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
 
 object Macro {
-    def parcelable( context: whitebox.Context )( annottees: context.Expr[Any]* ): context.Expr[Any] = {
+    def annotation( context: whitebox.Context )( annottees: context.Expr[Any]* ): context.Expr[Any] = {
         import context.universe.Flag._
         import context.universe._
 

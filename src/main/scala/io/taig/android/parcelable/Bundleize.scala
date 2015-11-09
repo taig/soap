@@ -1,16 +1,18 @@
 package io.taig.android.parcelable
 
 import android.annotation.TargetApi
-import android.os.{ IBinder, Bundle }
-import android.util.{ Log, SizeF, Size }
+import android.os.{ Bundle, IBinder }
+import android.util.{ Size, SizeF }
 
 import scala.collection._
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
-import scala.reflect.ClassTag
-import scala.reflect.classTag
+import scala.reflect.{ ClassTag, classTag }
 import scala.util.Try
 
+/**
+ * Type class that instructs how to read/write a value from/to a given Bundle
+ */
 trait Bundleize[T] {
     def read( key: String, bundle: Bundle ): T
 
@@ -144,7 +146,7 @@ object Bundleize {
 
     implicit def `Bundleize[Traversable]`[L[B] <: Traversable[B], T: Bundleize: ClassTag]( implicit cbf: CanBuildFrom[Nothing, T, L[T]] ) = {
         new Bundleize[L[T]] {
-            override def read( key: String, bundle: Bundle ) = `Bundleize[Array]`[T].read( key, bundle ).to[L]
+            override def read( key: String, bundle: Bundle ): L[T] = `Bundleize[Array]`[T].read( key, bundle ).to[L]
 
             override def write( key: String, value: L[T], bundle: Bundle ) = {
                 `Bundleize[Array]`[T].write( key, value.toArray, bundle )
@@ -152,7 +154,7 @@ object Bundleize {
         }
     }
 
-    implicit def `Bundleize[Array]`[T: Bundleize: ClassTag] = new Bundleize[Array[T]] {
+    implicit def `Bundleize[Array]`[T: Bundleize: ClassTag]: Bundleize[Array[T]] = new Bundleize[Array[T]] {
         val bundleize = implicitly[Bundleize[T]]
 
         override def read( key: String, bundle: Bundle ) = {

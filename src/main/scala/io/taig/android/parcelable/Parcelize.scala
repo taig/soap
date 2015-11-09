@@ -12,7 +12,7 @@ import scala.language.{ higherKinds, reflectiveCalls }
 import scala.reflect._
 
 /**
- * Instructions on how to parcel and unparcel an object of type T
+ * Type class that instructs how to read/write a value from/to a given Parcel
  */
 trait Parcelize[T] {
     def read( source: Parcel ): T

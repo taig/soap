@@ -4,11 +4,13 @@ import java.net.URL
 
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.os.Parcel
+import io.taig.android.parcelable.Bundleable
 import io.taig.android.parcelable.generator.Creator
 import org.robolectric.annotation.Config
 import org.scalatest._
 import test.io.taig.android.parcelable._
 
+import scala.language.reflectiveCalls
 import scala.reflect.runtime.universe
 
 @Config( sdk = Array( LOLLIPOP ) )
@@ -31,6 +33,16 @@ class Parcelable
         val result = companion.CREATOR.createFromParcel( parcel )
 
         entity shouldBe result
+    }
+
+    it should "allow to create Bundles on the fly" in {
+        val b = Bundleable.from[Primitive]
+        val x = Bundleable.from[( Int, String )]
+        val bb = b.write( Primitive( "3", 3, 3 ) )
+        val by = b.read( bb )
+        val b2 = x.write( ( 3, "asdf" ) )
+        println( by )
+        println( x.read( b2 ) )
     }
 
     it should "support \"primitives\"" in {
