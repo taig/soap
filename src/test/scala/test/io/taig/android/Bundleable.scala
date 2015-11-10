@@ -24,6 +24,7 @@ class Bundleable
         //        val bundleable = from[Int]
         //        val b = bundleable.write( 3 )
         //        bundleable.read( b ) shouldEqual 3
+        fail()
     }
 
     it should "support case class" in {
