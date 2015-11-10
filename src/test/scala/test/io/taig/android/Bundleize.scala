@@ -39,8 +39,11 @@ class Bundleize
         val b1 = Bundle( "value" ->> i1 :: HNil )
         val i2: Either[Int, String] = Right( "asdf" )
         val b2 = Bundle( "value" ->> i2 :: HNil )
+        val i3: Option[Option[Uri]] = Some( Some( Uri.parse( "http://taig.io/" ) ) )
+        val b3 = Bundle( "value" ->> i3 :: HNil )
         b1.read[Option[Int]]( "value" ) shouldEqual i1
         b2.read[Either[Int, String]]( "value" ) shouldEqual i2
+        b3.read[Option[Option[Uri]]]( "value" ) shouldEqual i3
     }
 
     it should "support Byte" in {
@@ -123,7 +126,7 @@ class Bundleize
 
     it should "fail when accessing an non-existant value" in {
         intercept[IllegalStateException] {
-            new Bundle().read[Int]( "a" )
+            Bundle.empty.read[Int]( "a" )
         }
     }
 }

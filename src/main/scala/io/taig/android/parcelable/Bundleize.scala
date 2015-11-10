@@ -3,13 +3,10 @@ package io.taig.android.parcelable
 import android.annotation.TargetApi
 import android.os.IBinder
 import android.util.{ Size, SizeF }
-import shapeless._
-import shapeless.syntax.singleton._
 
-import scala.collection.breakOut
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
-import scala.reflect._
+import scala.reflect.ClassTag
 
 /**
  * Type class that instructs how to read/write a value from/to a given Bundle
@@ -20,20 +17,8 @@ object Bundleize {
     }
 
     trait LowPriorityRead {
-        implicit def `Read[Array]`[T: Read: ClassTag]: Read[Array[T]] = new Read[Array[T]] {
-            override def read( bundle: Bundle, key: String ) = {
-                import collection.JavaConversions._
-
-                val nested = bundle.read[Bundle]( key )
-                nested.keySet().map( implicitly[Read[T]].read( nested, _ ) )( breakOut )
-            }
-        }
-
-        implicit def `Read[Traversable]`[L[B] <: Traversable[B], T: Read: ClassTag](
-            implicit
-            cbf: CanBuildFrom[Nothing, T, L[T]]
-        ): Read[L[T]] = new Read[L[T]] {
-            override def read( bundle: Bundle, key: String ) = `Read[Array]`[T].read( bundle, key ).to[L]
+        implicit def `Read[Bundleable]`[T: Bundleable.Read]: Read[T] = Read { ( bundle, key ) ⇒
+            implicitly[Bundleable.Read[T]].read( bundle.getBundle( key ) )
         }
     }
 
@@ -65,10 +50,6 @@ object Bundleize {
         implicit val `Read[Boolean]`: Read[Boolean] = Read( _.getBoolean( _ ) )
 
         implicit val `Read[Bundle]`: Read[Bundle] = Read( _.getBundle( _ ) )
-
-        implicit def `Read[Bundleable]`[T: Bundleable.Read]: Read[T] = Read { ( bundle, key ) ⇒
-            implicitly[Bundleable.Read[T]].read( bundle.read[Bundle]( key ) )
-        }
 
         implicit val `Read[Byte]`: Read[Byte] = Read( _.getByte( _ ) )
 
@@ -201,19 +182,8 @@ object Bundleize {
     }
 
     trait LowPriorityWrite {
-        implicit def `Write[Array]`[T: Write]: Write[Array[T]] = new Write[Array[T]] {
-            override def write( bundle: Bundle, key: String, value: Array[T] ) = {
-                val array = value.zipWithIndex
-                val nested = Bundle( array.length )
-                array.foreach{ case ( value, index ) ⇒ nested.write( index.toString, value ) }
-                bundle.write( key, nested )
-            }
-        }
-
-        implicit def `Write[Traversable]`[L[B] <: Traversable[B], T: Write: ClassTag]: Write[L[T]] = new Write[L[T]] {
-            override def write( bundle: Bundle, key: String, value: L[T] ) = {
-                `Write[Array]`[T].write( bundle, key, value.toArray )
-            }
+        implicit def `Write[Bundleable]`[T: Bundleable.Write: ClassTag]: Write[T] = Write { ( bundle, key, value ) ⇒
+            bundle.putBundle( key, implicitly[Bundleable.Write[T]].write( value ) )
         }
     }
 
@@ -248,10 +218,6 @@ object Bundleize {
 
         implicit val `Write[Bundle]`: Write[Bundle] = Write( _.putBundle( _, _ ) )
 
-        implicit def `Write[Bundleable]`[T: Bundleable.Write]: Write[T] = Write { ( bundle, key, value ) ⇒
-            bundle.write( key, implicitly[Bundleable.Write[T]].write( value ) )
-        }
-
         implicit val `Write[Byte]`: Write[Byte] = Write( _.putByte( _, _ ) )
 
         implicit val `Write[Char]`: Write[Char] = Write( _.putChar( _, _ ) )
@@ -275,12 +241,6 @@ object Bundleize {
         implicit val `Write[Int]`: Write[Int] = Write( _.putInt( _, _ ) )
 
         implicit val `Write[Long]`: Write[Long] = Write( _.putLong( _, _ ) )
-
-        implicit val `Write[None]`: Write[None.type] = new Write[None.type] {
-            override def write( bundle: Bundle, key: String, value: None.type ) = {
-                bundle.write( key, Bundle( "option" ->> -1 :: HNil ) )
-            }
-        }
 
         implicit val `Write[Parcelable]`: Write[android.os.Parcelable] = {
             Write[android.os.Parcelable]( _.putParcelable( _, _ ) )

@@ -13,7 +13,20 @@ class Bundleable
         extends FlatSpec
         with Matchers
         with RobolectricSuite {
-    it should "support case classes" in {
+    it should "support Array" in {
+        val bundleable = from[Array[Int]]
+        val instance = Array( 3, 1, 4 )
+        val b = bundleable.write( instance )
+        bundleable.read( b ) shouldEqual instance
+    }
+
+    it should "support Bundleize" in {
+        //        val bundleable = from[Int]
+        //        val b = bundleable.write( 3 )
+        //        bundleable.read( b ) shouldEqual 3
+    }
+
+    it should "support case class" in {
         case class Data( a: Int, b: String, c: Float )
         val bundleable = from[Data]
         val instance = Data( 3, "asdf", 3.14f )
@@ -47,6 +60,13 @@ class Bundleable
 
         bundleable.read( b1 ) shouldEqual instance1
         bundleable.read( b2 ) shouldEqual instance2
+    }
+
+    it should "support Traversable" in {
+        val bundleable = from[Seq[Int]]
+        val instance = Seq( 3, 1, 4 )
+        val b = bundleable.write( instance )
+        bundleable.read( b ) shouldEqual instance
     }
 
     it should "support Tuple" in {

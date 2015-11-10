@@ -9,6 +9,8 @@ object Bundle {
 
     def apply( capacity: Int ): Bundle = new Bundle( capacity )
 
+    def apply[T: Bundleize.Write]( key: String, value: T ): Bundle = Bundle( 1 ).write( key, value )
+
     def apply[H <: HList]( arguments: H )(
         implicit
         lf: LeftFolder.Aux[H, Bundle, fold.write.type, Bundle]

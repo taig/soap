@@ -8,6 +8,12 @@ import shapeless.ops.nat.ToInt
 import shapeless.syntax.std.tuple._
 import shapeless.syntax.singleton._
 
+import scala.collection._
+import scala.collection.generic.CanBuildFrom
+import scala.reflect.ClassTag
+
+import scala.language.higherKinds
+
 /**
  * Type class that instructs how to deserialize/serialize a value from/to a Bundle
  */
@@ -22,9 +28,17 @@ object Bundleable {
         def read( bundle: Bundle ): T
     }
 
-    object Read {
+    trait LowPriorityRead {
+    }
+
+    object Read extends LowPriorityRead {
         def apply[T]( f: Bundle ⇒ T ) = new Read[T] {
             override def read( bundle: Bundle ) = f( bundle )
+        }
+
+        implicit def `Read[Array]`[T: Bundleize.Read: ClassTag]: Read[Array[T]] = Read { bundle ⇒
+            import collection.JavaConversions._
+            bundle.keySet().map( implicitly[Bundleize.Read[T]].read( bundle, _ ) )( breakOut )
         }
 
         implicit def `Read[Either]`[A: Bundleize.Read, B: Bundleize.Read]: Read[Either[A, B]] = Read {
@@ -56,15 +70,34 @@ object Bundleable {
             }
             case null ⇒ None
         }
+
+        implicit def `Read[Traversable]`[L[B] <: Traversable[B], T: Bundleize.Read: ClassTag](
+            implicit
+            cbf: CanBuildFrom[Nothing, T, L[T]]
+        ): Read[L[T]] = Read[L[T]]( `Read[Array]`[T].read( _ ).to[L] )
     }
 
     trait Write[-T] {
         def write( value: T ): Bundle
     }
 
-    object Write {
+    trait LowPriorityWrite {
+        implicit def `Write[Bundleize]`[T: Bundleize.Write: ClassTag]: Write[T] = Write { value ⇒
+            println( "A: I'm here to mess around with " + implicitly[ClassTag[T]].runtimeClass.getName + ", dafuq?" )
+            Bundle( "value", value )
+        }
+    }
+
+    object Write extends LowPriorityWrite {
         def apply[T]( f: T ⇒ Bundle ) = new Write[T] {
             override def write( value: T ) = f( value )
+        }
+
+        implicit def `Write[Array]`[T: Bundleize.Write]: Write[Array[T]] = Write { value ⇒
+            val array = value.zipWithIndex
+            val bundle = Bundle( value.length )
+            array.foreach{ case ( value, index ) ⇒ bundle.write( index.toString, value ) }
+            bundle
         }
 
         implicit def `Write[Either]`[A: Bundleize.Write, B: Bundleize.Write]: Write[Either[A, B]] = Write {
@@ -90,6 +123,10 @@ object Bundleable {
         implicit def `Write[Option]`[T: Bundleize.Write]: Write[Option[T]] = Write {
             case Some( value ) ⇒ Bundle( "option" ->> 1 :: "value" ->> value :: HNil )
             case None          ⇒ Bundle( "option" ->> -1 :: HNil )
+        }
+
+        implicit def `Write[Traversable]`[L[B] <: Traversable[B], T: Bundleize.Write: ClassTag]: Write[L[T]] = Write {
+            value ⇒ `Write[Array]`[T].write( value.toArray )
         }
 
         private object fold {
