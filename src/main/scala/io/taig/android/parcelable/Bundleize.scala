@@ -1,7 +1,5 @@
 package io.taig.android.parcelable
 
-import java.util
-
 import android.annotation.TargetApi
 import android.os.IBinder
 import android.util.{ Size, SizeF }
@@ -12,7 +10,6 @@ import scala.collection.breakOut
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
 import scala.reflect._
-import scala.util.Try
 
 /**
  * Type class that instructs how to read/write a value from/to a given Bundle
@@ -69,6 +66,10 @@ object Bundleize {
 
         implicit val `Read[Bundle]`: Read[Bundle] = Read( _.getBundle( _ ) )
 
+        implicit def `Read[Bundleable]`[T: Bundleable.Read]: Read[T] = Read { ( bundle, key ) ⇒
+            implicitly[Bundleable.Read[T]].read( bundle.read[Bundle]( key ) )
+        }
+
         implicit val `Read[Byte]`: Read[Byte] = Read( _.getByte( _ ) )
 
         implicit val `Read[Char]`: Read[Char] = Read( _.getChar( _ ) )
@@ -76,17 +77,6 @@ object Bundleize {
         implicit val `Read[CharSequence]`: Read[CharSequence] = Read( _.getCharSequence( _ ) )
 
         implicit val `Read[Double]`: Read[Double] = Read( _.getDouble( _ ) )
-
-        implicit def `Read[Either]`[A: Read, B: Read]: Read[Either[A, B]] = new Read[Either[A, B]] {
-            override def read( bundle: Bundle, key: String ) = {
-                val nested = bundle.read[Bundle]( key )
-
-                nested.read[Int]( "either" ) match {
-                    case -1 ⇒ Left( nested.read[A]( "value" ) )
-                    case 1  ⇒ Right( nested.read[B]( "value" ) )
-                }
-            }
-        }
 
         implicit val `Read[IBinder]`: Read[IBinder] = new Read[IBinder] {
             @TargetApi( 18 )
@@ -98,23 +88,6 @@ object Bundleize {
         implicit val `Read[Int]`: Read[Int] = Read( _.getInt( _ ) )
 
         implicit val `Read[Long]`: Read[Long] = Read( _.getLong( _ ) )
-
-        implicit def `Read[Option]`[T: Read]: Read[Option[T]] = new Read[Option[T]] {
-            override def read( bundle: Bundle, key: String ) = {
-                if ( bundle.containsKey( key ) ) {
-                    bundle.get( key ) match {
-                        case bundle: Bundle if bundle.containsKey( "option" ) ⇒ bundle.read[Int]( "option" ) match {
-                            case 1  ⇒ Some( bundle.read[T]( "value" ) )
-                            case -1 ⇒ None
-                        }
-                        case null ⇒ None
-                        case _    ⇒ Try( Some( bundle.read[T]( key ) ) ).getOrElse( None )
-                    }
-                } else {
-                    None
-                }
-            }
-        }
 
         implicit def `Read[Parcelable]`[T <: android.os.Parcelable]: Read[T] = Read[T]( _.getParcelable[T]( _ ) )
 
@@ -275,6 +248,10 @@ object Bundleize {
 
         implicit val `Write[Bundle]`: Write[Bundle] = Write( _.putBundle( _, _ ) )
 
+        implicit def `Write[Bundleable]`[T: Bundleable.Write]: Write[T] = Write { ( bundle, key, value ) ⇒
+            bundle.write( key, implicitly[Bundleable.Write[T]].write( value ) )
+        }
+
         implicit val `Write[Byte]`: Write[Byte] = Write( _.putByte( _, _ ) )
 
         implicit val `Write[Char]`: Write[Char] = Write( _.putChar( _, _ ) )
@@ -288,13 +265,6 @@ object Bundleize {
 
         implicit val `Write[Double]`: Write[Double] = Write( _.putDouble( _, _ ) )
 
-        implicit def `Write[Either]`[A: Write, B: Write]: Write[Either[A, B]] = new Write[Either[A, B]] {
-            override def write( bundle: Bundle, key: String, value: Either[A, B] ) = value match {
-                case left @ Left( _ )   ⇒ `Write[Left]`[A].write( bundle, key, left )
-                case right @ Right( _ ) ⇒ `Write[Right]`[B].write( bundle, key, right )
-            }
-        }
-
         implicit val `Write[IBinder]`: Write[IBinder] = new Write[IBinder] {
             @TargetApi( 18 )
             override def write( bundle: Bundle, key: String, value: IBinder ) = bundle.putBinder( key, value )
@@ -304,12 +274,6 @@ object Bundleize {
 
         implicit val `Write[Int]`: Write[Int] = Write( _.putInt( _, _ ) )
 
-        implicit def `Write[Left]`[A: Write]: Write[Left[A, _]] = new Write[Left[A, _]] {
-            override def write( bundle: Bundle, key: String, value: Left[A, _] ) = {
-                bundle.write( key, Bundle( "either" ->> -1 :: "value" ->> value.a :: HNil ) )
-            }
-        }
-
         implicit val `Write[Long]`: Write[Long] = Write( _.putLong( _, _ ) )
 
         implicit val `Write[None]`: Write[None.type] = new Write[None.type] {
@@ -318,21 +282,8 @@ object Bundleize {
             }
         }
 
-        implicit def `Write[Option]`[T: Write]: Write[Option[T]] = new Write[Option[T]] {
-            override def write( bundle: Bundle, key: String, value: Option[T] ) = value match {
-                case Some( value ) ⇒ bundle.write( key, Bundle( "option" ->> 1 :: "value" ->> value :: HNil ) )
-                case None          ⇒ bundle.write( key, Bundle( "option" ->> -1 :: HNil ) )
-            }
-        }
-
         implicit val `Write[Parcelable]`: Write[android.os.Parcelable] = {
             Write[android.os.Parcelable]( _.putParcelable( _, _ ) )
-        }
-
-        implicit def `Write[Right]`[B: Write]: Write[Right[_, B]] = new Write[Right[_, B]] {
-            override def write( bundle: Bundle, key: String, value: Right[_, B] ) = {
-                bundle.write( key, Bundle( "either" ->> 1 :: "value" ->> value.b :: HNil ) )
-            }
         }
 
         implicit val `Write[Short]`: Write[Short] = Write( _.putShort( _, _ ) )
