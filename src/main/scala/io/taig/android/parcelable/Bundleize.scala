@@ -182,7 +182,7 @@ object Bundleize {
     }
 
     trait LowPriorityWrite {
-        implicit def `Write[Bundleable]`[T: Bundleable.Write: ClassTag]: Write[T] = Write { ( bundle, key, value ) ⇒
+        implicit def `Write[Bundleable]`[T: Bundleable.Write]: Write[T] = Write { ( bundle, key, value ) ⇒
             bundle.putBundle( key, implicitly[Bundleable.Write[T]].write( value ) )
         }
     }

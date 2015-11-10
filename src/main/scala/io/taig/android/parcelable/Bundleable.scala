@@ -28,7 +28,9 @@ object Bundleable {
         def read( bundle: Bundle ): T
     }
 
-    trait LowPriorityRead
+    trait LowPriorityRead {
+        implicit def `Read[Bundleize]`[T: Bundleize.Read]: Read[T] = Read( _.read[T]( "value" ) )
+    }
 
     object Read extends LowPriorityRead {
         def apply[T]( f: Bundle ⇒ T ) = new Read[T] {
@@ -81,7 +83,7 @@ object Bundleable {
     }
 
     trait LowPriorityWrite {
-        implicit def `Write[Bundleize]`[T: Bundleize.Write: ClassTag]: Write[T] = Write( Bundle( "value", _ ) )
+        implicit def `Write[Bundleize]`[T: Bundleize.Write]: Write[T] = Write( Bundle( "value", _ ) )
     }
 
     object Write extends LowPriorityWrite {

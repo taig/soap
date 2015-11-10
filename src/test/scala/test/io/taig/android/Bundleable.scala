@@ -20,13 +20,6 @@ class Bundleable
         bundleable.read( b ) shouldEqual instance
     }
 
-    it should "support Bundleize" in {
-        //        val bundleable = from[Int]
-        //        val b = bundleable.write( 3 )
-        //        bundleable.read( b ) shouldEqual 3
-        fail()
-    }
-
     it should "support case class" in {
         case class Data( a: Int, b: String, c: Float )
         val bundleable = from[Data]
@@ -75,5 +68,11 @@ class Bundleable
         val instance = ( 3, "asdf" )
         val b = bundleable.write( instance )
         bundleable.read( b ) shouldEqual instance
+    }
+
+    it should "support Bundleize" in {
+        val bundleable = from[Int]
+        val b = bundleable.write( 3 )
+        bundleable.read( b ) shouldEqual 3
     }
 }
