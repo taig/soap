@@ -16,7 +16,13 @@ object Parcelize {
         def read( source: Parcel ): T
     }
 
-    object Read {
+    trait LowPriorityRead {
+        implicit def `Write[Bundleable]`[T: Bundleable.Read]: Read[T] = Read { source ⇒
+            implicitly[Bundleable.Read[T]].read( source.readBundle() )
+        }
+    }
+
+    object Read extends LowPriorityRead {
         def apply[T]( f: Parcel ⇒ T ): Read[T] = new Read[T] {
             override def read( source: Parcel ) = f( source )
         }
@@ -73,7 +79,13 @@ object Parcelize {
         def write( destination: Parcel, value: T, flags: Int ): Unit
     }
 
-    object Write {
+    trait LowPriorityWrite {
+        implicit def `Write[Bundleable]`[T: Bundleable.Write]: Write[T] = Write { ( destination, value ) ⇒
+            destination.writeBundle( implicitly[Bundleable.Write[T]].write( value ) )
+        }
+    }
+
+    object Write extends LowPriorityWrite {
         def apply[T]( f: ( Parcel, T ) ⇒ Unit ): Write[T] = new Write[T] {
             def write( destination: Parcel, value: T, flags: Int ) = f( destination, value )
         }

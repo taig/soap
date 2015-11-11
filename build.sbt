@@ -26,4 +26,6 @@ scalacOptions ++=
     "-feature" ::
     Nil
 
+testOptions in Test += Tests.Argument( "-oDF" )
+
 version := "3.0.0-SNAPSHOT"
