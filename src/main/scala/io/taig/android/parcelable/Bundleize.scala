@@ -3,10 +3,10 @@ package io.taig.android.parcelable
 import android.annotation.TargetApi
 import android.os.IBinder
 import android.util.{ Size, SizeF }
+import shapeless.Lazy
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
-import scala.reflect.ClassTag
 
 /**
  * Type class that instructs how to read/write a value from/to a given Bundle
@@ -17,8 +17,8 @@ object Bundleize {
     }
 
     trait LowPriorityRead {
-        implicit def `Read[Bundleable]`[T: Bundleable.Read]: Read[T] = Read { ( bundle, key ) ⇒
-            implicitly[Bundleable.Read[T]].read( bundle.getBundle( key ) )
+        implicit def `Read[Bundleable]`[T]( implicit r: Lazy[Bundleable.Read[T]] ): Read[T] = Read { ( bundle, key ) ⇒
+            r.value.read( bundle.getBundle( key ) )
         }
     }
 
@@ -182,8 +182,8 @@ object Bundleize {
     }
 
     trait LowPriorityWrite {
-        implicit def `Write[Bundleable]`[T: Bundleable.Write]: Write[T] = Write { ( bundle, key, value ) ⇒
-            bundle.putBundle( key, implicitly[Bundleable.Write[T]].write( value ) )
+        implicit def `Write[Bundleable]`[T]( implicit w: Lazy[Bundleable.Write[T]] ): Write[T] = {
+            Write{ ( bundle, key, value ) ⇒ bundle.putBundle( key, w.value.write( value ) ) }
         }
     }
 

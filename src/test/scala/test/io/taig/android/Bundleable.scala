@@ -2,9 +2,11 @@ package test.io.taig.android
 
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import io.taig.android.parcelable.Bundleable.from
+import io.taig.android.parcelable._
 import org.robolectric.annotation.Config
 import org.scalatest._
 import shapeless._
+import shapeless.syntax.singleton._
 
 import scala.language.reflectiveCalls
 
@@ -20,12 +22,31 @@ class Bundleable
         bundleable.read( b ) shouldEqual instance
     }
 
+    it should "support Bundleize" in {
+        val bundleable = from[Int]
+        val b = bundleable.write( 3 )
+        b shouldEqual Bundle( "value" ->> 3 :: HNil )
+        bundleable.read( b ) shouldEqual 3
+    }
+
     it should "support case class" in {
-        case class Data( a: Int, b: String, c: Float )
-        val bundleable = from[Data]
-        val instance = Data( 3, "asdf", 3.14f )
-        val b = bundleable.write( instance )
-        bundleable.read( b ) shouldEqual instance
+        {
+            case class Data( a: Int, b: String, c: Float )
+            val bundleable = from[Data]
+            val instance = Data( 3, "asdf", 3.14f )
+            val b = bundleable.write( instance )
+            b shouldEqual Bundle( "a" ->> 3 :: "b" ->> "asdf" :: "c" ->> 3.14f :: HNil )
+            bundleable.read( b ) shouldEqual instance
+        }
+
+        {
+            case class Person( name: String, age: Option[Int] )
+            case class House( rooms: Int, inhabitants: Seq[Person] )
+            val bundleable = from[House]
+            val instance = House( 8, Seq( Person( "Taig", None ) ) )
+            val b = bundleable.write( instance )
+            bundleable.read( b ) shouldEqual instance
+        }
     }
 
     it should "support Either" in {
@@ -52,6 +73,7 @@ class Bundleable
         val instance2 = None
         val b2 = bundleable.write( instance2 )
 
+        b1 shouldEqual Bundle( "option" ->> 1 :: "value" ->> "asdf" :: HNil )
         bundleable.read( b1 ) shouldEqual instance1
         bundleable.read( b2 ) shouldEqual instance2
     }
@@ -68,11 +90,5 @@ class Bundleable
         val instance = ( 3, "asdf" )
         val b = bundleable.write( instance )
         bundleable.read( b ) shouldEqual instance
-    }
-
-    it should "support Bundleize" in {
-        val bundleable = from[Int]
-        val b = bundleable.write( 3 )
-        bundleable.read( b ) shouldEqual 3
     }
 }
