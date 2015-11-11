@@ -1,5 +1,3 @@
-Boilerplate.settings
-
 fork in Test := true
 
 javacOptions ++=

@@ -16,7 +16,7 @@ class Bundleize
         extends FlatSpec
         with Matchers
         with RobolectricSuite {
-    it should "support Arrays" in {
+    it should "support Array" in {
         val i = Array( 1, 2, 3 )
         val b = Bundle( "value" ->> i :: HNil )
         b.read[Array[Int]]( "value" ) shouldEqual i

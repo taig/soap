@@ -16,8 +16,8 @@ class Bundleable
         with Matchers
         with RobolectricSuite {
     it should "support Array" in {
-        val bundleable = from[Array[Int]]
-        val instance = Array( 3, 1, 4 )
+        val bundleable = from[Array[Option[Int]]]
+        val instance = Array( Some( 3 ), None, Some( 4 ) )
         val b = bundleable.write( instance )
         bundleable.read( b ) shouldEqual instance
     }
@@ -79,8 +79,8 @@ class Bundleable
     }
 
     it should "support Traversable" in {
-        val bundleable = from[Seq[Int]]
-        val instance = Seq( 3, 1, 4 )
+        val bundleable = from[Seq[Option[Int]]]
+        val instance = Seq( Some( 3 ), None, Some( 4 ) )
         val b = bundleable.write( instance )
         bundleable.read( b ) shouldEqual instance
     }

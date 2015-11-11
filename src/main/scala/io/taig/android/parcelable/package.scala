@@ -42,8 +42,10 @@ package object parcelable {
     }
 
     implicit class ParcelableParcel( val parcel: Parcel ) {
-        def read[T: Parcelize] = implicitly[Parcelize[T]].read( parcel )
+        def read[T: Parcelize.Read] = implicitly[Parcelize.Read[T]].read( parcel )
 
-        def write[T: Parcelize]( value: T, flags: Int = 0 ) = implicitly[Parcelize[T]].write( value, parcel, flags )
+        def write[T: Parcelize.Write]( value: T, flags: Int = 0 ) = {
+            implicitly[Parcelize.Write[T]].write( parcel, value, flags )
+        }
     }
 }
