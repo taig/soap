@@ -15,80 +15,53 @@ class Bundleable
         extends FlatSpec
         with Matchers
         with RobolectricSuite {
+    def write[T: Bundleable.Write]( value: T ) = implicitly[Bundleable.Write[T]].write( value )
+
+    def read[T: Bundleable.Read]( bundle: Bundle ) = implicitly[Bundleable.Read[T]].read( bundle )
+
+    def bundleable[T: Bundleable.Write: Bundleable.Read]( value: T ) = read[T]( write( value ) ) shouldEqual value
+
     it should "support Array" in {
-        val bundleable = from[Array[Option[Int]]]
-        val instance = Array( Some( 3 ), None, Some( 4 ) )
-        val b = bundleable.write( instance )
-        bundleable.read( b ) shouldEqual instance
+        bundleable( Array( Some( 3 ), None, Some( 4 ) ) )
     }
 
     it should "support Bundleize" in {
-        val bundleable = from[Int]
-        val b = bundleable.write( 3 )
-        b shouldEqual Bundle( "value" ->> 3 :: HNil )
-        bundleable.read( b ) shouldEqual 3
+        bundleable( 3 )
     }
 
     it should "support case class" in {
         {
             case class Data( a: Int, b: String, c: Float )
-            val bundleable = from[Data]
-            val instance = Data( 3, "asdf", 3.14f )
-            val b = bundleable.write( instance )
-            b shouldEqual Bundle( "a" ->> 3 :: "b" ->> "asdf" :: "c" ->> 3.14f :: HNil )
-            bundleable.read( b ) shouldEqual instance
+            bundleable( Data( 3, "asdf", 3.14f ) )
         }
 
         {
             case class Person( name: String, age: Option[Int] )
             case class House( rooms: Int, inhabitants: Seq[Person] )
-            val bundleable = from[House]
-            val instance = House( 8, Seq( Person( "Taig", None ) ) )
-            val b = bundleable.write( instance )
-            bundleable.read( b ) shouldEqual instance
+            bundleable( House( 8, Seq( Person( "Taig", None ) ) ) )
         }
     }
 
     it should "support Either" in {
-        val bundleable = from[Either[String, Int]]
-        val instance1: Either[String, Int] = Left( "fdsa" )
-        val b1 = bundleable.write( instance1 )
-        val instance2: Either[String, Int] = Right( 3 )
-        val b2 = bundleable.write( instance2 )
-
-        bundleable.read( b1 ) shouldEqual instance1
-        bundleable.read( b2 ) shouldEqual instance2
+        bundleable[Either[String, Int]]( Left( "fdsa" ) )
+        bundleable[Either[String, Int]]( Right( 3 ) )
     }
 
     it should "support HNil" in {
-        val bundleable = from[HNil]
-        val b = bundleable.write( HNil )
-        bundleable.read( b ) shouldEqual HNil
+        bundleable[HNil]( HNil )
     }
 
     it should "support Option" in {
-        val bundleable = from[Option[String]]
-        val instance1 = Some( "asdf" )
-        val b1 = bundleable.write( instance1 )
-        val instance2 = None
-        val b2 = bundleable.write( instance2 )
-
-        b1 shouldEqual Bundle( "option" ->> 1 :: "value" ->> "asdf" :: HNil )
-        bundleable.read( b1 ) shouldEqual instance1
-        bundleable.read( b2 ) shouldEqual instance2
+        bundleable( Option( 3 ) )
+        // bundleable( Some( "asdf" ) )
+        // bundleable( None )
     }
 
     it should "support Traversable" in {
-        val bundleable = from[Seq[Option[Int]]]
-        val instance = Seq( Some( 3 ), None, Some( 4 ) )
-        val b = bundleable.write( instance )
-        bundleable.read( b ) shouldEqual instance
+        bundleable( Seq( Some( 3 ), None, Some( 4 ) ) )
     }
 
     it should "support Tuple" in {
-        val bundleable = from[( Int, String )]
-        val instance = ( 3, "asdf" )
-        val b = bundleable.write( instance )
-        bundleable.read( b ) shouldEqual instance
+        bundleable( ( 3, "asdf" ) )
     }
 }
