@@ -18,12 +18,6 @@ import scala.language.higherKinds
  * Type class that instructs how to deserialize/serialize a value from/to a Bundle
  */
 object Bundleable {
-    def from[T: Read: Write]: Read[T] with Write[T] = new Read[T] with Write[T] {
-        override def read( bundle: Bundle ) = implicitly[Read[T]].read( bundle )
-
-        override def write( value: T ) = implicitly[Write[T]].write( value )
-    }
-
     trait Read[T] {
         def read( bundle: Bundle ): T
     }

@@ -1,12 +1,10 @@
 package test.io.taig.android
 
 import android.os.Build.VERSION_CODES.LOLLIPOP
-import io.taig.android.parcelable.Bundleable.from
 import io.taig.android.parcelable._
 import org.robolectric.annotation.Config
 import org.scalatest._
 import shapeless._
-import shapeless.syntax.singleton._
 
 import scala.language.reflectiveCalls
 
