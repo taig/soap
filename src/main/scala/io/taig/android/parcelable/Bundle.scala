@@ -20,16 +20,15 @@ object Bundle {
 
     private object fold {
         object write extends Poly2 {
-            implicit def string[K <: String, V: Bundleize.Write]( implicit key: Witness.Aux[K] ) = {
+            implicit def string[K, V: Bundleize.Write]( implicit w: Witness.Aux[K] ) = {
                 at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
-                    implicitly[Bundleize.Write[V]].write( bundle, key.value, value )
-                    bundle
-                }
-            }
+                    val key = w.value match {
+                        case symbol: Symbol ⇒ symbol.name
+                        case string: String ⇒ string
+                    }
 
-            implicit def symbol[K <: Symbol, V: Bundleize.Write]( implicit key: Witness.Aux[K] ) = {
-                at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
-                    implicitly[Bundleize.Write[V]].write( bundle, key.value.name, value )
+                    implicitly[Bundleize.Write[V]].write( bundle, key, value )
+
                     bundle
                 }
             }
