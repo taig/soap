@@ -20,77 +20,79 @@ class Bundleize
 
     def read[T: Bundleize.Read]( bundle: Bundle ) = bundle.read[T]( "value" )
 
-    def bundleize[T: Bundleize.Write: Bundleize.Read]( value: T ) = read( write( value ) ) shouldEqual value
+    def bundleize[W: Bundleize.Write, R: Bundleize.Read]( value: W ) = read[R]( write[W]( value ) ) shouldEqual value
 
     it should "support Array" in {
-        bundleize( Array( 1, 2, 3 ) )
+        bundleize[Array[Int], Array[Int]]( Array( 1, 2, 3 ) )
     }
 
     it should "support Boolean" in {
-        bundleize( true )
-        bundleize( false )
+        bundleize[Boolean, Boolean]( true )
+        bundleize[Boolean, Boolean]( false )
     }
 
     it should "support Bundle" in {
-        bundleize( Bundle( "int" ->> 3 :: "string" ->> "asdf" :: "long" ->> 5l :: HNil ) )
+        bundleize[Bundle, Bundle]( Bundle( "int" ->> 3 :: "string" ->> "asdf" :: "long" ->> 5l :: HNil ) )
     }
 
     it should "support Bundleable" in {
-        bundleize( Option( 3 ) )
-        // bundleize( Some( "asdf" ) )
-        // bundleize( None )
+        bundleize[Option[Int], Option[Int]]( Option( 3 ) )
     }
 
     it should "support Byte" in {
-        bundleize( 3.toByte )
+        bundleize[Byte, Byte]( 3.toByte )
     }
 
     it should "support Char" in {
-        bundleize( 'c )
+        bundleize[Char, Char]( 'c' )
     }
 
     it should "support CharSequence" in {
-        bundleize[CharSequence]( "asdf" )
+        bundleize[CharSequence, CharSequence]( "asdf" )
+        bundleize[String, CharSequence]( "asdf" )
     }
 
     it should "support Double" in {
-        bundleize( 3.14d )
+        bundleize[Double, Double]( 3.14d )
     }
 
     it should "support Float" in {
-        bundleize( 3.14f )
+        bundleize[Float, Float]( 3.14f )
     }
 
     it should "support Int" in {
-        bundleize( 3 )
+        bundleize[Int, Int]( 3 )
     }
 
     it should "support Long" in {
-        bundleize( 3l )
+        bundleize[Long, Long]( 3l )
     }
 
     it should "support Parcelable" in {
-        bundleize( Uri.parse( "http://taig.io/" ) )
+        bundleize[android.os.Parcelable, android.os.Parcelable]( Uri.parse( "http://taig.io/" ) )
+        bundleize[Uri, android.os.Parcelable]( Uri.parse( "http://taig.io/" ) )
+        bundleize[Uri, Uri]( Uri.parse( "http://taig.io/" ) )
     }
 
     it should "support Short" in {
-        bundleize( 3.toShort )
+        bundleize[Short, Short]( 3.toShort )
     }
 
     it should "support Size" in {
-        bundleize( new Size( 16, 9 ) )
+        bundleize[Size, Size]( new Size( 16, 9 ) )
     }
 
     it should "support SizeF" in {
-        bundleize( new SizeF( 16.1f, 9.2f ) )
+        bundleize[SizeF, SizeF]( new SizeF( 16.1f, 9.2f ) )
     }
 
     it should "support String" in {
-        bundleize( "asdf" )
+        bundleize[String, String]( "asdf" )
     }
 
     it should "support Traversable" in {
-        bundleize( Seq( 3.4f, 1.2f, 6.7f ) )
+        bundleize[Traversable[Float], Traversable[Float]]( Seq( 3.4f, 1.2f, 6.7f ) )
+        bundleize[Seq[Float], Traversable[Float]]( Seq( 3.4f, 1.2f, 6.7f ) )
     }
 
     it should "fail when accessing an non-existant value" in {

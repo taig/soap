@@ -42,9 +42,11 @@ object Bundleable {
             bundle.keySet().map( implicitly[Bundleize.Read[T]].read( bundle, _ ) )( breakOut )
         }
 
-        implicit def `Read[Either]`[A: Bundleize.Read, B: Bundleize.Read]: Read[Either[A, B]] = Read {
-            case bundle if bundle.read[Int]( "either" ) == -1 ⇒ Left( bundle.read[A]( "value" ) )
-            case bundle if bundle.read[Int]( "either" ) == 1  ⇒ Right( bundle.read[B]( "value" ) )
+        implicit def `Read[Either]`[A: Bundleize.Read, B: Bundleize.Read]: Read[Either[A, B]] = Read { bundle ⇒
+            bundle.read[Int]( "either" ) match {
+                case -1 ⇒ `Read[Left]`[A, B].read( bundle )
+                case 1  ⇒ `Read[Right]`[A, B].read( bundle )
+            }
         }
 
         implicit def `Read[HList]`[K <: Symbol, V, T <: HList](
@@ -58,16 +60,21 @@ object Bundleable {
 
         implicit val `Read[HNil]`: Read[HNil] = Read( _ ⇒ HNil )
 
+        implicit def `Read[Left]`[L: Bundleize.Read, R]: Read[Left[L, R]] = Read { bundle ⇒
+            Left( bundle.read[L]( "value" ) )
+        }
+
         implicit def `Read[Option]`[T: Bundleize.Read]: Read[Option[T]] = Read {
-            case bundle: Bundle if bundle.containsKey( "option" ) ⇒ bundle.read[Int]( "option" ) match {
-                case 1  ⇒ `Read[Some]`[T].read( bundle )
-                case -1 ⇒ None
-            }
-            case null ⇒ None
+            case bundle: Bundle if bundle.containsKey( "option" ) ⇒ `Read[Some]`[T].read( bundle )
+            case _ ⇒ None
+        }
+
+        implicit def `Read[Right]`[L, R: Bundleize.Read]: Read[Right[L, R]] = Read { bundle ⇒
+            Right( bundle.read[R]( "value" ) )
         }
 
         implicit def `Read[Some]`[T: Bundleize.Read]: Read[Some[T]] = Read { bundle ⇒
-            Some( bundle.read[T]( "value" ) )
+            Some( bundle.read[T]( "option" ) )
         }
 
         implicit def `Read[Traversable]`[L[B] <: Traversable[B], T: Bundleize.Read: ClassTag](
@@ -108,9 +115,9 @@ object Bundleable {
             bundle
         }
 
-        implicit def `Write[Either]`[A: Bundleize.Write, B: Bundleize.Write]: Write[Either[A, B]] = Write {
-            case Left( value )  ⇒ Bundle( "either" ->> -1 :: "value" ->> value :: HNil )
-            case Right( value ) ⇒ Bundle( "either" ->> 1 :: "value" ->> value :: HNil )
+        implicit def `Write[Either]`[L: Bundleize.Write, R: Bundleize.Write]: Write[Either[L, R]] = Write {
+            case value @ Left( _ )  ⇒ `Write[Left]`[L, R].write( value )
+            case value @ Right( _ ) ⇒ `Write[Right]`[L, R].write( value )
         }
 
         implicit def `Write[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
@@ -122,11 +129,19 @@ object Bundleable {
 
         implicit val `Write[HNil]`: Write[HNil] = Write( _ ⇒ Bundle.empty )
 
-        implicit val `Write[None]`: Write[None.type] = Write( _ ⇒ Bundle( "option", -1 ) )
+        implicit def `Write[Left]`[L: Bundleize.Write, R]: Write[Left[L, R]] = Write {
+            case Left( value ) ⇒ Bundle( "either" ->> -1 :: "value" ->> value :: HNil )
+        }
+
+        implicit val `Write[None]`: Write[None.type] = Write( _ ⇒ Bundle.empty )
 
         implicit def `Write[Option]`[T: Bundleize.Write]: Write[Option[T]] = Write {
-            case Some( value ) ⇒ Bundle( "option" ->> 1 :: "value" ->> value :: HNil )
+            case Some( value ) ⇒ Bundle( "option", value )
             case None          ⇒ `Write[None]`.write( None )
+        }
+
+        implicit def `Write[Right]`[L, R: Bundleize.Write]: Write[Right[L, R]] = Write {
+            case Right( value ) ⇒ Bundle( "either" ->> 1 :: "value" ->> value :: HNil )
         }
 
         implicit def `Write[Traversable]`[L[B] <: Traversable[B], T: Bundleize.Write: ClassTag]: Write[L[T]] = Write {

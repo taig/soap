@@ -187,11 +187,7 @@ object Bundleize {
         }
     }
 
-    object Write extends LowPriorityWrite {
-        def apply[T]( f: ( Bundle, String, T ) ⇒ Unit ) = new Write[T] {
-            override def write( bundle: Bundle, key: String, value: T ) = f( bundle, key, value )
-        }
-
+    trait DefaultPriorityWrite extends LowPriorityWrite {
         implicit val `Write[Array[Boolean]]`: Write[Array[Boolean]] = Write( _.putBooleanArray( _, _ ) )
 
         implicit val `Write[Array[Byte]]`: Write[Array[Byte]] = Write( _.putByteArray( _, _ ) )
@@ -222,12 +218,7 @@ object Bundleize {
 
         implicit val `Write[Char]`: Write[Char] = Write( _.putChar( _, _ ) )
 
-        implicit val `Write[CharSequence]`: Write[CharSequence] = new Write[CharSequence] {
-            override def write( bundle: Bundle, key: String, value: CharSequence ) = value match {
-                case value: String ⇒ bundle.putString( key, value )
-                case _             ⇒ bundle.putCharSequence( key, value )
-            }
-        }
+        implicit val `Write[CharSequence]`: Write[CharSequence] = Write( _.putCharSequence( _, _ ) )
 
         implicit val `Write[Double]`: Write[Double] = Write( _.putDouble( _, _ ) )
 
@@ -257,6 +248,8 @@ object Bundleize {
             @TargetApi( 21 )
             override def write( bundle: Bundle, key: String, value: SizeF ) = bundle.putSizeF( key, value )
         }
+
+        implicit val `Write[String]`: Write[String] = Write( _.putString( _, _ ) )
 
         implicit def `Write[Traversable[Boolean]]`[L <: Traversable[Boolean]]: Write[Traversable[Boolean]] = {
             new Write[Traversable[Boolean]] {
@@ -336,6 +329,12 @@ object Bundleize {
                     `Write[Array[String]]`.write( bundle, key, value.toArray )
                 }
             }
+        }
+    }
+
+    object Write extends DefaultPriorityWrite {
+        def apply[T]( f: ( Bundle, String, T ) ⇒ Unit ) = new Write[T] {
+            override def write( bundle: Bundle, key: String, value: T ) = f( bundle, key, value )
         }
     }
 }
