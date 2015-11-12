@@ -26,6 +26,17 @@ object Bundleable {
         implicit def `Read[Bundleize]`[T]( implicit r: Lazy[Bundleize.Read[T]] ): Read[T] = {
             Read( _.read[T]( "value" )( r.value ) )
         }
+
+        implicit def `Read[HList]`[K <: Symbol, V, T <: HList](
+            implicit
+            key: Witness.Aux[K],
+            bv:  Bundleize.Read[V],
+            bt:  Read[T]
+        ): Read[FieldType[K, V] :: T] = Read(
+            bundle ⇒ field[K]( bv.read( bundle, key.value.name ) ) :: bt.read( bundle )
+        )
+
+        implicit val `Read[HNil]`: Read[HNil] = Read( _ ⇒ HNil )
     }
 
     object Read extends LowPriorityRead {
@@ -42,17 +53,6 @@ object Bundleable {
             case bundle if bundle.read[Int]( "either" ) == -1 ⇒ Left( bundle.read[A]( "value" ) )
             case bundle if bundle.read[Int]( "either" ) == 1  ⇒ Right( bundle.read[B]( "value" ) )
         }
-
-        implicit def `Read[HList]`[K <: Symbol, V, T <: HList](
-            implicit
-            key: Witness.Aux[K],
-            bv:  Bundleize.Read[V],
-            bt:  Read[T]
-        ): Read[FieldType[K, V] :: T] = Read(
-            bundle ⇒ field[K]( bv.read( bundle, key.value.name ) ) :: bt.read( bundle )
-        )
-
-        implicit val `Read[HNil]`: Read[HNil] = Read( _ ⇒ HNil )
 
         implicit def `Read[LabelledGeneric]`[T, LG](
             implicit
@@ -82,6 +82,15 @@ object Bundleable {
         implicit def `Write[Bundleize]`[T]( implicit w: Lazy[Bundleize.Write[T]] ): Write[T] = {
             Write( Bundle( "value", _ )( w.value ) )
         }
+
+        implicit def `Write[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
+            implicit
+            l:  Length.Aux[FieldType[K, V] :: T, N],
+            ti: ToInt[N],
+            lf: LeftFolder.Aux[FieldType[K, V] :: T, Bundle, fold.write.type, Bundle]
+        ): Write[FieldType[K, V] :: T] = Write( _.foldLeft( new Bundle( toInt[N] ) )( fold.write ) )
+
+        implicit val `Write[HNil]`: Write[HNil] = Write( _ ⇒ Bundle.empty )
     }
 
     object Write extends LowPriorityWrite {
@@ -101,15 +110,6 @@ object Bundleable {
             case Right( value ) ⇒ Bundle( "either" ->> 1 :: "value" ->> value :: HNil )
         }
 
-        implicit def `Write[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
-            implicit
-            l:  Length.Aux[FieldType[K, V] :: T, N],
-            ti: ToInt[N],
-            lf: LeftFolder.Aux[FieldType[K, V] :: T, Bundle, fold.write.type, Bundle]
-        ): Write[FieldType[K, V] :: T] = Write( _.foldLeft( new Bundle( toInt[N] ) )( fold.write ) )
-
-        implicit val `Write[HNil]`: Write[HNil] = Write( _ ⇒ Bundle.empty )
-
         implicit def `Write[LabelledGeneric]`[T, LG](
             implicit
             lg: LabelledGeneric.Aux[T, LG],
@@ -124,14 +124,14 @@ object Bundleable {
         implicit def `Write[Traversable]`[L[B] <: Traversable[B], T: Bundleize.Write: ClassTag]: Write[L[T]] = Write {
             value ⇒ `Write[Array]`[T].write( value.toArray )
         }
+    }
 
-        private object fold {
-            object write extends Poly2 {
-                implicit def default[K <: Symbol, V: Bundleize.Write]( implicit key: Witness.Aux[K] ) = {
-                    at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
-                        implicitly[Bundleize.Write[V]].write( bundle, key.value.name, value )
-                        bundle
-                    }
+    private object fold {
+        object write extends Poly2 {
+            implicit def default[K <: Symbol, V: Bundleize.Write]( implicit key: Witness.Aux[K] ) = {
+                at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
+                    implicitly[Bundleize.Write[V]].write( bundle, key.value.name, value )
+                    bundle
                 }
             }
         }

@@ -28,16 +28,11 @@ class Bundleable
     }
 
     it should "support case class" in {
-        {
-            case class Data( a: Int, b: String, c: Float )
-            bundleable( Data( 3, "asdf", 3.14f ) )
-        }
+        case class Person( name: String, age: Option[Int] )
+        case class House( rooms: Int, inhabitants: Seq[Person] )
 
-        {
-            case class Person( name: String, age: Option[Int] )
-            case class House( rooms: Int, inhabitants: Seq[Person] )
-            bundleable( House( 8, Seq( Person( "Taig", None ) ) ) )
-        }
+        bundleable( Person( "Taig", None ) )
+        bundleable( House( 8, Seq( Person( "Taig", None ) ) ) )
     }
 
     it should "support Either" in {
