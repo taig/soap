@@ -22,9 +22,29 @@ object Bundleable {
         def read( bundle: Bundle ): T
     }
 
-    trait LowPriorityRead {
+    trait MinorPriorityRead {
         implicit def `Read[Bundleize]`[T]( implicit r: Lazy[Bundleize.Read[T]] ): Read[T] = {
             Read( _.read[T]( "value" )( r.value ) )
+        }
+    }
+
+    trait LowPriorityRead extends MinorPriorityRead {
+        implicit def `Read[LabelledGeneric]`[T, LG](
+            implicit
+            lg: LabelledGeneric.Aux[T, LG],
+            b:  Read[LG]
+        ): Read[T] = Read( bundle ⇒ lg.from( b.read( bundle ) ) )
+    }
+
+    trait DefaultPriorityRead extends LowPriorityRead {
+        implicit def `Read[Array]`[T: Bundleize.Read: ClassTag]: Read[Array[T]] = Read { bundle ⇒
+            import collection.JavaConversions._
+            bundle.keySet().map( implicitly[Bundleize.Read[T]].read( bundle, _ ) )( breakOut )
+        }
+
+        implicit def `Read[Either]`[A: Bundleize.Read, B: Bundleize.Read]: Read[Either[A, B]] = Read {
+            case bundle if bundle.read[Int]( "either" ) == -1 ⇒ Left( bundle.read[A]( "value" ) )
+            case bundle if bundle.read[Int]( "either" ) == 1  ⇒ Right( bundle.read[B]( "value" ) )
         }
 
         implicit def `Read[HList]`[K <: Symbol, V, T <: HList](
@@ -37,35 +57,17 @@ object Bundleable {
         )
 
         implicit val `Read[HNil]`: Read[HNil] = Read( _ ⇒ HNil )
-    }
-
-    object Read extends LowPriorityRead {
-        def apply[T]( f: Bundle ⇒ T ) = new Read[T] {
-            override def read( bundle: Bundle ) = f( bundle )
-        }
-
-        implicit def `Read[Array]`[T: Bundleize.Read: ClassTag]: Read[Array[T]] = Read { bundle ⇒
-            import collection.JavaConversions._
-            bundle.keySet().map( implicitly[Bundleize.Read[T]].read( bundle, _ ) )( breakOut )
-        }
-
-        implicit def `Read[Either]`[A: Bundleize.Read, B: Bundleize.Read]: Read[Either[A, B]] = Read {
-            case bundle if bundle.read[Int]( "either" ) == -1 ⇒ Left( bundle.read[A]( "value" ) )
-            case bundle if bundle.read[Int]( "either" ) == 1  ⇒ Right( bundle.read[B]( "value" ) )
-        }
-
-        implicit def `Read[LabelledGeneric]`[T, LG](
-            implicit
-            lg: LabelledGeneric.Aux[T, LG],
-            b:  Read[LG]
-        ): Read[T] = Read( bundle ⇒ lg.from( b.read( bundle ) ) )
 
         implicit def `Read[Option]`[T: Bundleize.Read]: Read[Option[T]] = Read {
             case bundle: Bundle if bundle.containsKey( "option" ) ⇒ bundle.read[Int]( "option" ) match {
-                case 1  ⇒ Some( bundle.read[T]( "value" ) )
+                case 1  ⇒ `Read[Some]`[T].read( bundle )
                 case -1 ⇒ None
             }
             case null ⇒ None
+        }
+
+        implicit def `Read[Some]`[T: Bundleize.Read]: Read[Some[T]] = Read { bundle ⇒
+            Some( bundle.read[T]( "value" ) )
         }
 
         implicit def `Read[Traversable]`[L[B] <: Traversable[B], T: Bundleize.Read: ClassTag](
@@ -74,30 +76,31 @@ object Bundleable {
         ): Read[L[T]] = Read[L[T]]( `Read[Array]`[T].read( _ ).to[L] )
     }
 
+    object Read extends DefaultPriorityRead {
+        def apply[T]( f: Bundle ⇒ T ) = new Read[T] {
+            override def read( bundle: Bundle ) = f( bundle )
+        }
+    }
+
     trait Write[-T] {
         def write( value: T ): Bundle
     }
 
-    trait LowPriorityWrite {
+    trait MinorPriorityWrite {
         implicit def `Write[Bundleize]`[T]( implicit w: Lazy[Bundleize.Write[T]] ): Write[T] = {
             Write( Bundle( "value", _ )( w.value ) )
         }
-
-        implicit def `Write[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
-            implicit
-            l:  Length.Aux[FieldType[K, V] :: T, N],
-            ti: ToInt[N],
-            lf: LeftFolder.Aux[FieldType[K, V] :: T, Bundle, fold.write.type, Bundle]
-        ): Write[FieldType[K, V] :: T] = Write( _.foldLeft( new Bundle( toInt[N] ) )( fold.write ) )
-
-        implicit val `Write[HNil]`: Write[HNil] = Write( _ ⇒ Bundle.empty )
     }
 
-    object Write extends LowPriorityWrite {
-        def apply[T]( f: T ⇒ Bundle ) = new Write[T] {
-            override def write( value: T ) = f( value )
-        }
+    trait LowPriorityWrite extends MinorPriorityWrite {
+        implicit def `Write[LabelledGeneric]`[T, LG](
+            implicit
+            lg: LabelledGeneric.Aux[T, LG],
+            b:  Write[LG]
+        ): Write[T] = Write( value ⇒ b.write( lg.to( value ) ) )
+    }
 
+    trait DefaultPriorityWrite extends LowPriorityWrite {
         implicit def `Write[Array]`[T: Bundleize.Write]: Write[Array[T]] = Write { value ⇒
             val array = value.zipWithIndex
             val bundle = Bundle( value.length )
@@ -110,19 +113,30 @@ object Bundleable {
             case Right( value ) ⇒ Bundle( "either" ->> 1 :: "value" ->> value :: HNil )
         }
 
-        implicit def `Write[LabelledGeneric]`[T, LG](
+        implicit def `Write[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
             implicit
-            lg: LabelledGeneric.Aux[T, LG],
-            b:  Write[LG]
-        ): Write[T] = Write( value ⇒ b.write( lg.to( value ) ) )
+            l:  Length.Aux[FieldType[K, V] :: T, N],
+            ti: ToInt[N],
+            lf: LeftFolder.Aux[FieldType[K, V] :: T, Bundle, fold.write.type, Bundle]
+        ): Write[FieldType[K, V] :: T] = Write( _.foldLeft( new Bundle( toInt[N] ) )( fold.write ) )
+
+        implicit val `Write[HNil]`: Write[HNil] = Write( _ ⇒ Bundle.empty )
+
+        implicit val `Write[None]`: Write[None.type] = Write( _ ⇒ Bundle( "option", -1 ) )
 
         implicit def `Write[Option]`[T: Bundleize.Write]: Write[Option[T]] = Write {
             case Some( value ) ⇒ Bundle( "option" ->> 1 :: "value" ->> value :: HNil )
-            case None          ⇒ Bundle( "option" ->> -1 :: HNil )
+            case None          ⇒ `Write[None]`.write( None )
         }
 
         implicit def `Write[Traversable]`[L[B] <: Traversable[B], T: Bundleize.Write: ClassTag]: Write[L[T]] = Write {
             value ⇒ `Write[Array]`[T].write( value.toArray )
+        }
+    }
+
+    object Write extends DefaultPriorityWrite {
+        def apply[T]( f: T ⇒ Bundle ) = new Write[T] {
+            override def write( value: T ) = f( value )
         }
     }
 

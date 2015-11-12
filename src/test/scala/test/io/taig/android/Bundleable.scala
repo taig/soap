@@ -46,8 +46,8 @@ class Bundleable
 
     it should "support Option" in {
         bundleable( Option( 3 ) )
-        // bundleable( Some( "asdf" ) )
-        // bundleable( None )
+        bundleable( Some( "asdf" ) )
+        bundleable( None )
     }
 
     it should "support Traversable" in {
