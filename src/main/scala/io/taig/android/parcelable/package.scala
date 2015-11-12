@@ -15,10 +15,10 @@ package object parcelable {
             }
         }
 
-        def read[T: Bundleize.Read]( key: String ) = implicitly[Bundleize.Read[T]].read( bundle, key )
+        def read[T: bundleize.Read]( key: String ) = implicitly[bundleize.Read[T]].read( bundle, key )
 
-        def write[T: Bundleize.Write]( key: String, value: T ): Bundle = {
-            implicitly[Bundleize.Write[T]].write( bundle, key, value )
+        def write[T: bundleize.Write]( key: String, value: T ): Bundle = {
+            implicitly[bundleize.Write[T]].write( bundle, key, value )
             bundle
         }
     }
@@ -28,9 +28,9 @@ package object parcelable {
         field.setAccessible( true )
         var bundle = field.get( intent ).asInstanceOf[Bundle]
 
-        def read[T: Bundleize.Read]( key: String ) = bundle.read[T]( key )
+        def read[T: bundleize.Read]( key: String ) = bundle.read[T]( key )
 
-        def write[T: Bundleize.Write]( key: String, value: T ): Intent = {
+        def write[T: bundleize.Write]( key: String, value: T ): Intent = {
             if ( bundle == null ) {
                 bundle = new Bundle()
                 field.set( intent, bundle )
