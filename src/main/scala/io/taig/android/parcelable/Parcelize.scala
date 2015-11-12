@@ -22,11 +22,7 @@ object Parcelize {
         }
     }
 
-    object Read extends LowPriorityRead {
-        def apply[T]( f: Parcel ⇒ T ): Read[T] = new Read[T] {
-            override def read( source: Parcel ) = f( source )
-        }
-
+    trait DefaultPriorityRead extends LowPriorityRead {
         implicit val `Read[Bundle]`: Read[Bundle] = Read( _.readBundle )
 
         implicit val `Read[Boolean]`: Read[Boolean] = Read( _.readValue( null ).asInstanceOf[Boolean] )
@@ -75,6 +71,12 @@ object Parcelize {
         implicit val `Read[URL]`: Read[URL] = Read[URL]( source ⇒ new URL( source.read[String] ) )
     }
 
+    object Read extends DefaultPriorityRead {
+        def apply[T]( f: Parcel ⇒ T ): Read[T] = new Read[T] {
+            override def read( source: Parcel ) = f( source )
+        }
+    }
+
     trait Write[-T] {
         def write( destination: Parcel, value: T, flags: Int ): Unit
     }
@@ -85,11 +87,7 @@ object Parcelize {
         }
     }
 
-    object Write extends LowPriorityWrite {
-        def apply[T]( f: ( Parcel, T ) ⇒ Unit ): Write[T] = new Write[T] {
-            def write( destination: Parcel, value: T, flags: Int ) = f( destination, value )
-        }
-
+    trait DefaultPriorityWrite {
         implicit val `Write[Bundle]`: Write[Bundle] = Write( _.writeBundle( _ ) )
 
         implicit val `Write[Boolean]`: Write[Boolean] = Write( _.writeValue( _ ) )
@@ -143,6 +141,12 @@ object Parcelize {
 
         implicit val `Write[URL]`: Write[URL] = Write[URL] { ( destination, value ) ⇒
             destination.writeString( value.toExternalForm )
+        }
+    }
+
+    object Write extends DefaultPriorityWrite {
+        def apply[T]( f: ( Parcel, T ) ⇒ Unit ): Write[T] = new Write[T] {
+            def write( destination: Parcel, value: T, flags: Int ) = f( destination, value )
         }
     }
 }
