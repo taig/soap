@@ -23,7 +23,9 @@ object Bundleable {
     }
 
     trait LowPriorityRead {
-        implicit def `Read[Bundleize]`[T: Bundleize.Read]: Read[T] = Read( _.read[T]( "value" ) )
+        implicit def `Read[Bundleize]`[T]( implicit r: Lazy[Bundleize.Read[T]] ): Read[T] = {
+            Read( _.read[T]( "value" )( r.value ) )
+        }
     }
 
     object Read extends LowPriorityRead {
@@ -77,7 +79,9 @@ object Bundleable {
     }
 
     trait LowPriorityWrite {
-        implicit def `Write[Bundleize]`[T: Bundleize.Write]: Write[T] = Write( Bundle( "value", _ ) )
+        implicit def `Write[Bundleize]`[T]( implicit w: Lazy[Bundleize.Write[T]] ): Write[T] = {
+            Write( Bundle( "value", _ )( w.value ) )
+        }
     }
 
     object Write extends LowPriorityWrite {
