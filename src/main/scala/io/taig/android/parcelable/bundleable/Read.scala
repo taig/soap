@@ -1,7 +1,6 @@
 package io.taig.android.parcelable.bundleable
 
 import io.taig.android.parcelable._
-import io.taig.android.parcelable.internal._
 import shapeless._
 import shapeless.labelled._
 
@@ -15,6 +14,8 @@ import scala.reflect.ClassTag
  */
 trait Read[T] {
     def read( bundle: Bundle ): T
+
+    def map[S]( f: T ⇒ S ): Read[S] = Read[S]{ bundle ⇒ f( read( bundle ) ) }
 }
 
 trait Read2 {

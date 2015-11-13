@@ -4,7 +4,6 @@ import android.annotation.TargetApi
 import android.os.{ IBinder, Parcelable ⇒ AParcelable }
 import android.util.{ Size, SizeF }
 import io.taig.android.parcelable._
-import io.taig.android.parcelable.internal._
 import shapeless.Lazy
 
 import scala.collection.generic.CanBuildFrom
@@ -15,6 +14,8 @@ import scala.language.higherKinds
  */
 trait Read[T] {
     def read( bundle: Bundle, key: String ): T
+
+    def map[S]( f: T ⇒ S ): Read[S] = Read{ ( bundle, key ) ⇒ f( read( bundle, key ) ) }
 }
 
 trait Read1 {

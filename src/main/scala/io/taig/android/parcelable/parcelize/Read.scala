@@ -8,7 +8,6 @@ import android.os.{ IBinder, Parcel, PersistableBundle }
 import android.text.TextUtils
 import android.util.{ Size, SizeF, SparseBooleanArray }
 import io.taig.android.parcelable._
-import io.taig.android.parcelable.internal._
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
@@ -19,6 +18,8 @@ import scala.reflect.ClassTag
  */
 trait Read[T] {
     def read( source: Parcel ): T
+
+    def map[S]( f: T ⇒ S ): Read[S] = Read{ source ⇒ f( read( source ) ) }
 }
 
 trait Read1 {
