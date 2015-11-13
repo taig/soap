@@ -1,10 +1,13 @@
 package io.taig.android.parcelable
 
-import io.taig.android.parcelable.generator.Macro
+import scala.reflect.ClassTag
 
-import scala.annotation.StaticAnnotation
-import scala.language.experimental.macros
+trait Parcelable extends android.os.Parcelable {
+    override def describeContents() = 0
+}
 
-class Parcelable extends StaticAnnotation {
-    def macroTransform( annottees: Any* ): Any = macro Macro.annotation
+object Parcelable {
+    abstract class Creator[T: ClassTag] extends android.os.Parcelable.Creator[T] {
+        override def newArray(size: Int) = new Array[T]( size )
+    }
 }
