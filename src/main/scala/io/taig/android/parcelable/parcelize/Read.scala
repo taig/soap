@@ -12,6 +12,7 @@ import io.taig.android.parcelable.internal._
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
+import scala.reflect.ClassTag
 
 /**
  * Type class that instructs how to read a value from a given Parcel
@@ -42,6 +43,12 @@ trait Read0 extends Read1 {
     implicit val `Read[Array[Int]]`: Read[Array[Int]] = Read( _.createIntArray )
 
     implicit val `Read[Array[Long]]`: Read[Array[Long]] = Read( _.createLongArray )
+
+    implicit def `Read[Array[Parcelize]]`[T: Read: ClassTag]: Read[Array[T]] = Read { source ⇒
+        val array = new Array[T]( source.read[Int] )
+        ( 0 to array.length ).foreach( i ⇒ array( i ) = source.read[T] )
+        array
+    }
 
     implicit val `Read[Array[String]]`: Read[Array[String]] = Read( _.createStringArray )
 
@@ -134,6 +141,11 @@ trait Read0 extends Read1 {
         implicit
         cbf: CanBuildFrom[Nothing, Long, L[Long]]
     ): Read[L[Long]] = `Read[Array[Long]]`.map( _.to[L] )
+
+    implicit def `Read[Traversable[Parcelize]]`[L[B] <: Traversable[B], T: Read: ClassTag](
+        implicit
+        cbf: CanBuildFrom[Nothing, T, L[T]]
+    ): Read[L[T]] = `Read[Array[Parcelize]]`[T].map( _.to[L] )
 
     implicit def `Read[Traversable[String]]`[L[B] <: Traversable[B]](
         implicit

@@ -9,6 +9,8 @@ import android.text.TextUtils
 import android.util.{ Size, SizeF, SparseBooleanArray }
 import io.taig.android.parcelable._
 
+import scala.reflect.ClassTag
+
 /**
  * Type class that instructs how to write a value to a given Parcel
  */
@@ -38,6 +40,11 @@ trait Write0 extends Write1 {
     implicit val `Write[Array[Int]`: Write[Array[Int]] = Write( _.writeIntArray( _ ) )
 
     implicit val `Write[Array[Long]`: Write[Array[Long]] = Write( _.writeLongArray( _ ) )
+
+    implicit def `Write[Array[Parcelize]]`[T: Write]: Write[Array[T]] = Write { ( destination, values ) ⇒
+        destination.write( values.length )
+        values.foreach( destination.write( _ ) )
+    }
 
     implicit val `Write[Array[String]`: Write[Array[String]] = Write( _.writeStringArray( _ ) )
 
@@ -139,6 +146,12 @@ trait Write0 extends Write1 {
     implicit val `Write[Traversable[Long]]`: Write[Traversable[Long]] = new Write[Traversable[Long]] {
         override def write( destination: Parcel, value: Traversable[Long], flags: Int ) = {
             `Write[Array[Long]`.write( destination, value.toArray, flags )
+        }
+    }
+
+    implicit def `Write[Traversable[Parcelize]]`[T: Write: ClassTag]: Write[Traversable[T]] = new Write[Traversable[T]] {
+        override def write( destination: Parcel, value: Traversable[T], flags: Int ) = {
+            `Write[Array[Parcelize]]`[T].write( destination, value.toArray, flags )
         }
     }
 
