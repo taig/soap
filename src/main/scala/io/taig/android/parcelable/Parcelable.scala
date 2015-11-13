@@ -8,6 +8,6 @@ trait Parcelable extends android.os.Parcelable {
 
 object Parcelable {
     abstract class Creator[T: ClassTag] extends android.os.Parcelable.Creator[T] {
-        override def newArray(size: Int) = new Array[T]( size )
+        override def newArray( size: Int ) = new Array[T with Object]( size )
     }
 }
