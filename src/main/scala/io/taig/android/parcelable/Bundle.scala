@@ -19,7 +19,7 @@ object Bundle {
     }
 
     private object fold extends Poly2 {
-        implicit def string[K, V: bundleize.Write]( implicit w: Witness.Aux[K] ) = {
+        implicit def default[K, V: bundleize.Write]( implicit w: Witness.Aux[K] ) = {
             at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
                 val key = w.value match {
                     case symbol: Symbol ⇒ symbol.name
