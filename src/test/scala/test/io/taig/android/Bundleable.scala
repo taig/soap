@@ -48,6 +48,15 @@ class Bundleable
         test[HNil, HNil]( HNil )
     }
 
+    it should "support trait inheritance" in {
+        sealed trait Animal
+        case class Dog( name: String ) extends Animal
+        case class Cat( friendly: Boolean ) extends Animal
+
+        test[Animal, Dog]( Dog( "Hoschi" ) )
+        test[Animal, Cat]( Cat( false ) )
+    }
+
     it should "support Option" in {
         test[Option[Int], Option[Int]]( Option( 3 ) )
         test[Option[Int], Some[Int]]( Option( 3 ) )
