@@ -12,13 +12,13 @@ pomExtra := {
         <system>GitHub Issues</system>
     </issueManagement>
     <developers>
-    <developer>
-        <id>Taig</id>
-        <name>Niklas Klein</name>
-        <email>mail@taig.io</email>
-        <url>http://taig.io/</url>
-    </developer>
-</developers>
+        <developer>
+            <id>Taig</id>
+            <name>Niklas Klein</name>
+            <email>mail@taig.io</email>
+            <url>http://taig.io/</url>
+        </developer>
+    </developers>
 }
 
 pomIncludeRepository := { _ => false }
@@ -30,12 +30,9 @@ publishMavenStyle := true
 publishTo <<= version ( version => {
     val url = Some( "https://oss.sonatype.org/" )
 
-    if( version.endsWith( "SNAPSHOT" ) )
-    {
+    if( version.endsWith( "SNAPSHOT" ) ) {
         url.map( "snapshot" at _ + "content/repositories/snapshots" )
-    }
-    else
-    {
+    } else {
         url.map( "release" at _ + "service/local/staging/deploy/maven2" )
     }
 } )

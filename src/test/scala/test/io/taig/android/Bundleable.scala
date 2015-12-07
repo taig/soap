@@ -53,8 +53,8 @@ class Bundleable
         case class Dog( name: String ) extends Animal
         case class Cat( friendly: Boolean ) extends Animal
 
-        test[Animal, Dog]( Dog( "Hoschi" ) )
-        test[Animal, Cat]( Cat( false ) )
+        test[Animal, Animal]( Dog( "Hoschi" ) )
+        test[Animal, Animal]( Cat( false ) )
     }
 
     it should "support Option" in {

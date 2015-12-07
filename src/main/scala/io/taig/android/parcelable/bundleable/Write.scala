@@ -41,6 +41,20 @@ trait Write0 extends Write1 {
         bundle
     }
 
+    implicit val `Write[CNil]`: Write[CNil] = Write[CNil] { _ ⇒
+        sys.error( "No Write representation of CNil (this shouldn't happen)" )
+    }
+
+    implicit def `Write[Coproduct]`[K <: Symbol, H, T <: Coproduct](
+        implicit
+        k: Witness.Aux[K],
+        h: Lazy[Write[H]],
+        t: Lazy[Write[T]]
+    ): Write[FieldType[K, H] :+: T] = Write {
+        case Inl( head ) ⇒ Bundle( "type" ->> k.value.name :: "value" ->> h.value.write( head ) :: HNil )
+        case Inr( tail ) ⇒ t.value.write( tail )
+    }
+
     implicit def `Write[Either]`[L: bundleize.Write, R: bundleize.Write]: Write[Either[L, R]] = Write {
         case value @ Left( _ )  ⇒ `Write[Left]`[L, R].write( value )
         case value @ Right( _ ) ⇒ `Write[Right]`[L, R].write( value )

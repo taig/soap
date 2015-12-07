@@ -15,7 +15,7 @@ import scala.reflect.ClassTag
 trait Read[T] {
     def read( bundle: Bundle ): T
 
-    def map[S]( f: T ⇒ S ): Read[S] = Read[S]{ bundle ⇒ f( read( bundle ) ) }
+    def map[S]( f: T ⇒ S ): Read[S] = Read[S]( bundle ⇒ f( read( bundle ) ) )
 }
 
 trait Read2 {
@@ -34,6 +34,24 @@ trait Read0 extends Read1 {
     implicit def `Read[Array]`[T: bundleize.Read: ClassTag]: Read[Array[T]] = Read { bundle ⇒
         import collection.JavaConversions._
         bundle.keySet().map( implicitly[bundleize.Read[T]].read( bundle, _ ) )( breakOut )
+    }
+
+    implicit val `Read[CNil]`: Read[CNil] = Read[CNil] { _ ⇒
+        sys.error( "No Read representation of CNil (this shouldn't happen)" )
+    }
+
+    implicit def `Read[Coproduct]`[K <: Symbol, H, T <: Coproduct](
+        implicit
+        k: Witness.Aux[K],
+        h: Lazy[Read[H]],
+        t: Lazy[Read[T]]
+    ): Read[FieldType[K, H] :+: T] = Read[FieldType[K, H] :+: T] { bundle ⇒
+        bundle.read[String]( "type" ) match {
+            case k.value.name ⇒
+                val value = bundle.read[Bundle]( "value" )
+                Inl( field( h.value.read( value ) ) )
+            case _ ⇒ Inr( t.value.read( bundle ) )
+        }
     }
 
     implicit def `Read[Either]`[A: bundleize.Read, B: bundleize.Read]: Read[Either[A, B]] = Read { bundle ⇒
