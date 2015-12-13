@@ -39,36 +39,60 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit def `Decoder[HList]`[K <: Symbol, V, T <: HList](
         implicit
         key: Witness.Aux[K],
-        bv:  bundle.Decoder[V],
-        bt:  Decoder[T]
+        dv:  Lazy[bundle.Decoder[V]],
+        dt:  Lazy[Decoder[T]]
     ): Decoder[FieldType[K, V] :: T] = {
-        Decoder( bundle ⇒ field[K]( bundle.read[V]( key.value.name ) ) :: bt.decode( bundle ) )
+        Decoder( bundle ⇒ field[K]( bundle.read[V]( key.value.name )( dv.value ) ) :: dt.value.decode( bundle ) )
     }
 }
 
 trait Decoders1 extends DecoderOperations with Decoders2 {
-    implicit def `Decoder[Array[bundle.Decoder]]`[V: bundle.Decoder: ClassTag]: Decoder[Array[V]] = Decoder { bundle ⇒
+    implicit def `Decoder[Array[bundle.Decoder]]`[V: ClassTag](
+        implicit
+        d: Lazy[bundle.Decoder[V]]
+    ): Decoder[Array[V]] = Decoder { bundle ⇒
         val array = new Array[V]( bundle.size() )
 
         for ( i ← 0 until bundle.size() ) {
-            array( i ) = bundle.read[V]( i.toString )
+            array( i ) = bundle.read[V]( i.toString )( d.value )
         }
 
         array
     }
 
-    implicit def `Decoder[Traversable[bundle.Decoder]]`[V: bundle.Decoder: ClassTag, T[V] <: Traversable[V]](
+    implicit def `Decoder[Array[Option[bundle.Decoder]]]`[V: ClassTag](
         implicit
+        d: Lazy[bundle.Decoder[Option[V]]]
+    ): Decoder[Array[Option[V]]] = Decoder { bundle ⇒
+        val length = bundle.read[Int]( "length" )
+        val array = new Array[Option[V]]( length )
+
+        for ( i ← 0 until length ) {
+            array( i ) = bundle.read[Option[V]]( i.toString )( d.value )
+        }
+
+        array
+    }
+
+    implicit def `Decoder[Traversable[bundle.Decoder]]`[V: ClassTag, T[V] <: Traversable[V]](
+        implicit
+        d:   Lazy[bundle.Decoder[V]],
         cbf: CanBuildFrom[Nothing, V, T[V]]
     ): Decoder[T[V]] = `Decoder[Array[bundle.Decoder]]`[V].map( _.to[T] )
+
+    implicit def `Decoder[Traversable[Option[bundle.Decoder]]]`[V: ClassTag, T[V] <: Traversable[V]](
+        implicit
+        d:   Lazy[bundle.Decoder[Option[V]]],
+        cbf: CanBuildFrom[Nothing, Option[V], T[Option[V]]]
+    ): Decoder[T[Option[V]]] = `Decoder[Array[Option[bundle.Decoder]]]`[V].map( _.to[T] )
 }
 
 trait Decoders2 extends DecoderOperations {
     implicit def `Decoder[LabelledGeneric]`[T, LG](
         implicit
         lg: LabelledGeneric.Aux[T, LG],
-        b:  Decoder[LG]
-    ): Decoder[T] = Decoder( bundle ⇒ lg.from( b.decode( bundle ) ) )
+        d:  Lazy[Decoder[LG]]
+    ): Decoder[T] = Decoder( bundle ⇒ lg.from( d.value.decode( bundle ) ) )
 }
 
 trait DecoderOperations {

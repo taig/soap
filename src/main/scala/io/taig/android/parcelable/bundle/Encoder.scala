@@ -10,6 +10,7 @@ import cats.syntax.contravariant._
 import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
+import shapeless.Lazy
 
 import scala.language.higherKinds
 import scala.reflect.ClassTag
@@ -71,8 +72,8 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
 
     implicit val `Encoder[Long]`: Encoder[Long] = Encoder( _.putLong( _, _ ) )
 
-    implicit def `Encoder[Option]`[V: Encoder]: Encoder[Option[V]] = Encoder {
-        case ( bundle, key, value ) ⇒ value.foreach( bundle.write( key, _ ) )
+    implicit def `Encoder[Option]`[V]( implicit e: Lazy[Encoder[V]] ): Encoder[Option[V]] = Encoder {
+        case ( bundle, key, value ) ⇒ value.foreach( bundle.write( key, _ )( e.value ) )
     }
 
     implicit def `Encoder[Parcelable]`[V <: Parcelable]: Encoder[V] = Encoder( _.putParcelable( _, _ ) )
@@ -101,15 +102,15 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
 
     implicit def `Encoder[Traversable]`[V: ClassTag, T[V] <: Traversable[V]](
         implicit
-        e: Encoder[Array[V]]
-    ): Encoder[T[V]] = e.contramap( _.toArray )
+        e: Lazy[Encoder[Array[V]]]
+    ): Encoder[T[V]] = e.map( _.contramap[T[V]]( _.toArray ) ).value
 
     implicit val `Encoder[URL]`: Encoder[URL] = `Encoder[String]`.contramap( _.toString )
 }
 
 trait Encoders1 extends EncoderOperations {
-    implicit def `Encoder[bundler.Encoder]`[V: bundler.Encoder]: Encoder[V] = Encoder {
-        case ( bundle, key, value ) ⇒ bundle.write( key, implicitly[bundler.Encoder[V]].encode( value ) )
+    implicit def `Encoder[bundler.Encoder]`[V]( implicit e: Lazy[bundler.Encoder[V]] ): Encoder[V] = Encoder {
+        case ( bundle, key, value ) ⇒ bundle.write( key, e.value.encode( value ) )
     }
 }
 

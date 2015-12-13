@@ -1,16 +1,17 @@
 package io.taig.android.parcelable
 
 import shapeless.labelled.FieldType
-import shapeless.{ Poly2, Witness }
+import shapeless.{ Lazy, Poly2, Witness }
 
 package object bundler {
-    private[bundler] object fold extends Poly2 {
-        implicit def default[K <: Symbol, V: bundle.Encoder](
+    object fold extends Poly2 {
+        implicit def default[K <: Symbol, V](
             implicit
-            key: Witness.Aux[K]
+            k: Witness.Aux[K],
+            e: Lazy[bundle.Encoder[V]]
         ): Case.Aux[Bundle, FieldType[K, V], Bundle] = {
             at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
-                bundle.write[V]( key.value.name, value )
+                bundle.write[V]( k.value.name, value )( e.value )
                 bundle
             }
         }

@@ -27,14 +27,12 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
     implicit def `Encoder[Coproduct]`[K <: Symbol, H, T <: Coproduct](
         implicit
         k: Witness.Aux[K],
-        h: bundle.Encoder[H],
-        t: Encoder[T]
+        h: Lazy[bundle.Encoder[H]],
+        t: Lazy[Encoder[T]]
     ): Encoder[FieldType[K, H] :+: T] = Encoder {
-        case Inl( head ) ⇒ Bundle[H]( k.value.name, head )( h )
-        case Inr( tail ) ⇒ t.encode( tail )
+        case Inl( head ) ⇒ Bundle[H]( k.value.name, head )( h.value )
+        case Inr( tail ) ⇒ t.value.encode( tail )
     }
-
-    implicit val `Encoder[HNil]`: Encoder[HNil] = Encoder( _ ⇒ Bundle.empty )
 
     implicit def `Encoder[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
         implicit
@@ -45,18 +43,47 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
 }
 
 trait Encoders1 extends EncoderOperations with Encoders2 {
-    implicit def `Encoder[Array[bundle.Encoder]]`[V: bundle.Encoder]: Encoder[Array[V]] = Encoder { values ⇒
+    implicit def `Encoder[Array[bundle.Encoder]]`[V](
+        implicit
+        e: Lazy[bundle.Encoder[V]]
+    ): Encoder[Array[V]] = Encoder { values ⇒
         val bundle = Bundle( values.length )
 
         for ( i ← values.indices ) {
-            bundle.write( i.toString, values( i ) )
+            bundle.write( i.toString, values( i ) )( e.value )
         }
 
         bundle
     }
 
-    implicit def `Encoder[Traversable[bundle.Encoder]]`[V: bundle.Encoder: ClassTag, T[V] <: Traversable[V]]: Encoder[T[V]] = {
+    implicit def `Encoder[Array[Option[bundle.Encoder]]]`[V](
+        implicit
+        e: Lazy[bundle.Encoder[Option[V]]]
+    ): Encoder[Array[Option[V]]] = Encoder { values ⇒
+        val length = values.length
+        val bundle = Bundle( values.count( _.isDefined ) )
+
+        bundle.write( "length", length )
+
+        for ( i ← values.indices ) {
+            bundle.write( i.toString, values( i ) )( e.value )
+        }
+
+        bundle
+    }
+
+    implicit def `Encoder[Traversable[bundle.Encoder]]`[V: ClassTag, T[V] <: Traversable[V]](
+        implicit
+        e: Lazy[bundle.Encoder[V]]
+    ): Encoder[T[V]] = {
         `Encoder[Array[bundle.Encoder]]`[V].contramap( _.toArray )
+    }
+
+    implicit def `Encoder[Traversable[Option[bundle.Encoder]]]`[V: ClassTag, T[V] <: Traversable[V]](
+        implicit
+        e: Lazy[bundle.Encoder[Option[V]]]
+    ): Encoder[T[Option[V]]] = {
+        `Encoder[Array[Option[bundle.Encoder]]]`[V].contramap( _.toArray )
     }
 }
 
@@ -64,8 +91,8 @@ trait Encoders2 extends EncoderOperations {
     implicit def `Encoder[LabelledGeneric]`[T, LG](
         implicit
         lg: LabelledGeneric.Aux[T, LG],
-        e:  Encoder[LG]
-    ): Encoder[T] = Encoder( value ⇒ e.encode( lg.to( value ) ) )
+        e:  Lazy[Encoder[LG]]
+    ): Encoder[T] = Encoder( value ⇒ e.value.encode( lg.to( value ) ) )
 }
 
 trait EncoderOperations {

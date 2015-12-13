@@ -22,7 +22,9 @@ class Bundle extends FlatSpec
     def symmetric[T: Encoder: Decoder]( value: T ) = asymmetric[T, T]( value, value )
 
     def asymmetric[I: Encoder, O: Decoder]( value: I, result: O ) = {
-        Bundle( "value", value ).read[O]( "value" ) shouldEqual result
+        val bundle = Bundle( "value", value )
+        bundle.read[O]( "value" ) shouldEqual result
+        bundle
     }
 
     it should "support Array" in {

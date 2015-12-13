@@ -10,6 +10,7 @@ import cats.syntax.functor._
 import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
+import shapeless.Lazy
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
@@ -86,12 +87,12 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
 
     implicit val `Decoder[Long]`: Decoder[Long] = Decoder( _.getLong( _ ) )
 
-    implicit def `Decoder[Option]`[V: Decoder]: Decoder[Option[V]] = new Decoder[Option[V]] {
+    implicit def `Decoder[Option]`[V]( implicit d: Lazy[Decoder[V]] ): Decoder[Option[V]] = new Decoder[Option[V]] {
         override def decode( serialization: ( Bundle, String ) ) = decodeRaw( serialization )
 
         override def decodeRaw( serialization: ( Bundle, String ) ) = serialization match {
             case ( bundle, key ) ⇒ bundle.containsKey( key ) match {
-                case true  ⇒ Option( bundle.read[V]( key ) )
+                case true  ⇒ Option( bundle.read[V]( key )( d.value ) )
                 case false ⇒ None
             }
         }
@@ -123,16 +124,16 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
 
     implicit def `Decoder[Traversable]`[V, T[V] <: Traversable[V]](
         implicit
-        d:   Decoder[Array[V]],
+        d:   Lazy[Decoder[Array[V]]],
         cbf: CanBuildFrom[Array[V], V, T[V]]
-    ): Decoder[T[V]] = d.map( _.to[T] )
+    ): Decoder[T[V]] = d.map( _.map( _.to[T] ) ).value
 
     implicit val `Decoder[URL]`: Decoder[URL] = `Decoder[String]`.map( new URL( _ ) )
 }
 
 trait Decoders1 extends DecoderOperations {
-    implicit def `Decoder[bundler.Decoder]`[V: bundler.Decoder]: Decoder[V] = Decoder {
-        case ( bundle, key ) ⇒ implicitly[bundler.Decoder[V]].decode( bundle.read[Bundle]( key ) )
+    implicit def `Decoder[bundler.Decoder]`[V]( implicit d: Lazy[bundler.Decoder[V]] ): Decoder[V] = Decoder {
+        case ( bundle, key ) ⇒ d.value.decode( bundle.read[Bundle]( key ) )
     }
 }
 
