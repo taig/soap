@@ -1,7 +1,6 @@
 package io.taig.android.parcelable
 
-import shapeless._
-import shapeless.labelled._
+import shapeless.HList
 import shapeless.ops.hlist.LeftFolder
 
 object Bundle {
@@ -9,27 +8,9 @@ object Bundle {
 
     def apply( capacity: Int ): Bundle = new Bundle( capacity )
 
-    def apply[T: bundleize.Write]( key: String, value: T ): Bundle = Bundle( 1 ).write( key, value )
+    def apply[T: bundle.Encoder]( key: String, value: T ): Bundle = Bundle( 1 ).write( key, value )
 
-    def apply[H <: HList]( arguments: H )(
-        implicit
-        lf: LeftFolder.Aux[H, Bundle, fold.type, Bundle]
-    ): Bundle = {
-        arguments.foldLeft( Bundle( arguments.runtimeLength ) )( fold )
-    }
-
-    private object fold extends Poly2 {
-        implicit def default[K, V: bundleize.Write]( implicit w: Witness.Aux[K] ) = {
-            at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
-                val key = w.value match {
-                    case symbol: Symbol ⇒ symbol.name
-                    case string: String ⇒ string
-                }
-
-                implicitly[bundleize.Write[V]].write( bundle, key, value )
-
-                bundle
-            }
-        }
+    def apply[L <: HList]( arguments: L )( implicit lf: LeftFolder.Aux[L, Bundle, bundle.fold.type, Bundle] ): Bundle = {
+        arguments.foldLeft( Bundle( arguments.runtimeLength ) )( bundle.fold )
     }
 }
