@@ -5,20 +5,15 @@ import java.net.URL
 import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import android.os.Parcelable
-import android.util.{ SizeF, Size }
-import io.taig.android.parcelable._
-import io.taig.android.parcelable.{ Bundle ⇒ ABundle }
-import io.taig.android.parcelable.bundle.Encoder
-import io.taig.android.parcelable.bundle.Decoder
+import android.util.{ SparseArray, Size, SizeF }
+import io.taig.android.parcelable.bundle.{ Decoder, Encoder }
+import io.taig.android.parcelable.{ Bundle ⇒ ABundle, _ }
 import org.robolectric.annotation.Config
-import org.scalatest.{ FlatSpec, Matchers, RobolectricSuite }
 import shapeless._
 import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
-class Bundle extends FlatSpec
-        with Matchers
-        with RobolectricSuite {
+class Bundle extends Suite {
     def symmetric[T: Encoder: Decoder]( value: T ) = asymmetric[T, T]( value, value )
 
     def asymmetric[I: Encoder, O: Decoder]( value: I, result: O ) = {
@@ -33,7 +28,7 @@ class Bundle extends FlatSpec
         symmetric[Array[Int]]( Array( 1, 2, 3 ) )
         symmetric[Array[String]]( Array( "1", "2", "3" ) )
         symmetric[Array[Uri]]( Array( Uri.parse( "http://taig.io/" ) ) )
-        symmetric[Array[A]]( Array( A( Byte.MinValue, 'a', None ) ) )
+        symmetric[Array[Animal]]( Array( Dog( "Hoschi" ) ) )
     }
 
     it should "support Boolean" in {
@@ -43,12 +38,11 @@ class Bundle extends FlatSpec
 
     it should "support Bundle" in {
         symmetric[ABundle]( ABundle( "int" ->> 3 :: "string" ->> "asdf" :: "long" ->> 5l :: HNil ) )
+        symmetric[ABundle]( ABundle( 'int ->> 3 :: 'string ->> "asdf" :: 'long ->> 5l :: HNil ) )
     }
 
     it should "support Bundler" in {
-        case class A( b: Byte, c: Char, d: Option[Double] )
-
-        symmetric[A]( A( Byte.MaxValue, 'c', Some( 3.14d ) ) )
+        symmetric[Cat]( Cat( true ) )
     }
 
     it should "support Byte" in {
@@ -105,17 +99,21 @@ class Bundle extends FlatSpec
         symmetric[SizeF]( new SizeF( 16.1f, 9.2f ) )
     }
 
+    it should "support SparseArray[_ <: Parcelable]" in {
+        val array = new SparseArray[Uri]( 1 )
+        array.put( 1, Uri.parse( "http://taig.io/" ) )
+        symmetric[SparseArray[Uri]]( array )
+    }
+
     it should "support String" in {
         symmetric[String]( "asdf" )
     }
 
     it should "support Traversable" in {
-        case class A( b: Byte, c: Char, d: Option[Double] )
-
         symmetric[Traversable[Float]]( Seq( 3.4f, 1.2f, 6.7f ) )
         symmetric[Seq[Float]]( Seq( 3.4f, 1.2f, 6.7f ) )
         symmetric[Vector[Uri]]( Vector( Uri.parse( "http://taig.io/" ) ) )
-        symmetric[List[A]]( List( A( Byte.MinValue, 'a', None ) ) )
+        symmetric[List[Animal]]( List( Dog( "Hoschi" ) ) )
     }
 
     it should "support URL" in {

@@ -8,7 +8,7 @@ package object bundle {
         implicit def default[K, V](
             implicit
             k: Witness.Aux[K],
-            e: Lazy[Encoder[V]]
+            e: Lazy[bundle.Encoder[V]]
         ): Case.Aux[Bundle, FieldType[K, V], Bundle] = {
             at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
                 val key = k.value match {

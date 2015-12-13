@@ -9,7 +9,7 @@ package object intent {
         implicit def default[K, V](
             implicit
             k: Witness.Aux[K],
-            e: Lazy[Encoder[V]]
+            e: Lazy[intent.Encoder[V]]
         ): Case.Aux[Intent, FieldType[K, V], Intent] = {
             at[Intent, FieldType[K, V]] { ( intent, value ) ⇒
                 val key = k.value match {
