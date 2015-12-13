@@ -4,11 +4,11 @@ import java.net.URL
 
 import android.content.Intent
 import android.os.Parcelable
-import cats.Functor
 import export.imports
 import io.taig.android.parcelable
-import cats.syntax.functor._
 import io.taig.android.parcelable._
+import io.taig.android.parcelable.functional._
+import io.taig.android.parcelable.syntax._
 import shapeless.Lazy
 
 import scala.collection.generic.CanBuildFrom
@@ -123,7 +123,7 @@ trait DecoderOperations {
         override def decodeRaw( serialization: ( Intent, String ) ) = f.tupled( serialization )
     }
 
-    implicit val `Functor[Bundle]`: Functor[Decoder] = new Functor[Decoder] {
+    implicit val `Map[Bundle]`: Map[Decoder] = new Map[Decoder] {
         override def map[A, B]( b: Decoder[A] )( f: A ⇒ B ) = new Decoder[B] {
             override def decodeRaw( serialization: ( Intent, String ) ) = f( b.decode( serialization ) )
         }

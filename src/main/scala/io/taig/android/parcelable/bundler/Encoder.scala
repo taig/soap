@@ -1,10 +1,10 @@
 package io.taig.android.parcelable.bundler
 
-import cats.functor.Contravariant
-import cats.syntax.contravariant._
 import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
+import io.taig.android.parcelable.functional._
+import io.taig.android.parcelable.syntax._
 import shapeless.Nat._
 import shapeless._
 import shapeless.labelled.FieldType
@@ -100,7 +100,7 @@ trait EncoderOperations {
         override def encode( value: V ) = f( value )
     }
 
-    implicit val `Contravariant[Bundle]`: Contravariant[Encoder] = new Contravariant[Encoder] {
+    implicit val `Contramap[Bundle]`: Contramap[Encoder] = new Contramap[Encoder] {
         override def contramap[A, B]( b: Encoder[A] )( f: B ⇒ A ) = new Encoder[B] {
             override def encode( value: B ) = b.encode( f( value ) )
         }

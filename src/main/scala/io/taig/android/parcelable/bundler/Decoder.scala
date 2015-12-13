@@ -1,12 +1,12 @@
 package io.taig.android.parcelable.bundler
 
-import cats.Functor
 import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
+import io.taig.android.parcelable.functional._
+import io.taig.android.parcelable.syntax._
 import shapeless._
 import shapeless.labelled._
-import cats.syntax.functor._
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
@@ -100,7 +100,7 @@ trait DecoderOperations {
         override def decode( bundle: Bundle ) = f( bundle )
     }
 
-    implicit val `Functor[Bundle]`: Functor[Decoder] = new Functor[Decoder] {
+    implicit val `Map[Bundle]`: Map[Decoder] = new Map[Decoder] {
         override def map[A, B]( b: Decoder[A] )( f: A ⇒ B ) = new Decoder[B] {
             override def decode( serialization: Bundle ) = f( b.decode( serialization ) )
         }

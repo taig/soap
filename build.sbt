@@ -12,7 +12,6 @@ libraryDependencies ++=
     "org.typelevel" %% "export-hook" % "1.1.0" ::
     "com.geteit" %% "robotest" % "0.12" % "test" ::
     "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
-    "org.spire-math" %% "cats" % "0.3.0" ::
     Nil
 
 name := "Parcelable"
