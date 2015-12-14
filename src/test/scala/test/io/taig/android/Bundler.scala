@@ -17,6 +17,7 @@ class Bundler extends Suite {
     }
 
     it should "support Array" in {
+        symmetric[Array[Int]]( Array( 3, 4 ) )
         symmetric[Array[Option[Int]]]( Array( Some( 3 ), None, Some( 4 ) ) )
     }
 
@@ -38,6 +39,7 @@ class Bundler extends Suite {
     }
 
     it should "support Traversable" in {
+        symmetric[List[Int]]( List( 3, 4 ) )
         symmetric[Seq[Option[Int]]]( Seq( Some( 3 ), None, Some( 4 ) ) )
     }
 
