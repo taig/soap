@@ -32,10 +32,14 @@ class Bundler extends Suite {
         symmetric[Either[String, Int]]( Right( 3 ) )
     }
 
-    it should "support trait inheritance" in {
+    it should "support sealed trait inheritance" in {
         symmetric[Animal]( Dog( "Hoschi" ) )
         symmetric[Animal]( Cat( false ) )
         symmetric[Bird]( Bird.Eagle( Some( 3.4f ), List( Cat( true ), Mouse( 1 ) ) ) )
+    }
+
+    it should "support sealed trait enums" in {
+        symmetric[Enum]( Enum.A )
     }
 
     it should "support Traversable" in {

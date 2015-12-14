@@ -34,6 +34,8 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
         case Inr( tail ) ⇒ t.value.encode( tail )
     }
 
+    implicit val `Encoder[HNil]`: Encoder[HNil] = Encoder( _ ⇒ Bundle.empty )
+
     implicit def `Encoder[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
         implicit
         l:  Length.Aux[FieldType[K, V] :: T, N],

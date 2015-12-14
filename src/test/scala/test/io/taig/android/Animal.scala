@@ -11,3 +11,9 @@ sealed trait Bird extends Animal
 object Bird {
     case class Eagle( weight: Option[Float], hunts: List[Animal] ) extends Bird
 }
+
+sealed trait Enum
+object Enum {
+    case object A extends Enum
+    case object B extends Enum
+}
