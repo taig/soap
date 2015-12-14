@@ -10,6 +10,7 @@ import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
 import io.taig.android.parcelable.syntax._
+import julienrf.enum.Enum
 import shapeless.Lazy
 
 import scala.collection.generic.CanBuildFrom
@@ -70,6 +71,8 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit val `Decoder[CharSequence]`: Decoder[CharSequence] = Decoder( _.getCharSequence( _ ) )
 
     implicit val `Decoder[Double]`: Decoder[Double] = Decoder( _.getDouble( _ ) )
+
+    implicit def `Decoder[Enumeration]`[V: Enum]: Decoder[V] = `Decoder[String]`.map( Enum[V].decodeOpt( _ ).get )
 
     implicit val `Decoder[Float]`: Decoder[Float] = Decoder( _.getFloat( _ ) )
 

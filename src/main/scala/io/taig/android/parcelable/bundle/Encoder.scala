@@ -10,6 +10,7 @@ import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
 import io.taig.android.parcelable.syntax._
+import julienrf.enum.Enum
 import shapeless.Lazy
 
 import scala.language.higherKinds
@@ -58,6 +59,8 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
     implicit val `Encoder[CharSequence]`: Encoder[CharSequence] = Encoder( _.putCharSequence( _, _ ) )
 
     implicit val `Encoder[Double]`: Encoder[Double] = Encoder( _.putDouble( _, _ ) )
+
+    implicit def `Encoder[Enumeration]`[V: Enum]: Encoder[V] = `Encoder[String]`.contramap( Enum[V].encode )
 
     implicit val `Encoder[Float]`: Encoder[Float] = Encoder( _.putFloat( _, _ ) )
 

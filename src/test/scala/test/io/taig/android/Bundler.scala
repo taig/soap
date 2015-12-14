@@ -1,6 +1,7 @@
 package test.io.taig.android
 
 import android.os.Build.VERSION_CODES._
+import io.taig.android.parcelable.{ Bundle ⇒ ABundle }
 import io.taig.android.parcelable.bundler.{ Decoder, Encoder }
 import org.robolectric.annotation.Config
 
@@ -39,7 +40,7 @@ class Bundler extends Suite {
     }
 
     it should "support sealed trait enums" in {
-        symmetric[Enum]( Enum.A )
+        symmetric[Enum]( Enum.A ) shouldEqual ABundle( "A", ABundle.empty )
     }
 
     it should "support Traversable" in {

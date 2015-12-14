@@ -8,6 +8,7 @@ javacOptions ++=
 libraryDependencies ++=
     compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ) ::
     "com.chuusai" %% "shapeless" % "2.2.5" ::
+    "org.julienrf" %% "enum" % "1.1" ::
     "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
     "org.typelevel" %% "export-hook" % "1.1.0" ::
     "com.geteit" %% "robotest" % "0.12" % "test" ::

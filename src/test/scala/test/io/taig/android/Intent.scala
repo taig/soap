@@ -86,6 +86,10 @@ class Intent extends Suite {
         symmetric[Uri]( Uri.parse( "http://taig.io/" ) )
     }
 
+    it should "support sealed trait enums" in {
+        symmetric[Enum]( Enum.B ).getExtras shouldEqual ABundle( "value", "B" )
+    }
+
     it should "support Short" in {
         symmetric[Short]( 3.toShort )
     }
