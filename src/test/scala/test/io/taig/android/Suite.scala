@@ -9,4 +9,3 @@ trait Suite
     extends FlatSpec
     with Matchers
     with RobolectricSuite
-    with Samples

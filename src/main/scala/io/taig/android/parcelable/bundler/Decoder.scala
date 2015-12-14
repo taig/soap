@@ -19,7 +19,7 @@ object Decoder extends DecoderOperations with Decoders0
 @imports[Decoder]
 trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit val `Decoder[CNil]`: Decoder[CNil] = Decoder{ _ ⇒
-        sys.error( "No Read representation of CNil (this shouldn't happen)" )
+        sys.error( "No Decoder representation of CNil (this shouldn't happen)" )
     }
 
     implicit def `Decoder[Coproduct]`[K <: Symbol, H, T <: Coproduct](

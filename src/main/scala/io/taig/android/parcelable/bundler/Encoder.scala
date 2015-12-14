@@ -21,7 +21,7 @@ object Encoder extends EncoderOperations with Encoders0
 @imports[Encoder]
 trait Encoders0 extends EncoderOperations with Encoders1 {
     implicit val `Encoder[CNil]`: Encoder[CNil] = Encoder { _ ⇒
-        sys.error( "No Write representation of CNil (this shouldn't happen)" )
+        sys.error( "No Encoder representation of CNil (this shouldn't happen)" )
     }
 
     implicit def `Encoder[Coproduct]`[K <: Symbol, H, T <: Coproduct](
