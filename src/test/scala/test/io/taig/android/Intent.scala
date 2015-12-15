@@ -99,8 +99,6 @@ class Intent extends Suite {
     }
 
     it should "support Traversable" in {
-        case class A( b: Byte, c: Char, d: Option[Double] )
-
         symmetric[Traversable[Float]]( Seq( 3.4f, 1.2f, 6.7f ) )
         symmetric[Seq[Float]]( Seq( 3.4f, 1.2f, 6.7f ) )
         symmetric[Vector[Uri]]( Vector( Uri.parse( "http://taig.io/" ) ) )

@@ -1,6 +1,5 @@
 package io.taig.android.parcelable.bundler
 
-import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
@@ -18,7 +17,6 @@ trait Encoder[V] extends Codec[V] with parcelable.Encoder
 
 object Encoder extends EncoderOperations with Encoders0
 
-@imports[Encoder]
 trait Encoders0 extends EncoderOperations with Encoders1 {
     implicit val `Encoder[CNil]`: Encoder[CNil] = Encoder { _ ⇒
         sys.error( "No Encoder representation of CNil (this shouldn't happen)" )
