@@ -50,7 +50,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit val `Decoder[Array[Long]]`: Decoder[Array[Long]] = Decoder.instance( _.getLongArrayExtra( _ ) )
 
     implicit def `Decoder[Array[Parcelable]]`[V <: Parcelable: ClassTag]: Decoder[Array[V]] = {
-        `Decoder[Iterable[Parcelable]]`[V, Iterable].map( _.toArray )
+        Decoder[Iterable[V]].map( _.toArray )
     }
 
     implicit val `Decoder[Array[Short]]`: Decoder[Array[Short]] = Decoder.instance( _.getShortArrayExtra( _ ) )
@@ -69,7 +69,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
 
     implicit val `Decoder[Double]`: Decoder[Double] = Decoder.instance( _.getDoubleExtra( _, Double.MinValue ) )
 
-    implicit def `Decoder[Enumeration]`[V: Enum]: Decoder[V] = `Decoder[String]`.map( Enum[V].decodeOpt( _ ).get )
+    implicit def `Decoder[Enumeration]`[V: Enum]: Decoder[V] = Decoder[String].map( Enum[V].decodeOpt( _ ).get )
 
     implicit val `Decoder[Float]`: Decoder[Float] = Decoder.instance( _.getFloatExtra( _, Float.MinValue ) )
 
@@ -108,7 +108,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
 
     implicit val `Decoder[String]`: Decoder[String] = Decoder.instance( _.getStringExtra( _ ) )
 
-    implicit val `Decoder[URL]`: Decoder[URL] = `Decoder[String]`.map( new URL( _ ) )
+    implicit val `Decoder[URL]`: Decoder[URL] = Decoder[String].map( new URL( _ ) )
 }
 
 trait Decoders1 extends DecoderOperations {
@@ -118,6 +118,8 @@ trait Decoders1 extends DecoderOperations {
 }
 
 trait DecoderOperations {
+    def apply[V: Decoder]: Decoder[V] = implicitly[Decoder[V]]
+
     def instance[V]( f: ( Intent, String ) ⇒ V ): Decoder[V] = new Decoder[V] {
         override def decodeRaw( serialization: ( Intent, String ) ) = f.tupled( serialization )
     }

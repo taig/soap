@@ -39,7 +39,7 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
     implicit val `Encoder[Array[Long]]`: Encoder[Array[Long]] = Encoder.instance( _.putLongArray( _, _ ) )
 
     implicit def `Encoder[Array[Parcelable]]`[V <: Parcelable]: Encoder[Array[V]] = {
-        `Encoder[Iterable[Parcelable]]`[V, Iterable].contramap( _.toIterable )
+        Encoder[Iterable[V]].contramap( _.toIterable )
     }
 
     implicit val `Encoder[Array[Short]]`: Encoder[Array[Short]] = Encoder.instance( _.putShortArray( _, _ ) )
@@ -58,7 +58,7 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
 
     implicit val `Encoder[Double]`: Encoder[Double] = Encoder.instance( _.putDouble( _, _ ) )
 
-    implicit def `Encoder[Enumeration]`[V: Enum]: Encoder[V] = `Encoder[String]`.contramap( Enum[V].encode )
+    implicit def `Encoder[Enumeration]`[V: Enum]: Encoder[V] = Encoder[String].contramap( Enum[V].encode )
 
     implicit val `Encoder[Float]`: Encoder[Float] = Encoder.instance( _.putFloat( _, _ ) )
 
@@ -106,7 +106,7 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
         e: Lazy[Encoder[Array[V]]]
     ): Encoder[T[V]] = e.map( _.contramap[T[V]]( _.toArray ) ).value
 
-    implicit val `Encoder[URL]`: Encoder[URL] = `Encoder[String]`.contramap( _.toString )
+    implicit val `Encoder[URL]`: Encoder[URL] = Encoder[String].contramap( _.toString )
 }
 
 trait Encoders1 extends EncoderOperations {
@@ -116,6 +116,8 @@ trait Encoders1 extends EncoderOperations {
 }
 
 trait EncoderOperations {
+    def apply[V: Encoder]: Encoder[V] = implicitly[Encoder[V]]
+
     def instance[V]( f: ( Bundle, String, V ) ⇒ Unit ): Encoder[V] = new Encoder[V] {
         override def encode( value: ( Bundle, String, V ) ) = f.tupled( value )
     }

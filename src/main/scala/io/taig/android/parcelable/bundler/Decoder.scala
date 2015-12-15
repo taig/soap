@@ -94,6 +94,8 @@ trait Decoders2 extends DecoderOperations {
 }
 
 trait DecoderOperations {
+    def apply[V: Decoder]: Decoder[V] = implicitly[Decoder[V]]
+
     def instance[V]( f: Bundle ⇒ V ): Decoder[V] = new Decoder[V] {
         override def decode( bundle: Bundle ) = f( bundle )
     }

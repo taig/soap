@@ -23,8 +23,6 @@ class Bundle extends Suite {
     }
 
     it should "support Array" in {
-        case class A( b: Byte, c: Char, d: Option[Double] )
-
         symmetric[Array[Int]]( Array( 1, 2, 3 ) )
         symmetric[Array[String]]( Array( "1", "2", "3" ) )
         symmetric[Array[Uri]]( Array( Uri.parse( "http://taig.io/" ) ) )

@@ -51,7 +51,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit val `Decoder[Array[Long]]`: Decoder[Array[Long]] = Decoder.instance( _.getLongArray( _ ) )
 
     implicit def `Decoder[Array[Parcelable]]`[V <: Parcelable: ClassTag]: Decoder[Array[V]] = {
-        `Decoder[Iterable[Parcelable]]`[V, Iterable].map( _.toArray )
+        Decoder[Iterable[V]].map( _.toArray )
     }
 
     implicit val `Decoder[Array[Short]]`: Decoder[Array[Short]] = Decoder.instance( _.getShortArray( _ ) )
@@ -70,7 +70,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
 
     implicit val `Decoder[Double]`: Decoder[Double] = Decoder.instance( _.getDouble( _ ) )
 
-    implicit def `Decoder[Enumeration]`[V: Enum]: Decoder[V] = `Decoder[String]`.map( Enum[V].decodeOpt( _ ).get )
+    implicit def `Decoder[Enumeration]`[V: Enum]: Decoder[V] = Decoder[String].map( Enum[V].decodeOpt( _ ).get )
 
     implicit val `Decoder[Float]`: Decoder[Float] = Decoder.instance( _.getFloat( _ ) )
 
@@ -79,11 +79,9 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit def `Decoder[Iterable[Parcelable]]`[V <: Parcelable, I[V] <: Iterable[V]](
         implicit
         cbf: CanBuildFrom[Nothing, V, I[V]]
-    ): Decoder[I[V]] = {
-        Decoder.instance { ( bundle, key ) ⇒
-            import collection.JavaConversions._
-            bundle.getParcelableArrayList[V]( key ).to[I]
-        }
+    ): Decoder[I[V]] = Decoder.instance { ( bundle, key ) ⇒
+        import collection.JavaConversions._
+        bundle.getParcelableArrayList[V]( key ).to[I]
     }
 
     implicit val `Decoder[Long]`: Decoder[Long] = Decoder.instance( _.getLong( _ ) )
@@ -129,7 +127,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
         cbf: CanBuildFrom[Array[V], V, T[V]]
     ): Decoder[T[V]] = d.map( _.map( _.to[T] ) ).value
 
-    implicit val `Decoder[URL]`: Decoder[URL] = `Decoder[String]`.map( new URL( _ ) )
+    implicit val `Decoder[URL]`: Decoder[URL] = Decoder[String].map( new URL( _ ) )
 }
 
 trait Decoders1 extends DecoderOperations {
@@ -139,6 +137,8 @@ trait Decoders1 extends DecoderOperations {
 }
 
 trait DecoderOperations {
+    def apply[V: Decoder]: Decoder[V] = implicitly[Decoder[V]]
+
     def instance[V]( f: ( Bundle, String ) ⇒ V ): Decoder[V] = new Decoder[V] {
         override def decodeRaw( serialization: ( Bundle, String ) ) = f.tupled( serialization )
     }

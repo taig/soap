@@ -96,6 +96,8 @@ trait Encoders2 extends EncoderOperations {
 }
 
 trait EncoderOperations {
+    def apply[V: Encoder]: Encoder[V] = implicitly[Encoder[V]]
+
     def instance[V]( f: V ⇒ Bundle ): Encoder[V] = new Encoder[V] {
         override def encode( value: V ) = f( value )
     }
