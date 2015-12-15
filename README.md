@@ -17,8 +17,13 @@ libraryDependencies ++= Seq(
 
 TODO
 
+## Acknowledgements
+
+This library is highly inspired by [travisbrown/circe][2], especially for the serialization of case classes and ADTs.
+
 ## License
 
 MIT, see [LICENSE][1] file for more information
 
 [1]: https://raw.githubusercontent.com/Taig/Parcelable/master/LICENSE
+[2]: https://github.com/travisbrown/circe
