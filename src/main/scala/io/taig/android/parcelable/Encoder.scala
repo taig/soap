@@ -8,8 +8,6 @@ trait Encoder extends Codec {
     def encode( value: Input ): Output
 }
 
-object Encoder extends Encoders {
+object Encoder {
     type Aux[I, O] = Encoder { type Value = I; type Serialization = O }
 }
-
-trait Encoders
