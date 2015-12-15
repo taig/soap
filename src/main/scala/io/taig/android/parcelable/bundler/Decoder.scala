@@ -16,7 +16,7 @@ trait Decoder[V] extends Codec[V] with parcelable.Decoder
 object Decoder extends DecoderOperations with Decoders0
 
 trait Decoders0 extends DecoderOperations with Decoders1 {
-    implicit val `Decoder[CNil]`: Decoder[CNil] = Decoder{ _ ⇒
+    implicit val `Decoder[CNil]`: Decoder[CNil] = Decoder.instance { _ ⇒
         sys.error( "No Decoder representation of CNil (this shouldn't happen)" )
     }
 
@@ -25,22 +25,22 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
         k: Witness.Aux[K],
         h: Lazy[bundle.Decoder[H]],
         t: Lazy[Decoder[T]]
-    ): Decoder[FieldType[K, H] :+: T] = Decoder { bundle ⇒
+    ): Decoder[FieldType[K, H] :+: T] = Decoder.instance { bundle ⇒
         bundle.containsKey( k.value.name ) match {
             case true  ⇒ Inl( field( bundle.read[H]( k.value.name ) ( h.value ) ) )
             case false ⇒ Inr( t.value.decode( bundle ) )
         }
     }
 
-    implicit val `Decoder[HNil]`: Decoder[HNil] = Decoder( _ ⇒ HNil )
+    implicit val `Decoder[HNil]`: Decoder[HNil] = Decoder.instance( _ ⇒ HNil )
 
     implicit def `Decoder[HList]`[K <: Symbol, V, T <: HList](
         implicit
         key: Witness.Aux[K],
         dv:  Lazy[bundle.Decoder[V]],
         dt:  Lazy[Decoder[T]]
-    ): Decoder[FieldType[K, V] :: T] = {
-        Decoder( bundle ⇒ field[K]( bundle.read[V]( key.value.name )( dv.value ) ) :: dt.value.decode( bundle ) )
+    ): Decoder[FieldType[K, V] :: T] = Decoder.instance { bundle ⇒
+        field[K]( bundle.read[V]( key.value.name )( dv.value ) ) :: dt.value.decode( bundle )
     }
 }
 
@@ -48,7 +48,7 @@ trait Decoders1 extends DecoderOperations with Decoders2 {
     implicit def `Decoder[Array[bundle.Decoder]]`[V: ClassTag](
         implicit
         d: Lazy[bundle.Decoder[V]]
-    ): Decoder[Array[V]] = Decoder { bundle ⇒
+    ): Decoder[Array[V]] = Decoder.instance { bundle ⇒
         val array = new Array[V]( bundle.size() )
 
         for ( i ← 0 until bundle.size() ) {
@@ -61,7 +61,7 @@ trait Decoders1 extends DecoderOperations with Decoders2 {
     implicit def `Decoder[Array[Option[bundle.Decoder]]]`[V: ClassTag](
         implicit
         d: Lazy[bundle.Decoder[Option[V]]]
-    ): Decoder[Array[Option[V]]] = Decoder { bundle ⇒
+    ): Decoder[Array[Option[V]]] = Decoder.instance { bundle ⇒
         val length = bundle.read[Int]( "length" )
         val array = new Array[Option[V]]( length )
 
@@ -90,11 +90,11 @@ trait Decoders2 extends DecoderOperations {
         implicit
         lg: LabelledGeneric.Aux[T, LG],
         d:  Lazy[Decoder[LG]]
-    ): Decoder[T] = Decoder( bundle ⇒ lg.from( d.value.decode( bundle ) ) )
+    ): Decoder[T] = Decoder.instance( bundle ⇒ lg.from( d.value.decode( bundle ) ) )
 }
 
 trait DecoderOperations {
-    def apply[V]( f: Bundle ⇒ V ): Decoder[V] = new Decoder[V] {
+    def instance[V]( f: Bundle ⇒ V ): Decoder[V] = new Decoder[V] {
         override def decode( bundle: Bundle ) = f( bundle )
     }
 

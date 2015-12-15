@@ -18,7 +18,7 @@ trait Encoder[V] extends Codec[V] with parcelable.Encoder
 object Encoder extends EncoderOperations with Encoders0
 
 trait Encoders0 extends EncoderOperations with Encoders1 {
-    implicit val `Encoder[CNil]`: Encoder[CNil] = Encoder { _ ⇒
+    implicit val `Encoder[CNil]`: Encoder[CNil] = Encoder.instance { _ ⇒
         sys.error( "No Encoder representation of CNil (this shouldn't happen)" )
     }
 
@@ -27,26 +27,26 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
         k: Witness.Aux[K],
         h: Lazy[bundle.Encoder[H]],
         t: Lazy[Encoder[T]]
-    ): Encoder[FieldType[K, H] :+: T] = Encoder {
+    ): Encoder[FieldType[K, H] :+: T] = Encoder.instance {
         case Inl( head ) ⇒ Bundle[H]( k.value.name, head )( h.value )
         case Inr( tail ) ⇒ t.value.encode( tail )
     }
 
-    implicit val `Encoder[HNil]`: Encoder[HNil] = Encoder( _ ⇒ Bundle.empty )
+    implicit val `Encoder[HNil]`: Encoder[HNil] = Encoder.instance( _ ⇒ Bundle.empty )
 
     implicit def `Encoder[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
         implicit
         l:  Length.Aux[FieldType[K, V] :: T, N],
         ti: ToInt[N],
         lf: LeftFolder.Aux[FieldType[K, V] :: T, Bundle, fold.type, Bundle]
-    ): Encoder[FieldType[K, V] :: T] = Encoder( _.foldLeft( Bundle( toInt[N] ) )( fold ) )
+    ): Encoder[FieldType[K, V] :: T] = Encoder.instance( _.foldLeft( Bundle( toInt[N] ) )( fold ) )
 }
 
 trait Encoders1 extends EncoderOperations with Encoders2 {
     implicit def `Encoder[Array[bundle.Encoder]]`[V](
         implicit
         e: Lazy[bundle.Encoder[V]]
-    ): Encoder[Array[V]] = Encoder { values ⇒
+    ): Encoder[Array[V]] = Encoder.instance { values ⇒
         val bundle = Bundle( values.length )
 
         for ( i ← values.indices ) {
@@ -59,7 +59,7 @@ trait Encoders1 extends EncoderOperations with Encoders2 {
     implicit def `Encoder[Array[Option[bundle.Encoder]]]`[V](
         implicit
         e: Lazy[bundle.Encoder[Option[V]]]
-    ): Encoder[Array[Option[V]]] = Encoder { values ⇒
+    ): Encoder[Array[Option[V]]] = Encoder.instance { values ⇒
         val length = values.length
         val bundle = Bundle( values.count( _.isDefined ) )
 
@@ -92,11 +92,11 @@ trait Encoders2 extends EncoderOperations {
         implicit
         lg: LabelledGeneric.Aux[T, LG],
         e:  Lazy[Encoder[LG]]
-    ): Encoder[T] = Encoder( value ⇒ e.value.encode( lg.to( value ) ) )
+    ): Encoder[T] = Encoder.instance( value ⇒ e.value.encode( lg.to( value ) ) )
 }
 
 trait EncoderOperations {
-    def apply[V]( f: V ⇒ Bundle ): Encoder[V] = new Encoder[V] {
+    def instance[V]( f: V ⇒ Bundle ): Encoder[V] = new Encoder[V] {
         override def encode( value: V ) = f( value )
     }
 
