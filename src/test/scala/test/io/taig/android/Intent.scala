@@ -22,7 +22,14 @@ class Intent extends Suite {
     }
 
     it should "support Array" in {
-        verify[Array[Int]]( Array( 1, 2, 3 ) )
+        verify[Array[Boolean]]( Array( true, false ) )
+        verify[Array[Byte]]( Array( Byte.MaxValue, Byte.MinValue ) )
+        verify[Array[Char]]( Array( Char.MaxValue, Char.MinValue ) )
+        verify[Array[Double]]( Array( Double.MaxValue, Double.MinValue ) )
+        verify[Array[Float]]( Array( Float.MaxValue, Float.MinValue ) )
+        verify[Array[Int]]( Array( Int.MaxValue, Int.MinValue ) )
+        verify[Array[Long]]( Array( Long.MaxValue, Long.MinValue ) )
+        verify[Array[Short]]( Array( Short.MaxValue, Short.MinValue ) )
         verify[Array[String]]( Array( "1", "2", "3" ) )
         verify[Array[Uri]]( Array( Uri.parse( "http://taig.io/" ) ) )
         verify[Array[Animal]]( Array( Dog( "Hoschi" ) ) )
