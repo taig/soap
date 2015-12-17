@@ -2,7 +2,7 @@ import Settings._
 
 lazy val parcelable = ( project in file( "." ) )
     .settings( common ++ noPublish: _* )
-    .aggregate( core, benchmark )
+    .aggregate( core )
 
 lazy val core = ( project in file( "core" ) )
     .settings( androidBuildAar ++ common ++ android: _* )
@@ -19,12 +19,3 @@ lazy val core = ( project in file( "core" ) )
         name := "Parcelable",
         testOptions in Test += Tests.Argument( "-oDF" )
 )
-
-lazy val benchmark = ( project in file( "benchmark" ) )
-    .androidBuildWith( core )
-    .settings( common ++ android: _* )
-    .settings(
-        libraryDependencies ++=
-            "dk.ilios" % "spanner" % "0.5.0" ::
-            Nil
-    )
