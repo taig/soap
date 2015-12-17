@@ -16,12 +16,8 @@ import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
-trait Decoder[V] extends parcelable.Decoder {
-    override type Serialization = ( Bundle, String )
-
-    override type Value = V
-
-    override def decode( serialization: Serialization ): V = serialization match {
+trait Decoder[V] extends parcelable.Decoder[( Bundle, String ), V] {
+    override def decode( serialization: ( Bundle, String ) ): V = serialization match {
         case ( bundle, key ) ⇒
             if ( bundle.containsKey( key ) ) {
                 decodeRaw( serialization )
@@ -30,7 +26,7 @@ trait Decoder[V] extends parcelable.Decoder {
             }
     }
 
-    def decodeRaw( serialization: Serialization ): V
+    def decodeRaw( serialization: ( Bundle, String ) ): V
 }
 
 object Decoder extends DecoderOperations with Decoders0

@@ -14,11 +14,7 @@ import shapeless.Lazy
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
-trait Encoder[V] extends parcelable.Encoder {
-    override type Value = ( Intent, String, V )
-
-    override type Serialization = Unit
-}
+trait Encoder[V] extends parcelable.Encoder[( Intent, String, V ), Unit]
 
 object Encoder extends EncoderOperations with Encoders0
 

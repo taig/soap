@@ -13,7 +13,7 @@ import shapeless.ops.nat.ToInt
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
-trait Encoder[V] extends Codec[V] with parcelable.Encoder
+trait Encoder[V] extends parcelable.Encoder[V, Bundle]
 
 object Encoder extends EncoderOperations with Encoders0
 

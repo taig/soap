@@ -13,8 +13,8 @@ package object parcelable {
         protected def host: H
     }
 
-    abstract class ParcelableEncoder[H, I[V], E[V] <: Encoder.Aux[I[V], _]] extends ParcelableCodec[H] {
-        protected def encode[V]( key: String, value: V ): E[V]#Input
+    abstract class ParcelableEncoder[H, I[V], E[V] <: Encoder[I[V], _]] extends ParcelableCodec[H] {
+        protected def encode[V]( key: String, value: V ): I[V]
 
         def write[V: E]( key: String, value: V ): H = {
             implicitly[E[V]].encode( encode[V]( key, value ) )
@@ -22,8 +22,8 @@ package object parcelable {
         }
     }
 
-    trait ParcelableDecoder[H, I, D[T] <: Decoder.Aux[I, T]] extends ParcelableCodec[H] {
-        protected def decode[T]( key: String ): D[T]#Input
+    trait ParcelableDecoder[H, I, D[T] <: Decoder[I, T]] extends ParcelableCodec[H] {
+        protected def decode[T]( key: String ): I
 
         def read[T: D]( key: String ): T = implicitly[D[T]].decode( decode( key ) )
     }

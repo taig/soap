@@ -11,7 +11,7 @@ import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
-trait Decoder[V] extends Codec[V] with parcelable.Decoder
+trait Decoder[V] extends parcelable.Decoder[Bundle, V]
 
 object Decoder extends DecoderOperations with Decoders0
 
