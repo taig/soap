@@ -11,7 +11,7 @@ dependencies:
     - ~/.ivy2
     - ~/.sbt
   override:
-    - sbt test:compile
+    - sbt test
 
 general:
   artifacts:
