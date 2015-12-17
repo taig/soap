@@ -20,11 +20,7 @@ trait Decoder[V] extends parcelable.Decoder[( Bundle, String ), V] {
 
 object Decoder extends DecoderOperations with Decoders0
 
-trait Decoders0 extends DecoderOperations {
-    implicit def `Decoder[bundler.Decoder]`[V]( implicit d: Lazy[bundler.Decoder[V]] ): Decoder[V] = Decoder.instance {
-        case ( bundle, key ) ⇒ d.value.decode( bundle.read[Bundle]( key ) )
-    }
-}
+trait Decoders0 extends DecoderOperations
 
 trait DecoderOperations {
     def apply[V: Decoder]: Decoder[V] = implicitly[Decoder[V]]

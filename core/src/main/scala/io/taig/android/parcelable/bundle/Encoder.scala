@@ -11,11 +11,7 @@ trait Encoder[V] extends parcelable.Encoder[( Bundle, String, V ), Unit]
 
 object Encoder extends EncoderOperations with Encoders0
 
-trait Encoders0 extends EncoderOperations {
-    implicit def `Encoder[bundler.Encoder]`[V]( implicit e: Lazy[bundler.Encoder[V]] ): Encoder[V] = Encoder.instance {
-        case ( bundle, key, value ) ⇒ bundle.write( key, e.value.encode( value ) )
-    }
-}
+trait Encoders0 extends EncoderOperations
 
 trait EncoderOperations {
     def apply[V: Encoder]: Encoder[V] = implicitly[Encoder[V]]
