@@ -9,46 +9,31 @@ import scala.language.higherKinds
 package object parcelable {
     type Bundle = android.os.Bundle
 
-    trait ParcelableCodec[H] {
-        protected def host: H
-    }
+    implicit class ParcelableBundle( b: Bundle ) {
+        def read[V: bundle.Codec]( key: String ): V = bundle.Codec[V].decode( ( b, key ) )
 
-    abstract class ParcelableEncoder[H, I[V], E[V] <: Encoder[I[V], _]] extends ParcelableCodec[H] {
-        protected def encode[V]( key: String, value: V ): I[V]
-
-        def write[V: E]( key: String, value: V ): H = {
-            implicitly[E[V]].encode( encode[V]( key, value ) )
-            host
+        def write[V: bundle.Codec]( key: String, value: V ): Bundle = {
+            bundle.Codec[V].encode( ( b, key, value ) )
+            b
         }
+
+        def write[L <: HList]( arguments: L )(
+            implicit
+            lf: LeftFolder.Aux[L, Bundle, bundle.fold.type, Bundle]
+        ): Bundle = arguments.foldLeft( b )( bundle.fold )
     }
 
-    trait ParcelableDecoder[H, I, D[T] <: Decoder[I, T]] extends ParcelableCodec[H] {
-        protected def decode[T]( key: String ): I
+    implicit class ParcelableIntent( i: Intent ) {
+        def read[V: intent.Codec]( key: String ): V = intent.Codec[V].decode( ( i, key ) )
 
-        def read[T: D]( key: String ): T = implicitly[D[T]].decode( decode( key ) )
-    }
-
-    implicit class ParcelableBundle( val host: Bundle )
-            extends ParcelableEncoder[Bundle, ( { type λ[ɣ] = ( Bundle, String, ɣ ) } )#λ, bundle.Encoder]
-            with ParcelableDecoder[Bundle, ( Bundle, String ), bundle.Decoder] {
-        override protected def encode[T]( key: String, value: T ) = ( host, key, value )
-
-        override protected def decode[T]( key: String ) = ( host, key )
-
-        def write[L <: HList]( arguments: L )( implicit lf: LeftFolder.Aux[L, Bundle, bundle.fold.type, Bundle] ) = {
-            arguments.foldLeft( host )( bundle.fold )
+        def write[V: intent.Codec]( key: String, value: V ): Intent = {
+            intent.Codec[V].encode( ( i, key, value ) )
+            i
         }
-    }
 
-    implicit class ParcelableIntent( val host: Intent )
-            extends ParcelableEncoder[Intent, ( { type λ[ɣ] = ( Intent, String, ɣ ) } )#λ, intent.Encoder]
-            with ParcelableDecoder[Intent, ( Intent, String ), intent.Decoder] {
-        override protected def encode[V]( key: String, value: V ) = ( host, key, value )
-
-        override protected def decode[T]( key: String ) = ( host, key )
-
-        def write[L <: HList]( arguments: L )( implicit lf: LeftFolder.Aux[L, Intent, intent.fold.type, Intent] ) = {
-            arguments.foldLeft( host )( intent.fold )
-        }
+        def write[L <: HList]( arguments: L )(
+            implicit
+            lf: LeftFolder.Aux[L, Intent, intent.fold.type, Intent]
+        ): Intent = arguments.foldLeft( i )( intent.fold )
     }
 }
