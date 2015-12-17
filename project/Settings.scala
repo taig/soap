@@ -1,6 +1,12 @@
+import android.Keys._
 import sbt.Keys._
 
 object Settings {
+    val android = Seq(
+        platformTarget := "android-23",
+        typedResources := false
+    )
+
     val common = Seq(
         javacOptions ++=
             "-source" :: "1.7" ::
