@@ -23,5 +23,8 @@ lazy val core = ( project in file( "core" ) )
 lazy val benchmark = ( project in file( "benchmark" ) )
     .androidBuildWith( core )
     .settings( common ++ android: _* )
-    .enablePlugins( JmhPlugin )
-    .settings()
+    .settings(
+        libraryDependencies ++=
+            "dk.ilios" % "spanner" % "0.5.0" ::
+            Nil
+    )
