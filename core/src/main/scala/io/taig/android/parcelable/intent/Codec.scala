@@ -4,9 +4,10 @@ import java.net.URL
 
 import android.content.Intent
 import android.os.Parcelable
+import export.exports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
-import io.taig.android.parcelable.functional.{ Contravariant, Functor, Inmap }
+import io.taig.android.parcelable.functional._
 import io.taig.android.parcelable.syntax._
 import julienrf.enum.Enum
 import shapeless.Lazy
@@ -20,6 +21,7 @@ trait Codec[V]
     with Encoder[V]
     with Decoder[V]
 
+@exports
 object Codec extends CodecOperations with Codecs0
 
 trait Codecs0 extends CodecOperations with Codecs1 {
@@ -175,10 +177,14 @@ trait Codecs0 extends CodecOperations with Codecs1 {
 }
 
 trait Codecs1 extends CodecOperations {
-    implicit def `Codec[bundler.Encoder]`[V]( implicit c: Lazy[bundler.Codec[V]] ): Codec[V] = Codec.instance(
-        { case ( intent, key, value ) ⇒ intent.write[Bundle]( key, c.value.encode( value ) ) },
-        { case ( intent, key ) ⇒ c.value.decode( intent.read[Bundle]( key ) ) }
-    )
+    implicit def `Codec[bundler.Encoder]`[V]( implicit c: Lazy[bundler.Codec[V]] ): Codec[V] = {
+        import codecs._
+
+        Codec.instance(
+            { case ( intent, key, value ) ⇒ intent.write[Bundle]( key, c.value.encode( value ) ) },
+            { case ( intent, key ) ⇒ c.value.decode( intent.read[Bundle]( key ) ) }
+        )
+    }
 }
 
 trait CodecOperations {
@@ -191,14 +197,9 @@ trait CodecOperations {
     }
 
     implicit val `Inmap[Codec]`: Inmap[Codec] = new Inmap[Codec] {
-        override def inmap[A, B]( fa: Codec[A] )( contramap: B ⇒ A, map: A ⇒ B ) = new Codec[B] {
-            override def encode( value: ( Intent, String, B ) ) = {
-                implicitly[Contravariant[Encoder]].contramap( fa )( contramap ).encode( value )
-            }
-
-            override def decodeRaw( serialization: ( Intent, String ) ) = {
-                implicitly[Functor[Decoder]].map( fa )( map ).decodeRaw( serialization )
-            }
-        }
+        override def inmap[A, B]( fa: Codec[A] )( contramap: B ⇒ A, map: A ⇒ B ) = instance(
+            { case value ⇒ implicitly[Contravariant[Encoder]].contramap( fa )( contramap ).encode( value ) },
+            { case serialization ⇒ implicitly[Functor[Decoder]].map( fa )( map ).decode( serialization ) }
+        )
     }
 }

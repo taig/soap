@@ -6,7 +6,8 @@ import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import android.os.Parcelable
 import android.util.{ SparseArray, Size, SizeF }
-import io.taig.android.parcelable.bundle.Codec
+import io.taig.android.parcelable.bundle.{ Decoder, Encoder }
+import io.taig.android.parcelable.bundle.codecs._
 import io.taig.android.parcelable.{ Bundle ⇒ ABundle, _ }
 import org.robolectric.annotation.Config
 import shapeless._
@@ -14,7 +15,7 @@ import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class Bundle extends Suite {
-    def verify[V: Codec]( value: V ) = {
+    def verify[V: Encoder: Decoder]( value: V ) = {
         val bundle = ABundle( "value", value )
         bundle.read[V]( "value" ) shouldEqual value
         bundle

@@ -7,11 +7,13 @@ lazy val parcelable = ( project in file( "." ) )
 lazy val core = ( project in file( "core" ) )
     .settings( androidBuildAar ++ common ++ android: _* )
     .settings(
-        addCompilerPlugin( "org.spire-math" %% "kind-projector" % "0.7.1" ),
         fork in Test := true,
         libraryDependencies ++=
+            compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full) ::
             "com.chuusai" %% "shapeless" % "2.2.5" ::
             "org.julienrf" %% "enum" % "1.1" ::
+            "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
+            "org.typelevel" %% "export-hook" % "1.1.0" ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
             Nil,

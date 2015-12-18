@@ -5,6 +5,7 @@ import java.net.URL
 import android.annotation.TargetApi
 import android.os.Parcelable
 import android.util.{ Size, SizeF, SparseArray }
+import export.exports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
@@ -21,6 +22,7 @@ trait Codec[V]
     with Encoder[V]
     with Decoder[V]
 
+@exports
 object Codec extends CodecOperations with Codecs0
 
 trait Codecs0 extends CodecOperations with Codecs1 {
@@ -205,10 +207,14 @@ trait Codecs0 extends CodecOperations with Codecs1 {
 }
 
 trait Codecs1 extends CodecOperations {
-    implicit def `Codec[bundler.Encoder]`[V]( implicit c: Lazy[bundler.Codec[V]] ): Codec[V] = Codec.instance(
-        { case ( bundle, key, value ) ⇒ bundle.write[Bundle]( key, c.value.encode( value ) ) },
-        { case ( bundle, key ) ⇒ c.value.decode( bundle.read[Bundle]( key ) ) }
-    )
+    implicit def `Codec[bundler.Encoder]`[V]( implicit c: Lazy[bundler.Codec[V]] ): Codec[V] = {
+        import codecs._
+
+        Codec.instance(
+            { case ( bundle, key, value ) ⇒ bundle.write[Bundle]( key, c.value.encode( value ) ) },
+            { case ( bundle, key ) ⇒ c.value.decode( bundle.read[Bundle]( key ) ) }
+        )
+    }
 }
 
 trait CodecOperations {

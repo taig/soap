@@ -6,7 +6,9 @@ import android.content.{ Intent ⇒ AIntent }
 import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import android.os.Parcelable
-import io.taig.android.parcelable.intent.Codec
+import io.taig.android.parcelable.bundle.codecs._
+import io.taig.android.parcelable.intent.{ Decoder, Encoder }
+import io.taig.android.parcelable.intent.codecs._
 import io.taig.android.parcelable.{ Bundle ⇒ ABundle, _ }
 import org.robolectric.annotation.Config
 import shapeless._
@@ -14,7 +16,7 @@ import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class Intent extends Suite {
-    def verify[V: Codec]( value: V ) = {
+    def verify[V: Encoder: Decoder]( value: V ) = {
         val intent = new AIntent()
         intent.write[V]( "value", value )
         intent.read[V]( "value" ) shouldEqual value

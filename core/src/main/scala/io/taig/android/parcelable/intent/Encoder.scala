@@ -1,6 +1,7 @@
 package io.taig.android.parcelable.intent
 
 import android.content.Intent
+import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable.functional._
 
@@ -10,6 +11,7 @@ trait Encoder[V] extends parcelable.Encoder[( Intent, String, V ), Unit]
 
 object Encoder extends EncoderOperations with Encoders0
 
+@imports[Encoder]
 trait Encoders0 extends EncoderOperations
 
 trait EncoderOperations {

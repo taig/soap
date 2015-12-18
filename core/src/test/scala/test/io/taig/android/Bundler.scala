@@ -1,7 +1,9 @@
 package test.io.taig.android
 
 import android.os.Build.VERSION_CODES._
-import io.taig.android.parcelable.bundler.Codec
+import io.taig.android.parcelable.bundle.codecs._
+import io.taig.android.parcelable.bundler.{ Decoder, Encoder }
+import io.taig.android.parcelable.bundler.codecs._
 import io.taig.android.parcelable.{ Bundle ⇒ ABundle }
 import org.robolectric.annotation.Config
 import shapeless.HNil
@@ -11,9 +13,9 @@ import scala.language.reflectiveCalls
 
 @Config( sdk = Array( LOLLIPOP ) )
 class Bundler extends Suite {
-    def verify[V: Codec]( value: V ) = {
-        val bundle = implicitly[Codec[V]].encode( value )
-        implicitly[Codec[V]].decode( bundle ) shouldEqual value
+    def verify[V: Encoder: Decoder]( value: V ) = {
+        val bundle = implicitly[Encoder[V]].encode( value )
+        implicitly[Decoder[V]].decode( bundle ) shouldEqual value
         bundle
     }
 

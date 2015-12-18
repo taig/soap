@@ -1,10 +1,9 @@
 package io.taig.android.parcelable.bundle
 
+import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
-
-import scala.language.higherKinds
 
 trait Decoder[V] extends parcelable.Decoder[( Bundle, String ), V] {
     override def decode( serialization: ( Bundle, String ) ): V = serialization match {
@@ -19,6 +18,7 @@ trait Decoder[V] extends parcelable.Decoder[( Bundle, String ), V] {
 
 object Decoder extends DecoderOperations with Decoders0
 
+@imports[Decoder]
 trait Decoders0 extends DecoderOperations
 
 trait DecoderOperations {

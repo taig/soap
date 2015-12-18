@@ -5,11 +5,13 @@ import shapeless.labelled._
 import shapeless.{ Lazy, Poly2, Witness }
 
 package object intent {
+    import codecs._
+
     object fold extends Poly2 {
         implicit def default[K, V](
             implicit
             k: Witness.Aux[K],
-            e: Lazy[intent.Codec[V]]
+            e: Lazy[intent.Encoder[V]]
         ): Case.Aux[Intent, FieldType[K, V], Intent] = at[Intent, FieldType[K, V]] { ( intent, value ) ⇒
             val key = k.value match {
                 case symbol: Symbol ⇒ symbol.name
