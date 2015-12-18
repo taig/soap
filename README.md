@@ -38,6 +38,9 @@ res0: Bundle = Bundle[{my_cat=Bundle[{moody=true}]}]
 
 > Bundle( "some_dogs", Seq( Dog( Some( "Holly", Some( 2 ) ) ), Dog( "Freddy", None ) ) )
 res1: Bundle = Bundle[{some_dogs=Bundle[{0=Bundle[{age=2, name=Holly}], 1=Bundle[{name=Freddy}]}]}]
+
+> res0.read[Cat]( "my_cat" )
+res2: Cat = Cat(true)
 ````
 
 ## Usage
