@@ -4,8 +4,6 @@ import shapeless.labelled._
 import shapeless.{ Lazy, Poly2, Witness }
 
 package object bundle {
-    import codecs._
-
     object fold extends Poly2 {
         implicit def default[K, V](
             implicit

@@ -49,7 +49,7 @@ TODO
 
 ## Acknowledgements
 
-This library is highly inspired by [travisbrown/circe][2], especially for the serialization of case classes and ADTs as well as the integration of [export-hook][3].
+This library is highly inspired by [travisbrown/circe][2], especially for the serialization of case classes and ADTs.
 
 ## License
 
@@ -57,4 +57,3 @@ MIT, see [LICENSE][1] file for more information
 
 [1]: https://raw.githubusercontent.com/Taig/Parcelable/master/LICENSE
 [2]: https://github.com/travisbrown/circe/
-[3]: https://github.com/milessabin/export-hook/

@@ -4,6 +4,7 @@ import export.exports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
+import shapeless.Lazy
 
 import scala.language.higherKinds
 
@@ -15,7 +16,14 @@ trait Codec[V]
 @exports
 object Codec extends CodecOperations with Codecs0
 
-trait Codecs0 extends CodecOperations
+trait Codecs0 extends CodecOperations {
+    implicit def `Codec[Encoder, Decoder]`[V]( implicit e: Lazy[Encoder[V]], d: Lazy[Decoder[V]] ): Codec[V] = {
+        Codec.instance(
+            { case value ⇒ e.value.encode( value ) },
+            { case serialization ⇒ d.value.decode( serialization ) }
+        )
+    }
+}
 
 trait CodecOperations {
     def apply[V: Codec]: Codec[V] = implicitly[Codec[V]]
