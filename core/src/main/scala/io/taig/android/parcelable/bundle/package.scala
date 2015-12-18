@@ -8,14 +8,14 @@ package object bundle {
         implicit def default[K, V](
             implicit
             k: Witness.Aux[K],
-            e: Lazy[bundle.Codec[V]]
+            c: Lazy[bundle.Codec[V]]
         ): Case.Aux[Bundle, FieldType[K, V], Bundle] = at[Bundle, FieldType[K, V]] { ( bundle, value ) ⇒
             val key = k.value match {
                 case symbol: Symbol ⇒ symbol.name
                 case string: String ⇒ string
             }
 
-            e.value.encode( ( bundle, key, value ) )
+            c.value.encode( ( bundle, key, value ) )
             bundle
         }
     }

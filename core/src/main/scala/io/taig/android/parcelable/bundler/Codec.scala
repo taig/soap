@@ -60,6 +60,33 @@ trait Codecs0 extends CodecOperations with Codecs1 {
         _.foldLeft( Bundle( toInt[N] ) )( fold ),
         bundle ⇒ field[K]( bundle.read[V]( k.value.name )( h.value ) ) :: t.value.decode( bundle )
     )
+
+    implicit def `Codec[Map[String, bundle.Codec]]`[V, M[K, +V] <: collection.Map[K, V]](
+        implicit
+        c:   Lazy[bundle.Codec[V]],
+        cbf: CanBuildFrom[Nothing, ( String, V ), M[String, V]]
+    ): Codec[M[String, V]] = Codec.instance(
+        values ⇒ values.foldLeft( Bundle( values.size ) ) {
+            case ( bundle, ( key, value ) ) ⇒ bundle.write( key, value )( c.value )
+        },
+        bundle ⇒ {
+            import collection.JavaConversions._
+
+            val builder = cbf.apply()
+
+            bundle.keySet().map { key ⇒
+                builder += ( ( key, bundle.read[V]( key )( c.value ) ) )
+            }
+
+            builder.result
+        }
+    )
+
+    implicit def `Codec[Traversable[(String, bundle.Codec)]]`[V, M[+V] <: Traversable[V]](
+        implicit
+        c:   Lazy[bundle.Codec[V]],
+        cbf: CanBuildFrom[Nothing, ( String, V ), M[( String, V )]]
+    ): Codec[M[( String, V )]] = Codec[collection.Map[String, V]].inmap( _.to[M], _.toMap )
 }
 
 trait Codecs1 extends CodecOperations with Codecs2 {
