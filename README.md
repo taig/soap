@@ -10,9 +10,7 @@ Parcelable is Android's serialization tool for inter-process communication (IPC)
 ## Installation
 
 ````scala
-libraryDependencies ++= Seq(
-  "io.taig.android" %% "parcelable" % "3.0.0-SNAPSHOT"
-)
+libraryDependencies += "io.taig.android" %% "parcelable" % "3.0.0-SNAPSHOT"
 ````
 
 ## Usage
@@ -21,11 +19,12 @@ TODO
 
 ## Acknowledgements
 
-This library is highly inspired by [travisbrown/circe][2], especially for the serialization of case classes and ADTs.
+This library is highly inspired by [travisbrown/circe][2], especially for the serialization of case classes and ADTs as well as the integration of [export-hook][3].
 
 ## License
 
 MIT, see [LICENSE][1] file for more information
 
 [1]: https://raw.githubusercontent.com/Taig/Parcelable/master/LICENSE
-[2]: https://github.com/travisbrown/circe
+[2]: https://github.com/travisbrown/circe/
+[3]: https://github.com/milessabin/export-hook/
