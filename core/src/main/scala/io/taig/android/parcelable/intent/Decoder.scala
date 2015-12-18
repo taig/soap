@@ -4,7 +4,6 @@ import java.net.URL
 
 import android.content.Intent
 import android.os.Parcelable
-import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
@@ -22,7 +21,6 @@ trait Decoder[V] extends parcelable.Decoder.Guarded[Intent, V] {
 
 object Decoder extends DecoderOperations with Decoders0
 
-@imports[Decoder]
 trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit val `Decoder[Array[Boolean]]`: Decoder[Array[Boolean]] = Decoder.instance( _.getBooleanArrayExtra( _ ) )
 

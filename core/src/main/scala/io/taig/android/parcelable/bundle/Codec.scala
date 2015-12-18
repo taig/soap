@@ -1,6 +1,5 @@
 package io.taig.android.parcelable.bundle
 
-import export.exports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
@@ -13,7 +12,6 @@ trait Codec[V]
     with Encoder[V]
     with Decoder[V]
 
-@exports
 object Codec extends CodecOperations with Codecs0
 
 trait Codecs0 extends CodecOperations {

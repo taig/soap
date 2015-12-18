@@ -1,6 +1,5 @@
 package io.taig.android.parcelable.bundler
 
-import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
@@ -16,7 +15,6 @@ trait Decoder[V] extends parcelable.Decoder[Bundle, V]
 
 object Decoder extends DecoderOperations with Decoders0
 
-@imports[Decoder]
 trait Decoders0 extends DecoderOperations with Decoders1 {
     implicit val `Decoder[CNil]`: Decoder[CNil] = Decoder.instance(
         _ ⇒ sys.error( "No Decoder representation for CNil (this shouldn't happen)" )

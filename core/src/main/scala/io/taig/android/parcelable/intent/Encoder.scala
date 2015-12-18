@@ -4,7 +4,6 @@ import java.net.URL
 
 import android.content.Intent
 import android.os.Parcelable
-import export.imports
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
@@ -19,7 +18,6 @@ trait Encoder[V] extends parcelable.Encoder[( Intent, String, V ), Unit]
 
 object Encoder extends EncoderOperations with Encoders0
 
-@imports[Encoder]
 trait Encoders0 extends EncoderOperations with Encoders1 {
     implicit val `Encoder[Array[Boolean]]`: Encoder[Array[Boolean]] = Encoder.instance( _.putExtra( _, _ ) )
 

@@ -2,7 +2,6 @@ package test.io.taig.android
 
 import android.os.Build.VERSION_CODES._
 import io.taig.android.parcelable.bundler.{ Decoder, Encoder }
-import io.taig.android.parcelable.codecs._
 import io.taig.android.parcelable.{ Bundle ⇒ ABundle }
 import org.robolectric.annotation.Config
 import shapeless.HNil
