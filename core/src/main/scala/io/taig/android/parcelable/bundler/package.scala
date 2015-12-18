@@ -4,8 +4,6 @@ import shapeless.labelled.FieldType
 import shapeless.{ Lazy, Poly2, Witness }
 
 package object bundler {
-    import codecs._
-
     object fold extends Poly2 {
         implicit def default[K <: Symbol, V](
             implicit

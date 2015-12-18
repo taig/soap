@@ -55,7 +55,7 @@ class Intent extends Suite {
     }
 
     it should "support Char" in {
-        verify[Char]( 'c' )
+        verify[Char]( 'e' )
     }
 
     it should "support CharSequence" in {

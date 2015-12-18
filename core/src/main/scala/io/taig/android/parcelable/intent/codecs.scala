@@ -4,5 +4,5 @@ import export.reexports
 
 import scala.language.higherKinds
 
-@reexports[Codec]
+@reexports[Codec, Decoder, Encoder]
 object codecs

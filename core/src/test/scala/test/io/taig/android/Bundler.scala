@@ -40,10 +40,10 @@ class Bundler extends Suite {
     }
 
     it should "support Map" in {
-        val bundle = ABundle( "a" ->> 1 :: "b" ->> 2 :: "c" ->> 3 :: HNil )
+        val bundle = ABundle( "a" ->> 1 :: "b" ->> 2 :: "e" ->> 3 :: HNil )
 
-        verify[Seq[( String, Int )]]( Seq( "a" → 1, "b" → 2, "c" → 3 ) ) shouldEqual bundle
-        verify[Map[String, Int]]( Map( "a" → 1, "b" → 2, "c" → 3 ) ) shouldEqual bundle
+        verify[Seq[( String, Int )]]( Seq( "a" → 1, "b" → 2, "e" → 3 ) ) shouldEqual bundle
+        verify[Map[String, Int]]( Map( "a" → 1, "b" → 2, "e" → 3 ) ) shouldEqual bundle
     }
 
     it should "support sealed trait inheritance" in {
