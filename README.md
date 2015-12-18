@@ -13,6 +13,33 @@ Parcelable is Android's serialization tool for inter-process communication (IPC)
 libraryDependencies += "io.taig.android" %% "parcelable" % "3.0.0-SNAPSHOT"
 ````
 
+## Overview
+
+````scala
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+
+import io.taig.android.parcelable._, codecs._
+
+sealed trait Animal
+case class Cat( moody: Boolean ) extends Animal
+case class Dog( name: String, age: Option[Int] ) extends Animal
+
+// Exiting paste mode, now interpreting.
+
+import io.taig.android.parcelable._
+import codecs._
+defined trait Animal
+defined class Cat
+defined class Dog
+
+> Bundle( "my_cat", Cat( moody = true ) )
+res0: Bundle = Bundle[{my_cat=Bundle[{moody=true}]}]
+
+> Bundle( "some_dogs", Seq( Dog( Some( "Holly", Some( 2 ) ) ), Dog( "Freddy", None ) ) )
+res1: Bundle = Bundle[{some_dogs=Bundle[{0=Bundle[{age=2, name=Holly}], 1=Bundle[{name=Freddy}]}]}]
+````
+
 ## Usage
 
 TODO
