@@ -19,9 +19,7 @@ trait EncoderOperations {
         override def encode( value: V ) = f( value )
     }
 
-    implicit val `Contramap[Encoder]`: Contramap[Encoder] = new Contramap[Encoder] {
-        override def contramap[A, B]( b: Encoder[A] )( f: B ⇒ A ) = new Encoder[B] {
-            override def encode( value: B ) = b.encode( f( value ) )
-        }
+    implicit val `Contravariant[Encoder]`: Contravariant[Encoder] = new Contravariant[Encoder] {
+        override def contramap[A, B]( b: Encoder[A] )( f: B ⇒ A ) = instance( value ⇒ b.encode( f( value ) ) )
     }
 }

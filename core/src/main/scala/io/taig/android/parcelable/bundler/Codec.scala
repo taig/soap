@@ -2,8 +2,8 @@ package io.taig.android.parcelable.bundler
 
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
+import io.taig.android.parcelable.functional.{ Contravariant, Functor, Inmap }
 import io.taig.android.parcelable.syntax._
-import io.taig.android.parcelable.functional.{ Contramap, Inmap, Map }
 import shapeless.Nat._
 import shapeless._
 import shapeless.labelled._
@@ -61,7 +61,7 @@ trait Codecs0 extends CodecOperations with Codecs1 {
         bundle ⇒ field[K]( bundle.read[V]( k.value.name )( h.value ) ) :: t.value.decode( bundle )
     )
 
-    implicit def `Codec[Map[String, bundle.Codec]]`[V, M[K, +V] <: collection.Map[K, V]](
+    implicit def `Codec[Map[String, bundle.Codec]]`[V, M[K, +V] <: Map[K, V]](
         implicit
         c:   Lazy[bundle.Codec[V]],
         cbf: CanBuildFrom[Nothing, ( String, V ), M[String, V]]
@@ -86,7 +86,7 @@ trait Codecs0 extends CodecOperations with Codecs1 {
         implicit
         c:   Lazy[bundle.Codec[V]],
         cbf: CanBuildFrom[Nothing, ( String, V ), M[( String, V )]]
-    ): Codec[M[( String, V )]] = Codec[collection.Map[String, V]].inmap( _.to[M], _.toMap )
+    ): Codec[M[( String, V )]] = Codec[Map[String, V]].inmap( _.toMap, _.to[M] )
 }
 
 trait Codecs1 extends CodecOperations with Codecs2 {
@@ -146,15 +146,13 @@ trait Codecs1 extends CodecOperations with Codecs2 {
         implicit
         c:   Lazy[bundle.Codec[V]],
         cbf: CanBuildFrom[Nothing, V, T[V]]
-    ): Codec[T[V]] = Codec[Array[V]].inmap( _.to[T], _.toArray )
+    ): Codec[T[V]] = Codec[Array[V]].inmap( _.toArray, _.to[T] )
 
     implicit def `Codec[Traversable[Option[bundle.Codec]]]`[V: ClassTag, T[V] <: Traversable[V]](
         implicit
         c:   Lazy[bundle.Codec[Option[V]]],
         cbf: CanBuildFrom[Nothing, Option[V], T[Option[V]]]
-    ): Codec[T[Option[V]]] = {
-        Codec[Array[Option[V]]].inmap( _.to[T], _.toArray )
-    }
+    ): Codec[T[Option[V]]] = Codec[Array[Option[V]]].inmap( _.toArray, _.to[T] )
 }
 
 trait Codecs2 extends CodecOperations {
@@ -178,14 +176,9 @@ trait CodecOperations {
     }
 
     implicit val `Inmap[Codec]`: Inmap[Codec] = new Inmap[Codec] {
-        override def inmap[A, B]( fa: Codec[A] )( map: A ⇒ B, contramap: B ⇒ A ) = new Codec[B] {
-            override def encode( value: B ) = {
-                implicitly[Contramap[Encoder]].contramap( fa )( contramap ).encode( value )
-            }
-
-            override def decode( serialization: Bundle ) = {
-                implicitly[Map[Decoder]].map( fa )( map ).decode( serialization )
-            }
-        }
+        override def inmap[A, B]( fa: Codec[A] )( contramap: B ⇒ A, map: A ⇒ B ) = instance(
+            { case value ⇒ implicitly[Contravariant[Encoder]].contramap( fa )( contramap ).encode( value ) },
+            { case serialization ⇒ implicitly[Functor[Decoder]].map( fa )( map ).decode( serialization ) }
+        )
     }
 }

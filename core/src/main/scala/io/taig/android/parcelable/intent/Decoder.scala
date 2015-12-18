@@ -29,9 +29,9 @@ trait DecoderOperations {
         override def decodeRaw( serialization: ( Intent, String ) ) = f.tupled( serialization )
     }
 
-    implicit val `Map[Decoder]`: Map[Decoder] = new Map[Decoder] {
-        override def map[A, B]( b: Decoder[A] )( f: A ⇒ B ) = new Decoder[B] {
-            override def decodeRaw( serialization: ( Intent, String ) ) = f( b.decode( serialization ) )
+    implicit val `Map[Decoder]`: Functor[Decoder] = new Functor[Decoder] {
+        override def map[A, B]( b: Decoder[A] )( f: A ⇒ B ) = instance {
+            case serialization ⇒ f( b.decode( serialization ) )
         }
     }
 }

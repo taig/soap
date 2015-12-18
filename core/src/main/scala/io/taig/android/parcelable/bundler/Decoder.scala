@@ -19,9 +19,7 @@ trait DecoderOperations {
         override def decode( bundle: Bundle ) = f( bundle )
     }
 
-    implicit val `Map[Decoder]`: Map[Decoder] = new Map[Decoder] {
-        override def map[A, B]( b: Decoder[A] )( f: A ⇒ B ) = new Decoder[B] {
-            override def decode( serialization: Bundle ) = f( b.decode( serialization ) )
-        }
+    implicit val `Functor[Decoder]`: Functor[Decoder] = new Functor[Decoder] {
+        override def map[A, B]( b: Decoder[A] )( f: A ⇒ B ) = instance( bundle ⇒ f( b.decode( bundle ) ) )
     }
 }

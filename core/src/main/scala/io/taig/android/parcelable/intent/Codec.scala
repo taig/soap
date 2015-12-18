@@ -6,8 +6,8 @@ import android.content.Intent
 import android.os.Parcelable
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
+import io.taig.android.parcelable.functional.{ Contravariant, Functor, Inmap }
 import io.taig.android.parcelable.syntax._
-import io.taig.android.parcelable.functional.{ Map, Contramap, Inmap }
 import julienrf.enum.Enum
 import shapeless.Lazy
 
@@ -59,8 +59,8 @@ trait Codecs0 extends CodecOperations with Codecs1 {
     )
 
     implicit def `Codec[Array[Parcelable]]`[V <: Parcelable: ClassTag]: Codec[Array[V]] = Codec[Iterable[V]].inmap(
-        _.toArray,
-        _.toIterable
+        _.toIterable,
+        _.toArray
     )
 
     implicit val `Codec[Array[Short]]`: Codec[Array[Short]] = Codec.instance(
@@ -104,8 +104,8 @@ trait Codecs0 extends CodecOperations with Codecs1 {
     )
 
     implicit def `Codec[Enumeration]`[V: Enum]: Codec[V] = Codec[String].inmap(
-        Enum[V].decodeOpt( _ ).get,
-        Enum[V].encode
+        Enum[V].encode,
+        Enum[V].decodeOpt( _ ).get
     )
 
     implicit val `Codec[Float]`: Codec[Float] = Codec.instance(
@@ -169,9 +169,9 @@ trait Codecs0 extends CodecOperations with Codecs1 {
         implicit
         c:   Lazy[Codec[Array[V]]],
         cbf: CanBuildFrom[Array[V], V, T[V]]
-    ): Codec[T[V]] = c.map( _.inmap[T[V]]( _.to[T], _.toArray ) ).value
+    ): Codec[T[V]] = c.map( _.inmap[T[V]]( _.toArray, _.to[T] ) ).value
 
-    implicit val `Codec[URL]`: Codec[URL] = Codec[String].inmap( new URL( _ ), _.toString )
+    implicit val `Codec[URL]`: Codec[URL] = Codec[String].inmap( _.toString, new URL( _ ) )
 }
 
 trait Codecs1 extends CodecOperations {
@@ -191,13 +191,13 @@ trait CodecOperations {
     }
 
     implicit val `Inmap[Codec]`: Inmap[Codec] = new Inmap[Codec] {
-        override def inmap[A, B]( fa: Codec[A] )( map: A ⇒ B, contramap: B ⇒ A ) = new Codec[B] {
+        override def inmap[A, B]( fa: Codec[A] )( contramap: B ⇒ A, map: A ⇒ B ) = new Codec[B] {
             override def encode( value: ( Intent, String, B ) ) = {
-                implicitly[Contramap[Encoder]].contramap( fa )( contramap ).encode( value )
+                implicitly[Contravariant[Encoder]].contramap( fa )( contramap ).encode( value )
             }
 
             override def decodeRaw( serialization: ( Intent, String ) ) = {
-                implicitly[Map[Decoder]].map( fa )( map ).decodeRaw( serialization )
+                implicitly[Functor[Decoder]].map( fa )( map ).decodeRaw( serialization )
             }
         }
     }
