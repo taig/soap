@@ -17,3 +17,9 @@ object Enum {
     case object A extends Enum
     case object B extends Enum
 }
+
+sealed trait Vehicle
+case class Car( seats: Int ) extends Vehicle
+object Military {
+    case class Car( weight: Float ) extends Vehicle
+}

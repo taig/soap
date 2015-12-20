@@ -11,7 +11,7 @@ import shapeless.ops.hlist.{ LeftFolder, Length }
 import shapeless.ops.nat.ToInt
 
 import scala.language.higherKinds
-import scala.reflect.ClassTag
+import scala.reflect._
 
 trait Encoder[V] extends parcelable.Encoder[V, Bundle]
 
@@ -22,13 +22,12 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
         _ ⇒ sys.error( "No Encoder representation for CNil (this shouldn't happen)" )
     )
 
-    implicit def `Encoder[Coproduct]`[K <: Symbol, H, T <: Coproduct](
+    implicit def `Encoder[Coproduct]`[K <: Symbol, H: ClassTag, T <: Coproduct](
         implicit
-        k: Witness.Aux[K],
         h: Lazy[bundle.Encoder[H]],
         t: Lazy[Encoder[T]]
     ): Encoder[FieldType[K, H] :+: T] = Encoder.instance {
-        case Inl( head ) ⇒ Bundle[H]( k.value.name, head )( h.value )
+        case Inl( head ) ⇒ Bundle[H]( classTag[H].runtimeClass.getCanonicalName, head )( h.value )
         case Inr( tail ) ⇒ t.value.encode( tail )
     }
 

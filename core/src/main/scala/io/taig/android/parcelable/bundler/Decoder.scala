@@ -9,7 +9,7 @@ import shapeless.labelled._
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
-import scala.reflect.ClassTag
+import scala.reflect._
 
 trait Decoder[V] extends parcelable.Decoder[Bundle, V]
 
@@ -20,14 +20,15 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
         _ ⇒ sys.error( "No Decoder representation for CNil (this shouldn't happen)" )
     )
 
-    implicit def `Decoder[Coproduct]`[K <: Symbol, H, T <: Coproduct](
+    implicit def `Decoder[Coproduct]`[K <: Symbol, H: ClassTag, T <: Coproduct](
         implicit
-        k: Witness.Aux[K],
         h: Lazy[bundle.Decoder[H]],
         t: Lazy[Decoder[T]]
     ): Decoder[FieldType[K, H] :+: T] = Decoder.instance { bundle ⇒
-        bundle.containsKey( k.value.name ) match {
-            case true  ⇒ Inl( field( bundle.read[H]( k.value.name )( h.value ) ) )
+        val name = classTag[H].runtimeClass.getCanonicalName
+
+        bundle.containsKey( name ) match {
+            case true  ⇒ Inl( field( bundle.read[H]( name )( h.value ) ) )
             case false ⇒ Inr( t.value.decode( bundle ) )
         }
     }

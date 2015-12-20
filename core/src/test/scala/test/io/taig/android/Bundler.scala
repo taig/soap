@@ -46,13 +46,18 @@ class Bundler extends Suite {
     }
 
     it should "support sealed trait inheritance" in {
-        verify[Animal]( Dog( "Hoschi" ) ) shouldEqual ABundle( "Dog", ABundle( "name", "Hoschi" ) )
-        verify[Animal]( Cat( false ) ) shouldEqual ABundle( "Cat", ABundle( "moody", false ) )
+        verify[Animal]( Dog( "Hoschi" ) ) shouldEqual ABundle( classOf[Dog].getCanonicalName, ABundle( "name", "Hoschi" ) )
+        verify[Animal]( Cat( false ) ) shouldEqual ABundle( classOf[Cat].getCanonicalName, ABundle( "moody", false ) )
         verify[Animal]( Bird.Eagle( Some( 3.4f ), List( Cat( true ), Mouse( 1 ) ) ) )
     }
 
+    it should "support sealed trait hierarchies with duplicate names" in {
+        verify[Vehicle]( Car( 4 ) )
+        verify[Vehicle]( Military.Car( 60000 ) )
+    }
+
     it should "support sealed trait enums" in {
-        verify[Enum]( Enum.A ) shouldEqual ABundle( "A", ABundle.empty )
+        verify[Enum]( Enum.A ) shouldEqual ABundle( Enum.A.getClass.getCanonicalName, ABundle.empty )
     }
 
     it should "support Traversable" in {
