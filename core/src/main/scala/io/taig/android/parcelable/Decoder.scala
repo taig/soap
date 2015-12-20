@@ -9,9 +9,11 @@ object Decoder {
         override def decode( serialization: ( I, String ) ) = serialization match {
             case ( host, key ) ⇒ contains( host, key ) match {
                 case true  ⇒ decodeRaw( serialization )
-                case false ⇒ throw exception.KeyNotFound( key )
+                case false ⇒ throw exception.KeyNotFound( key, printHost( host ) )
             }
         }
+
+        protected def printHost( host: I ): String
 
         protected def contains( host: I, key: String ): Boolean
 

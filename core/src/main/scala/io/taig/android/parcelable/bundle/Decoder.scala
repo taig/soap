@@ -9,6 +9,7 @@ import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.syntax._
 import io.taig.android.parcelable.functional._
+import io.taig.android.parcelable.util.printBundle
 import julienrf.enum.Enum
 import shapeless.Lazy
 
@@ -17,6 +18,8 @@ import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 trait Decoder[V] extends parcelable.Decoder.Guarded[Bundle, V] {
+    override protected def printHost( bundle: Bundle ) = printBundle( bundle )
+
     override protected def contains( bundle: Bundle, key: String ) = bundle.containsKey( key )
 }
 

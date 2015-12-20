@@ -27,7 +27,7 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
         k: Witness.Aux[K],
         h: Lazy[bundle.Encoder[H]],
         t: Lazy[Encoder[T]]
-    ): Encoder[FieldType[K, H] :+: T] = Encoder.instance{
+    ): Encoder[FieldType[K, H] :+: T] = Encoder.instance {
         case Inl( head ) ⇒ Bundle[H]( k.value.name, head )( h.value )
         case Inr( tail ) ⇒ t.value.encode( tail )
     }
