@@ -20,15 +20,15 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
         _ ⇒ sys.error( "No Decoder representation for CNil (this shouldn't happen)" )
     )
 
-    implicit def `Decoder[Coproduct]`[K <: Symbol, H: ClassTag, T <: Coproduct](
+    implicit def `Decoder[Coproduct]`[H: ClassTag, T <: Coproduct](
         implicit
         h: Lazy[bundle.Decoder[H]],
         t: Lazy[Decoder[T]]
-    ): Decoder[FieldType[K, H] :+: T] = Decoder.instance { bundle ⇒
+    ): Decoder[H :+: T] = Decoder.instance { bundle ⇒
         val name = classTag[H].runtimeClass.getCanonicalName
 
         bundle.containsKey( name ) match {
-            case true  ⇒ Inl( field( bundle.read[H]( name )( h.value ) ) )
+            case true  ⇒ Inl( bundle.read[H]( name )( h.value ) )
             case false ⇒ Inr( t.value.decode( bundle ) )
         }
     }
@@ -108,12 +108,20 @@ trait Decoders1 extends DecoderOperations with Decoders2 {
     ): Decoder[T[Option[V]]] = Decoder[Array[Option[V]]].map( _.to[T] )
 }
 
-trait Decoders2 extends DecoderOperations {
+trait Decoders2 extends DecoderOperations with Decoders3 {
     implicit def `Decoder[LabelledGeneric]`[T, LG](
         implicit
         lg: LabelledGeneric.Aux[T, LG],
         c:  Lazy[Decoder[LG]]
     ): Decoder[T] = Decoder.instance( bundle ⇒ lg.from( c.value.decode( bundle ) ) )
+}
+
+trait Decoders3 extends DecoderOperations {
+    implicit def `Decoder[Generic]`[T, G](
+        implicit
+        g: Generic.Aux[T, G],
+        c: Lazy[Decoder[G]]
+    ): Decoder[T] = Decoder.instance( bundle ⇒ g.from( c.value.decode( bundle ) ) )
 }
 
 trait DecoderOperations {

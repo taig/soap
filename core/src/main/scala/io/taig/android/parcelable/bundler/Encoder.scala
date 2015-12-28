@@ -22,11 +22,11 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
         _ ⇒ sys.error( "No Encoder representation for CNil (this shouldn't happen)" )
     )
 
-    implicit def `Encoder[Coproduct]`[K <: Symbol, H: ClassTag, T <: Coproduct](
+    implicit def `Encoder[Coproduct]`[H: ClassTag, T <: Coproduct](
         implicit
         h: Lazy[bundle.Encoder[H]],
         t: Lazy[Encoder[T]]
-    ): Encoder[FieldType[K, H] :+: T] = Encoder.instance {
+    ): Encoder[H :+: T] = Encoder.instance {
         case Inl( head ) ⇒ Bundle[H]( classTag[H].runtimeClass.getCanonicalName, head )( h.value )
         case Inr( tail ) ⇒ t.value.encode( tail )
     }
@@ -96,12 +96,20 @@ trait Encoders1 extends EncoderOperations with Encoders2 {
     ): Encoder[T[Option[V]]] = Encoder[Array[Option[V]]].contramap( _.toArray )
 }
 
-trait Encoders2 extends EncoderOperations {
+trait Encoders2 extends EncoderOperations with Encoders3 {
     implicit def `Encoder[LabelledGeneric]`[T, LG](
         implicit
         lg: LabelledGeneric.Aux[T, LG],
         e:  Lazy[Encoder[LG]]
     ): Encoder[T] = Encoder.instance( value ⇒ e.value.encode( lg.to( value ) ) )
+}
+
+trait Encoders3 extends EncoderOperations {
+    implicit def `Encoder[Generic]`[T, G](
+        implicit
+        g: Generic.Aux[T, G],
+        e: Lazy[Encoder[G]]
+    ): Encoder[T] = Encoder.instance( value ⇒ e.value.encode( g.to( value ) ) )
 }
 
 trait EncoderOperations {
