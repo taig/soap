@@ -19,7 +19,7 @@ libraryDependencies += "io.taig.android" %% "parcelable" % "3.0.0-SNAPSHOT"
 scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
-import io.taig.android.parcelable._, codecs._
+import io.taig.android.parcelable._
 
 sealed trait Animal
 case class Cat( moody: Boolean ) extends Animal
@@ -28,7 +28,6 @@ case class Dog( name: String, age: Option[Int] ) extends Animal
 // Exiting paste mode, now interpreting.
 
 import io.taig.android.parcelable._
-import codecs._
 defined trait Animal
 defined class Cat
 defined class Dog
