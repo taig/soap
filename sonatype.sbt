@@ -30,12 +30,9 @@ publishMavenStyle := true
 publishTo <<= version ( version => {
     val url = Some( "https://oss.sonatype.org/" )
 
-    if( version.endsWith( "SNAPSHOT" ) )
-    {
+    if( version.endsWith( "SNAPSHOT" ) ) {
         url.map( "snapshot" at _ + "content/repositories/snapshots" )
-    }
-    else
-    {
+    } else {
         url.map( "release" at _ + "service/local/staging/deploy/maven2" )
     }
 } )
