@@ -18,7 +18,7 @@ object Settings {
             "-feature" ::
             Nil,
         scalaVersion := "2.11.7",
-        version := "3.0.0-SNAPSHOT"
+        version := "3.0.0-BETA1"
     )
 
     val noPublish = Seq(
