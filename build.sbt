@@ -14,7 +14,7 @@ lazy val core = ( project in file( "core" ) )
             "org.julienrf" %% "enum" % "2.0" ::
             "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
-            "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
+            "org.scalatest" %% "scalatest" % "2.2.6" % "test" ::
             Nil,
         minSdkVersion := "4",
         name := "Parcelable",
