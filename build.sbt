@@ -11,7 +11,7 @@ lazy val core = ( project in file( "core" ) )
         libraryDependencies ++=
             compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full) ::
             "com.chuusai" %% "shapeless" % "2.2.5" ::
-            "org.julienrf" %% "enum" % "1.1" ::
+            "org.julienrf" %% "enum" % "2.0" ::
             "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::

@@ -60,7 +60,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
 
     implicit val `Decoder[Double]`: Decoder[Double] = Decoder.instance( _.getDouble( _ ) )
 
-    implicit def `Decoder[Enumeration]`[V: Enum]: Decoder[V] = Decoder[String].map( Enum[V].decodeOpt( _ ).get )
+    implicit def `Decoder[Enumeration]`[V: Enum.Derived]: Decoder[V] = Decoder[String].map( Enum[V].decodeOpt( _ ).get )
 
     implicit val `Decoder[Float]`: Decoder[Float] = Decoder.instance( _.getFloat( _ ) )
 

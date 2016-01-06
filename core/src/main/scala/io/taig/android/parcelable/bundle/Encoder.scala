@@ -54,7 +54,7 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
 
     implicit val `Encoder[Double]`: Encoder[Double] = Encoder.instance( _.putDouble( _, _ ) )
 
-    implicit def `Encoder[Enumeration]`[V: Enum]: Encoder[V] = Encoder[String].contramap( Enum[V].encode )
+    implicit def `Encoder[Enumeration]`[V: Enum.Derived]: Encoder[V] = Encoder[String].contramap( Enum[V].encode )
 
     implicit val `Encoder[Float]`: Encoder[Float] = Encoder.instance( _.putFloat( _, _ ) )
 

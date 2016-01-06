@@ -40,10 +40,8 @@ class Bundle extends Suite {
     }
 
     it should "support Bundle" in {
-        val animal: Animal = Dog( "Hoschi" )
-        //        implicit val x: bundler.Encoder[Animal] = cachedImplicit
-        verify[ABundle]( ABundle( "int" ->> 3 :: "string" ->> "asdf" :: "animal" ->> animal :: HNil ) )
-        verify[ABundle]( ABundle( 'int ->> 3 :: 'string ->> "asdf" :: 'animal ->> animal :: HNil ) )
+        verify[ABundle]( ABundle( "int" ->> 3 :: "string" ->> "asdf" :: HNil ) )
+        verify[ABundle]( ABundle( 'int ->> 3 :: 'string ->> "asdf" :: HNil ) )
     }
 
     it should "support Bundler" in {
