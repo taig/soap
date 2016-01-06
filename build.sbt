@@ -1,31 +1,22 @@
-Boilerplate.settings
+import Settings._
 
-fork in Test := true
+lazy val parcelable = ( project in file( "." ) )
+    .settings( common ++ sonatype ++ noPublish: _* )
+    .aggregate( core )
 
-javacOptions ++=
-    "-source" :: "1.7" ::
-    "-target" :: "1.7" ::
-    Nil
-
-libraryDependencies <++= scalaVersion( version =>
-    compilerPlugin( "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full ) ::
-    "com.chuusai" %% "shapeless" % "2.2.5" ::
-    "org.scala-lang" % "scala-reflect" % version ::
-    "com.android.support" % "support-v4" % "23.1.1" % "test" ::
-    "com.geteit" %% "robotest" % "0.12" % "test" ::
-    "org.scalatest" %% "scalatest" % "2.2.5" % "test" ::
-    Nil
+lazy val core = ( project in file( "core" ) )
+    .settings( androidBuildAar ++ common ++ sonatype ++ android: _* )
+    .settings(
+        fork in Test := true,
+        libraryDependencies ++=
+            compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full) ::
+            "com.chuusai" %% "shapeless" % "2.2.5" ::
+            "org.julienrf" %% "enum" % "2.1" ::
+            "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
+            "com.geteit" %% "robotest" % "0.12" % "test" ::
+            "org.scalatest" %% "scalatest" % "2.2.6" % "test" ::
+            Nil,
+        minSdkVersion := "4",
+        name := "Parcelable",
+        testOptions in Test += Tests.Argument( "-oDF" )
 )
-
-name := "Parcelable"
-
-organization := "io.taig.android"
-
-scalaVersion := "2.11.7"
-
-scalacOptions ++=
-    "-deprecation" ::
-    "-feature" ::
-    Nil
-
-version := "2.4.1"
