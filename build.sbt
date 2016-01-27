@@ -12,7 +12,7 @@ lazy val core = ( project in file( "core" ) )
             compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full) ::
             "com.chuusai" %% "shapeless" % "2.2.5" ::
             "org.julienrf" %% "enum" % "2.1" ::
-            "org.scala-lang" % "scala-reflect" % scalaVersion.value ::
+            "org.scala-lang" % "scala-reflect" % scalaVersion.value % "compile" ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "2.2.6" % "test" ::
             Nil,
