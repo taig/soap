@@ -1,18 +1,14 @@
-import Settings._
-
 lazy val parcelable = ( project in file( "." ) )
-    .settings( common ++ sonatype ++ noPublish: _* )
+    .settings( Settings.common ++ Settings.sonatype ++ Settings.noPublish: _* )
     .aggregate( core )
 
 lazy val core = ( project in file( "core" ) )
-    .settings( androidBuildAar ++ common ++ sonatype ++ android: _* )
+    .settings( androidBuildAar ++ Settings.common ++ Settings.sonatype ++ Settings.android: _* )
     .settings(
         fork in Test := true,
         libraryDependencies ++=
-            compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full) ::
             "com.chuusai" %% "shapeless" % "2.2.5" ::
             "org.julienrf" %% "enum" % "2.1" ::
-            "org.scala-lang" % "scala-reflect" % scalaVersion.value % "compile" ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "2.2.6" % "test" ::
             Nil,
