@@ -1,8 +1,11 @@
 lazy val parcelable = ( project in file( "." ) )
     .settings( Settings.common ++ Settings.sonatype ++ Settings.noPublish: _* )
+    .settings(
+        name := "Parcelable"
+    )
     .aggregate( core )
 
-lazy val core = ( project in file( "core" ) )
+lazy val core = project
     .settings( androidBuildAar ++ Settings.common ++ Settings.sonatype ++ Settings.android: _* )
     .settings(
         fork in Test := true,
@@ -13,6 +16,5 @@ lazy val core = ( project in file( "core" ) )
             "org.scalatest" %% "scalatest" % "2.2.6" % "test" ::
             Nil,
         minSdkVersion := "4",
-        name := "Parcelable",
         testOptions in Test += Tests.Argument( "-oDF" )
 )
