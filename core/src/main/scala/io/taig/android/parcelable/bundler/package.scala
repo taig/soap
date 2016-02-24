@@ -1,5 +1,6 @@
 package io.taig.android.parcelable
 
+import io.taig.android.parcelable.syntax.bundle._
 import shapeless.labelled.FieldType
 import shapeless.{ Lazy, Poly2, Witness }
 

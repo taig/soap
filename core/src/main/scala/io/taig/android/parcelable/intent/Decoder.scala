@@ -7,7 +7,8 @@ import android.os.Parcelable
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
-import io.taig.android.parcelable.syntax._
+import io.taig.android.parcelable.syntax.functional._
+import io.taig.android.parcelable.syntax.intent._
 import io.taig.android.parcelable.util.printBundle
 import julienrf.enum.Enum
 import shapeless.Lazy

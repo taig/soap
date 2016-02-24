@@ -4,11 +4,12 @@ import java.net.URL
 
 import android.annotation.TargetApi
 import android.os.Parcelable
-import android.util.{ SparseArray, SizeF, Size }
+import android.util.{ Size, SizeF, SparseArray }
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
-import io.taig.android.parcelable.syntax._
 import io.taig.android.parcelable.functional._
+import io.taig.android.parcelable.syntax.bundle._
+import io.taig.android.parcelable.syntax.functional._
 import io.taig.android.parcelable.util.printBundle
 import julienrf.enum.Enum
 import shapeless.Lazy

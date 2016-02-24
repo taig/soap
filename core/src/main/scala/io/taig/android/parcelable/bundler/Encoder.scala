@@ -3,7 +3,8 @@ package io.taig.android.parcelable.bundler
 import io.taig.android.parcelable
 import io.taig.android.parcelable._
 import io.taig.android.parcelable.functional._
-import io.taig.android.parcelable.syntax._
+import io.taig.android.parcelable.syntax.bundle._
+import io.taig.android.parcelable.syntax.functional._
 import shapeless.Nat._
 import shapeless._
 import shapeless.labelled._

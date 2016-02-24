@@ -5,8 +5,9 @@ import java.net.URL
 import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import android.os.Parcelable
-import android.util.{ SparseArray, Size, SizeF }
+import android.util.{ Size, SizeF, SparseArray }
 import io.taig.android.parcelable.bundle.{ Decoder, Encoder }
+import io.taig.android.parcelable.syntax.bundle._
 import io.taig.android.parcelable.{ Bundle ⇒ ABundle, _ }
 import org.robolectric.annotation.Config
 import shapeless._
