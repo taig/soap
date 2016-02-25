@@ -1,4 +1,4 @@
-package test.io.taig.android
+package io.taig.android
 
 import android.os.Build.VERSION_CODES._
 import io.taig.android.parcelable.bundler.{ Decoder, Encoder }
@@ -10,7 +10,7 @@ import shapeless.syntax.singleton._
 import scala.language.reflectiveCalls
 
 @Config( sdk = Array( LOLLIPOP ) )
-class Bundler extends Suite {
+class BundlerTest extends Suite {
     def verify[V: Encoder: Decoder]( value: V ) = {
         val bundle = implicitly[Encoder[V]].encode( value )
         implicitly[Decoder[V]].decode( bundle ) shouldEqual value

@@ -1,4 +1,4 @@
-package test.io.taig.android
+package io.taig.android
 
 sealed trait Animal
 case class Dog( name: String ) extends Animal

@@ -1,4 +1,4 @@
-package test.io.taig.android
+package io.taig.android
 
 import java.net.URL
 
@@ -14,7 +14,7 @@ import shapeless._
 import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
-class Intent extends Suite {
+class IntentTest extends Suite {
     def verify[V: Encoder: Decoder]( value: V ) = {
         val intent = new AIntent()
         intent.write[V]( "value", value )
