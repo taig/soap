@@ -20,8 +20,7 @@ object Settings {
             "-deprecation" ::
             "-feature" ::
             Nil,
-        scalaVersion := "2.11.7",
-        version := "3.0.0-BETA1"
+        scalaVersion := "2.11.7"
     )
 
     val noPublish = Seq(
