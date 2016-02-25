@@ -7,7 +7,7 @@ lazy val core = project
     .settings(
         fork in Test := true,
         libraryDependencies ++=
-            "com.chuusai" %% "shapeless" % "2.3.0-RC4" ::
+            "com.chuusai" %% "shapeless" % "2.3.0" ::
             "org.julienrf" %% "enum" % "2.1" ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "2.2.6" % "test" ::
