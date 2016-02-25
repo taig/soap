@@ -1,7 +1,7 @@
 lazy val parcelable = ( project in file( "." ) )
     .settings( Settings.common ++ Settings.noPublish: _* )
     .settings(
-        name := "Parcelable"
+        name := "SOAP"
     )
     .aggregate( core )
 

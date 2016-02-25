@@ -10,7 +10,7 @@ object Settings {
     )
 
     val common = Seq(
-        githubProject := "parcelable",
+        githubProject := "soap",
         javacOptions ++=
             "-source" :: "1.7" ::
             "-target" :: "1.7" ::
