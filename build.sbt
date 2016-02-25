@@ -1,8 +1,5 @@
-lazy val parcelable = ( project in file( "." ) )
+lazy val soap = ( project in file( "." ) )
     .settings( Settings.common ++ Settings.noPublish: _* )
-    .settings(
-        name := "Soap"
-    )
     .aggregate( core )
 
 lazy val core = project
@@ -15,6 +12,7 @@ lazy val core = project
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "2.2.6" % "test" ::
             Nil,
+        name := "Soap",
         minSdkVersion := "4",
         testOptions in Test += Tests.Argument( "-oDF" )
 )
