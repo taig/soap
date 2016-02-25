@@ -1,3 +1,8 @@
+3.0.0-BETA2
+
+- Renamed project to Soap (Scala on Android Parcelable)
+- Added io.taig.android.soap.implicits object
+
 3.0.0-BETA1
 
 - Complete shapeless-based rewrite, ditching the `@Parcelable`-Annotation in favor of Bundle-based serialization
