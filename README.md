@@ -21,7 +21,8 @@ libraryDependencies += "io.taig.android" %% "soap" % "3.0.0-BETA2"
 scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
-import io.taig.android.soap._
+import io.taig.android.soap.Bundle
+import io.taig.android.soap.implicits.
 
 sealed trait Animal
 case class Cat( moody: Boolean ) extends Animal
@@ -29,7 +30,8 @@ case class Dog( name: String, age: Option[Int] ) extends Animal
 
 // Exiting paste mode, now interpreting.
 
-import io.taig.android.soap._
+import io.taig.android.soap.Bundle
+import io.taig.android.soap.implicits._
 defined trait Animal
 defined class Cat
 defined class Dog
