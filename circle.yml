@@ -18,7 +18,10 @@ general:
     - target/scala-2.11/coverage-report
 
 test:
+  pre:
+    - sbt clean
   override:
-    - sbt clean coverage test
+    - sbt coverage test coverageReport
   post:
+    - sbt coverageAggregate
     - pip install --user codecov && codecov
