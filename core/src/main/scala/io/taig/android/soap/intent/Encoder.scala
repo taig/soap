@@ -20,47 +20,47 @@ trait Encoder[V] extends soap.Encoder[( Intent, String, V ), Unit]
 object Encoder extends EncoderOperations with Encoders0
 
 trait Encoders0 extends EncoderOperations with Encoders1 {
-    implicit val `Encoder[Array[Boolean]]`: Encoder[Array[Boolean]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayBoolean: Encoder[Array[Boolean]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Array[Byte]]`: Encoder[Array[Byte]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayByte: Encoder[Array[Byte]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Array[Char]]`: Encoder[Array[Char]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayChar: Encoder[Array[Char]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Array[Double]]`: Encoder[Array[Double]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayDouble: Encoder[Array[Double]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Array[Float]]`: Encoder[Array[Float]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayFloat: Encoder[Array[Float]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Array[Int]]`: Encoder[Array[Int]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayInt: Encoder[Array[Int]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Array[Long]]`: Encoder[Array[Long]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayLong: Encoder[Array[Long]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit def `Encoder[Array[Parcelable]]`[V <: Parcelable: ClassTag]: Encoder[Array[V]] = {
+    implicit def encoderArrayParcelable[V <: Parcelable: ClassTag]: Encoder[Array[V]] = {
         Encoder[Iterable[V]].contramap( _.toIterable )
     }
 
-    implicit val `Encoder[Array[Short]]`: Encoder[Array[Short]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayShort: Encoder[Array[Short]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Array[String]]`: Encoder[Array[String]] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderArrayString: Encoder[Array[String]] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Boolean]`: Encoder[Boolean] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderBoolean: Encoder[Boolean] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Bundle]`: Encoder[Bundle] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderBundle: Encoder[Bundle] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Byte]`: Encoder[Byte] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderByte: Encoder[Byte] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Char]`: Encoder[Char] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderChar: Encoder[Char] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[CharSequence]`: Encoder[CharSequence] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderCharSequence: Encoder[CharSequence] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Double]`: Encoder[Double] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderDouble: Encoder[Double] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit def `Encoder[Enumeration]`[V: Enum.Derived]: Encoder[V] = Encoder[String].contramap( Enum[V].encode )
+    implicit def encoderEnumeration[V: Enum.Derived]: Encoder[V] = Encoder[String].contramap( Enum[V].encode )
 
-    implicit val `Encoder[Float]`: Encoder[Float] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderFloat: Encoder[Float] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Int]`: Encoder[Int] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderInt: Encoder[Int] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit def `Encoder[Iterable[Parcelable]]`[V <: Parcelable, I[V] <: Iterable[V]]: Encoder[I[V]] = {
+    implicit def encoderIterableParcelable[V <: Parcelable, I[V] <: Iterable[V]]: Encoder[I[V]] = {
         Encoder.instance {
             case ( bundle, key, value ) ⇒
                 import collection.JavaConversions._
@@ -68,28 +68,28 @@ trait Encoders0 extends EncoderOperations with Encoders1 {
         }
     }
 
-    implicit val `Encoder[Long]`: Encoder[Long] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderLong: Encoder[Long] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit def `Encoder[Option]`[V]( implicit c: Lazy[Encoder[V]] ): Encoder[Option[V]] = Encoder.instance {
+    implicit def encoderOption[V]( implicit c: Lazy[Encoder[V]] ): Encoder[Option[V]] = Encoder.instance {
         case ( intent, key, value ) ⇒ value.foreach( intent.write( key, _ )( c.value ) )
     }
 
-    implicit def `Encoder[Parcelable]`[V <: Parcelable]: Encoder[V] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit def encoderParcelable[V <: Parcelable]: Encoder[V] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[Short]`: Encoder[Short] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderShort: Encoder[Short] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit val `Encoder[String]`: Encoder[String] = Encoder.instance( _.putExtra( _, _ ) )
+    implicit val encoderString: Encoder[String] = Encoder.instance( _.putExtra( _, _ ) )
 
-    implicit def `Encoder[Traversable]`[V: ClassTag, T[V] <: Traversable[V]](
+    implicit def encoderTraversable[V: ClassTag, T[V] <: Traversable[V]](
         implicit
         e: Lazy[Encoder[Array[V]]]
     ): Encoder[T[V]] = e.map( _.contramap[T[V]]( _.toArray ) ).value
 
-    implicit val `Encoder[URL]`: Encoder[URL] = Encoder[String].contramap( _.toString )
+    implicit val encoderURL: Encoder[URL] = Encoder[String].contramap( _.toString )
 }
 
 trait Encoders1 extends EncoderOperations {
-    implicit def `Encoder[bundler.Encoder]`[V]( implicit e: Lazy[bundler.Encoder[V]] ): Encoder[V] = {
+    implicit def encoderBundlerEncoder[V]( implicit e: Lazy[bundler.Encoder[V]] ): Encoder[V] = {
         Encoder.instance{ case ( intent, key, value ) ⇒ intent.write[Bundle]( key, e.value.encode( value ) ) }
     }
 }
@@ -101,7 +101,7 @@ trait EncoderOperations {
         override def encode( value: ( Intent, String, V ) ) = f.tupled( value )
     }
 
-    implicit val `Contramap[Encoder]`: Contravariant[Encoder] = new Contravariant[Encoder] {
+    implicit val contramapEncoder: Contravariant[Encoder] = new Contravariant[Encoder] {
         override def contramap[A, B]( b: Encoder[A] )( f: B ⇒ A ) = instance {
             case ( intent, key, value ) ⇒ b.encode( intent, key, f( value ) )
         }

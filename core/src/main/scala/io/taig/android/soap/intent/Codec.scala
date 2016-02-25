@@ -15,7 +15,7 @@ trait Codec[V]
 object Codec extends CodecOperations with Codecs0
 
 trait Codecs0 extends CodecOperations {
-    implicit def `Codec[Encoder, Decoder]`[V]( implicit e: Lazy[Encoder[V]], d: Lazy[Decoder[V]] ): Codec[V] = {
+    implicit def codecEncoderDecoder[V]( implicit e: Lazy[Encoder[V]], d: Lazy[Decoder[V]] ): Codec[V] = {
         Codec.instance(
             { case value ⇒ e.value.encode( value ) },
             { case serialization ⇒ d.value.decode( serialization ) }
@@ -32,7 +32,7 @@ trait CodecOperations {
         override def decodeRaw( serialization: ( Intent, String ) ) = d.tupled( serialization )
     }
 
-    implicit val `Inmap[Codec]`: Inmap[Codec] = new Inmap[Codec] {
+    implicit val inmapCodec: Inmap[Codec] = new Inmap[Codec] {
         override def inmap[A, B]( fa: Codec[A] )( contramap: B ⇒ A, map: A ⇒ B ) = instance(
             { case value ⇒ implicitly[Contravariant[Encoder]].contramap( fa )( contramap ).encode( value ) },
             { case serialization ⇒ implicitly[Functor[Decoder]].map( fa )( map ).decode( serialization ) }

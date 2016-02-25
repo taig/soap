@@ -17,11 +17,11 @@ trait Decoder[V] extends soap.Decoder[Bundle, V]
 object Decoder extends DecoderOperations with Decoders0
 
 trait Decoders0 extends DecoderOperations with Decoders1 {
-    implicit val `Decoder[CNil]`: Decoder[CNil] = Decoder.instance(
+    implicit val decoderCNil: Decoder[CNil] = Decoder.instance(
         _ ⇒ sys.error( "No Decoder representation for CNil (this shouldn't happen)" )
     )
 
-    implicit def `Decoder[Coproduct]`[H: ClassTag, T <: Coproduct](
+    implicit def decoderCoproduct[H: ClassTag, T <: Coproduct](
         implicit
         h: Lazy[bundle.Decoder[H]],
         t: Lazy[Decoder[T]]
@@ -34,9 +34,9 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
         }
     }
 
-    implicit val `Decoder[HNil]`: Decoder[HNil] = Decoder.instance( _ ⇒ HNil )
+    implicit val decoderHNil: Decoder[HNil] = Decoder.instance( _ ⇒ HNil )
 
-    implicit def `Decoder[HList]`[K <: Symbol, V, T <: HList, N <: Nat](
+    implicit def decoderHList[K <: Symbol, V, T <: HList, N <: Nat](
         implicit
         k: Witness.Aux[K],
         h: Lazy[bundle.Decoder[V]],
@@ -45,7 +45,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
         field[K]( bundle.read[V]( k.value.name )( h.value ) ) :: t.value.decode( bundle )
     }
 
-    implicit def `Decoder[Map[String, bundle.Decoder]]`[V, M[K, +V] <: Map[K, V]](
+    implicit def decoderMapStringBundleDecoder[V, M[K, +V] <: Map[K, V]](
         implicit
         d:   Lazy[bundle.Decoder[V]],
         cbf: CanBuildFrom[Nothing, ( String, V ), M[String, V]]
@@ -61,7 +61,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
         builder.result
     }
 
-    implicit def `Decoder[Traversable[(String, bundle.Decoder)]]`[V, M[+V] <: Traversable[V]](
+    implicit def decoderTraversableStringBundleDecoder[V, M[+V] <: Traversable[V]](
         implicit
         d:   Lazy[bundle.Decoder[V]],
         cbf: CanBuildFrom[Nothing, ( String, V ), M[( String, V )]]
@@ -69,7 +69,7 @@ trait Decoders0 extends DecoderOperations with Decoders1 {
 }
 
 trait Decoders1 extends DecoderOperations with Decoders2 {
-    implicit def `Decoder[Array[bundle.Decoder]]`[V: ClassTag](
+    implicit def decoderArrayBundleDecoder[V: ClassTag](
         implicit
         d: Lazy[bundle.Decoder[V]]
     ): Decoder[Array[V]] = Decoder.instance { bundle ⇒
@@ -82,7 +82,7 @@ trait Decoders1 extends DecoderOperations with Decoders2 {
         array
     }
 
-    implicit def `Decoder[Array[Option[bundle.Decoder]]]`[V: ClassTag](
+    implicit def decoderArrayOptionBundleDecoder[V: ClassTag](
         implicit
         d: Lazy[bundle.Decoder[Option[V]]]
     ): Decoder[Array[Option[V]]] = Decoder.instance { bundle ⇒
@@ -96,13 +96,13 @@ trait Decoders1 extends DecoderOperations with Decoders2 {
         array
     }
 
-    implicit def `Decoder[Traversable[bundle.Decoder]]`[V: ClassTag, T[V] <: Traversable[V]](
+    implicit def decoderTraversableBundleDecoder[V: ClassTag, T[V] <: Traversable[V]](
         implicit
         d:   Lazy[bundle.Decoder[V]],
         cbf: CanBuildFrom[Nothing, V, T[V]]
     ): Decoder[T[V]] = Decoder[Array[V]].map( _.to[T] )
 
-    implicit def `Decoder[Traversable[Option[bundle.Decoder]]]`[V: ClassTag, T[V] <: Traversable[V]](
+    implicit def decoderTraversableOptionBundleDecoder[V: ClassTag, T[V] <: Traversable[V]](
         implicit
         d:   Lazy[bundle.Decoder[Option[V]]],
         cbf: CanBuildFrom[Nothing, Option[V], T[Option[V]]]
@@ -110,7 +110,7 @@ trait Decoders1 extends DecoderOperations with Decoders2 {
 }
 
 trait Decoders2 extends DecoderOperations with Decoders3 {
-    implicit def `Decoder[LabelledGeneric]`[T, LG](
+    implicit def decoderLabelledGeneric[T, LG](
         implicit
         lg: LabelledGeneric.Aux[T, LG],
         c:  Lazy[Decoder[LG]]
@@ -118,7 +118,7 @@ trait Decoders2 extends DecoderOperations with Decoders3 {
 }
 
 trait Decoders3 extends DecoderOperations {
-    implicit def `Decoder[Generic]`[T, G](
+    implicit def decoderGeneric[T, G](
         implicit
         g: Generic.Aux[T, G],
         c: Lazy[Decoder[G]]
@@ -132,7 +132,7 @@ trait DecoderOperations {
         override def decode( bundle: Bundle ) = f( bundle )
     }
 
-    implicit val `Functor[Decoder]`: Functor[Decoder] = new Functor[Decoder] {
+    implicit val functorDecoder: Functor[Decoder] = new Functor[Decoder] {
         override def map[A, B]( b: Decoder[A] )( f: A ⇒ B ) = instance( bundle ⇒ f( b.decode( bundle ) ) )
     }
 }
