@@ -4,10 +4,10 @@ import java.net.URL
 
 import android.content.Intent
 import android.os.Parcelable
+import cats.Functor
+import cats.syntax.functor._
 import io.taig.android.soap
 import io.taig.android.soap._
-import io.taig.android.soap.functional._
-import io.taig.android.soap.syntax.functional._
 import io.taig.android.soap.syntax.intent._
 import io.taig.android.soap.util.printBundle
 import julienrf.enum.Enum

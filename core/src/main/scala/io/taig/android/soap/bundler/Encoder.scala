@@ -1,10 +1,10 @@
 package io.taig.android.soap.bundler
 
+import cats.functor.Contravariant
+import cats.syntax.contravariant._
 import io.taig.android.soap
 import io.taig.android.soap._
-import io.taig.android.soap.functional._
 import io.taig.android.soap.syntax.bundle._
-import io.taig.android.soap.syntax.functional._
 import shapeless.Nat._
 import shapeless._
 import shapeless.labelled._

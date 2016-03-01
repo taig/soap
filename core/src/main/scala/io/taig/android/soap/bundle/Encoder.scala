@@ -4,12 +4,12 @@ import java.net.URL
 
 import android.annotation.TargetApi
 import android.os.Parcelable
-import android.util.{ SparseArray, SizeF, Size }
+import android.util.{ Size, SizeF, SparseArray }
+import cats.functor.Contravariant
+import cats.syntax.contravariant._
 import io.taig.android.soap
 import io.taig.android.soap._
-import io.taig.android.soap.functional._
 import io.taig.android.soap.syntax.bundle._
-import io.taig.android.soap.syntax.functional._
 import julienrf.enum.Enum
 import shapeless.Lazy
 

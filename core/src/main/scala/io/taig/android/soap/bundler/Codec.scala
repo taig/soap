@@ -2,7 +2,6 @@ package io.taig.android.soap.bundler
 
 import io.taig.android.soap
 import io.taig.android.soap._
-import io.taig.android.soap.functional._
 import shapeless.Lazy
 
 import scala.language.higherKinds
@@ -30,12 +29,5 @@ trait CodecOperations {
         override def encode( value: V ) = e( value )
 
         override def decode( serialization: Bundle ) = d( serialization )
-    }
-
-    implicit val inmapCodec: Inmap[Codec] = new Inmap[Codec] {
-        override def inmap[A, B]( fa: Codec[A] )( contramap: B ⇒ A, map: A ⇒ B ) = instance(
-            { case value ⇒ implicitly[Contravariant[Encoder]].contramap( fa )( contramap ).encode( value ) },
-            { case serialization ⇒ implicitly[Functor[Decoder]].map( fa )( map ).decode( serialization ) }
-        )
     }
 }
