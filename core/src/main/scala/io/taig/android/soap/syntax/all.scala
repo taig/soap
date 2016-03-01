@@ -1,7 +1,7 @@
 package io.taig.android.soap.syntax
 
 trait all
-    extends bundle
-    with intent
+    extends reader
+    with writer
 
 object all extends all

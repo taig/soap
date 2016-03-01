@@ -9,14 +9,11 @@ object Bird {
     case class Eagle( weight: Option[Float], hunts: List[Animal] ) extends Bird
 }
 
-sealed trait Enum
-object Enum {
-    case object A extends Enum
-    case object B extends Enum
-}
+sealed trait Yolo
+case class Eagle( weight: Option[Float], hunts: List[Yolo] ) extends Yolo
 
-sealed trait Vehicle
-case class Car( seats: Int ) extends Vehicle
-object Military {
-    case class Car( weight: Float ) extends Vehicle
+sealed trait Enumeration
+object Enumeration {
+    case object A extends Enumeration
+    case object B extends Enumeration
 }
