@@ -22,7 +22,7 @@ scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
 import io.taig.android.soap.Bundle
-import io.taig.android.soap.implicits.
+import io.taig.android.soap.implicits._
 
 sealed trait Animal
 case class Cat( moody: Boolean ) extends Animal
