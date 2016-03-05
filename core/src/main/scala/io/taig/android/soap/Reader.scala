@@ -1,5 +1,6 @@
 package io.taig.android.soap
 
+import java.io.Serializable
 import java.net.URL
 
 import android.content.{ Intent ⇒ AIntent }
@@ -7,8 +8,8 @@ import android.os.{ Parcelable, Bundle ⇒ ABundle }
 import cats.Functor
 import cats.syntax.functor._
 import julienrf.enum.Enum
-import shapeless.{ Lazy, Typeable }
 import shapeless.syntax.typeable._
+import shapeless.{ Lazy, Typeable }
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds

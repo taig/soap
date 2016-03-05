@@ -2,6 +2,8 @@ package io.taig.android.soap
 
 import android.content.Intent
 import android.os.Build.VERSION_CODES._
+import io.taig.android.soap.Reader.readerIntentSerializable
+import io.taig.android.soap.Writer.writerIntentSerializable
 import io.taig.android.soap.syntax.reader._
 import io.taig.android.soap.syntax.writer._
 import org.robolectric.annotation.Config
@@ -9,7 +11,10 @@ import shapeless._
 import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
-class IntentTest extends WriterReaderTest[Intent] {
+class IntentTest extends WriterReaderTest[Intent](
+    writerIntentSerializable,
+    readerIntentSerializable
+) {
     override def instance = new Intent()
 
     it should "have a write method" in {

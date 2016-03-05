@@ -1,10 +1,14 @@
 package io.taig.android.soap
 
+import java.io.File
 import java.net.URL
 
 import android.net.Uri
 
 abstract class WriterReaderTest[C](
+        writerSerializable: Writer[C, File],
+        readerSerializable: Reader[C, File]
+)(
         implicit
         writerAnimal:       Writer[C, Animal],
         writerArrayBoolean: Writer[C, Array[Boolean]],
@@ -164,6 +168,10 @@ abstract class WriterReaderTest[C](
 
     it should "support Parcelable Iterables" in {
         verify[Seq[Uri]]( Seq( Uri.parse( "http://taig.io/" ) ) )
+    }
+
+    it should "support Serializable" in {
+        verify[File]( new File( "./foo/bar" ) )( writerSerializable, readerSerializable )
     }
 
     it should "support Short" in {
