@@ -199,7 +199,7 @@ object mySoapInstances {
 }
 ````
 
-`Serializable` is not supported autmatically. It is necessary to provide the `Writer` and `Reader` explicitly.
+`Serializable` is not supported automatically. It is necessary to provide the `Writer` and `Reader` explicitly.
 
 ````scala
 import io.taig.android.soap.Bundle
