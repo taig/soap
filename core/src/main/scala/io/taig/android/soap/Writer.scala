@@ -1,5 +1,6 @@
 package io.taig.android.soap
 
+import java.io.Serializable
 import java.net.URL
 import java.util.ArrayList
 
@@ -72,6 +73,8 @@ trait Writer0 extends Writer1 {
 
     implicit def writerBundleParcelable[V <: Parcelable]: Writer.Bundle[V] = instance( _.putParcelable( _, _ ) )
 
+    def writerBundleSerializable[V <: Serializable]: Writer.Bundle[V] = instance( _.putSerializable( _, _ ) )
+
     implicit val writerBundleShort: Writer.Bundle[Short] = instance( _.putShort( _, _ ) )
 
     implicit val writerBundleString: Writer.Bundle[String] = instance( _.putString( _, _ ) )
@@ -120,6 +123,8 @@ trait Writer0 extends Writer1 {
     implicit val writerIntentLong: Writer.Intent[Long] = instance( _.putExtra( _, _ ) )
 
     implicit def writerIntentParcelable[V <: Parcelable]: Writer.Intent[V] = instance( _.putExtra( _, _ ) )
+
+    def writerIntentSerializable[V <: Serializable]: Writer.Intent[V] = instance( _.putExtra( _, _ ) )
 
     implicit val writerIntentShort: Writer.Intent[Short] = instance( _.putExtra( _, _ ) )
 

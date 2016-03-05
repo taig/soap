@@ -13,14 +13,14 @@ package object soap {
         implicit def default[C, K, V](
             implicit
             k: Witness.Aux[K],
-            e: Lazy[Writer[C, V]]
+            w: Lazy[Writer[C, V]]
         ): Case.Aux[C, FieldType[K, V], C] = at { ( container, value ) ⇒
             val key = k.value match {
                 case symbol: Symbol ⇒ symbol.name
                 case any            ⇒ any.toString
             }
 
-            e.value.write( container, key, value )
+            w.value.write( container, key, value )
             container
         }
     }

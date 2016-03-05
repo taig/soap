@@ -7,7 +7,8 @@ import android.os.{ Parcelable, Bundle ⇒ ABundle }
 import cats.Functor
 import cats.syntax.functor._
 import julienrf.enum.Enum
-import shapeless.Lazy
+import shapeless.{ Lazy, Typeable }
+import shapeless.syntax.typeable._
 
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
@@ -73,6 +74,10 @@ trait Reader0 extends Reader1 {
 
     implicit def readerBundleParcelable[V <: Parcelable]: Reader.Bundle[V] = instanceNullable( _.getParcelable[V]( _ ) )
 
+    def readerBundleSerializable[V <: Serializable: Typeable]: Reader.Bundle[V] = instance { ( bundle, key ) ⇒
+        Option( bundle.getSerializable( key ) ).flatMap( _.cast[V] )
+    }
+
     implicit val readerBundleShort: Reader.Bundle[Short] = instanceGuardedBundle( _.getShort( _ ) )
 
     implicit val readerBundleString: Reader.Bundle[String] = instanceNullable( _.getString( _ ) )
@@ -122,6 +127,10 @@ trait Reader0 extends Reader1 {
     implicit val readerIntentLong: Reader.Intent[Long] = instanceGuardedIntent( _.getLongExtra( _, Long.MinValue ) )
 
     implicit def readerIntentParcelable[V <: Parcelable]: Reader.Intent[V] = instanceNullable( _.getParcelableExtra[V]( _ ) )
+
+    def readerIntentSerializable[V <: Serializable: Typeable]: Reader.Intent[V] = instance { ( intent, key ) ⇒
+        Option( intent.getSerializableExtra( key ) ).flatMap( _.cast[V] )
+    }
 
     implicit val readerIntentShort: Reader.Intent[Short] = instanceGuardedIntent( _.getShortExtra( _, Short.MinValue ) )
 
