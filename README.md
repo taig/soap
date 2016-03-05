@@ -2,9 +2,9 @@
 
 > Scala on Android Parcelable
 
-[![Circle CI](https://img.shields.io/circleci/project/Taig/Soap/master.svg)](https://circleci.com/gh/Taig/Soap/tree/master)
+[![Circle CI](https://circleci.com/gh/Taig/Soap/tree/master.svg?style=shield)](https://circleci.com/gh/Taig/Soap/tree/master)
 [![codecov.io](https://codecov.io/github/Taig/Soap/coverage.svg?branch=master)](https://codecov.io/github/Taig/Soap?branch=master)
-[![Maven](https://img.shields.io/maven-central/v/io.taig.android/soap_2.11.svg)](http://search.maven.org/#artifactdetails%7Cio.taig.android%7Csoap_2.11%7C3.0.0%7CBETA3%7Caar)
+[![Maven](https://img.shields.io/maven-central/v/io.taig.android/soap_2.11.svg)](http://search.maven.org/#artifactdetails%7Cio.taig.android%7Csoap_2.11%7C3.0.0%7Caar)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Taig/Soap/master/LICENSE)
 
 Parcelable is Android's serialization tool for inter-process communication (IPC). The emphasis on performance is the prominent difference to the Java Serialization framework (which the developer is discouraged to use for this very reason). Unfortunately, Parcelable requires the developer to implement a vast portion of boilerplate code in order to work. This project combines the performance of Parcelable with the ease of Java's Serializable interface.
@@ -12,18 +12,18 @@ Parcelable is Android's serialization tool for inter-process communication (IPC)
 ## Installation
 
 ````scala
-libraryDependencies += "io.taig.android" %% "soap" % "3.0.0-SNAPSHOT"
+libraryDependencies += "io.taig.android" %% "soap" % "3.0.0"
 ````
 
 ## Overview
 
-*Soap* works, in general, with `Bundle` and `Intent`. The library enriches the APIs by `write` and `read` methods. It is therefore always necessary `import io.taig.android.soap.implicits._`.
+*Soap* enriches the `Bundle` and `Intent` APIs by `write` and `read` methods. It is therefore always necessary to `import io.taig.android.soap.implicits._`.
 
 There are four distinct type classes that handle serialization and deserialization:
 
 ### `Writer[C, V]` & `Reader[C, V]`  
 
-Describes how a value `V` is injected into a given container `C` (`Bundle` or `Intent`). This is used to serialize a simple value. For instance, writing an `Int` is as easy as defining:
+Describes how a value `V` is injected / extracted into / from a given container `C` (`Bundle` or `Intent`). This is used to serialize a simple value. For instance, writing an `Int` is as easy as defining:
 
 ````scala
 implicit val writerBundleInt: Writer.Bundle[Int] = instance { ( bundle, key, value ) =>
@@ -33,7 +33,7 @@ implicit val writerBundleInt: Writer.Bundle[Int] = instance { ( bundle, key, val
 
 ### `Encoder[V]` & `Decoder[V]` 
 
-Describes how a value `V` can be en- and decoded as a `Bundle`. Case classes, for instance, are represented as `Bundle`.
+Describes how a value `V` can be en- and decoded as a `Bundle`. Case classes, for instance, are represented as `Bundle`s.
 
 ````scala
 case class Dog( name: String, age: Int )
@@ -44,7 +44,7 @@ val bundle: Bundle = Encoder[Dog].encode( Dog( "Holly", 2 ) )
 
 ### Basic usage
 
-*Soap* provides a Bundle alias with custom apply methods. All examples below construct the same `Bundle`.
+*Soap* provides a `Bundle` alias with custom `apply` methods. All examples below construct the same `Bundle`.
 
 ````scala
 import io.taig.android.soap.Bundle
@@ -84,7 +84,7 @@ bundle.read[String]( "key1" ) // None
 intent.read[Int]( "key1" ) // Some( 42 )
 ````
 
-### Activity / Intent
+### Working with `Activity` & `Intent`
 
 ````scala
 import android.app.Activity
@@ -121,7 +121,7 @@ object MyActivity {
 }
 ````
 
-### Fragment
+### Working with `Fragment`
 
 ````scala
 import android.app.Fragment
@@ -206,13 +206,16 @@ import io.taig.android.soap.Bundle
 import io.taig.android.soap.Writer.writerBundleSerializable
 import io.taig.android.soap.implicits._
 
-import java.net.URL
+import java.io.File
 
-// Please note that Soap provides a proper Reader and Writer
-// instance for URL
-
-Bundle( "url", new URL( "http://taig.io/" ) )( writerBundleSerializable )
+Bundle( "file", new File( "./foo/bar" ) )( writerBundleSerializable )
 ````
+
+## Advanced usage
+
+The implicit resolution process for *Soap* instances can skyrocket compile times. It is therefore useful to cache implicits with the `shapeless.cachedImplicit` helper.
+
+Please keep in mind that implicit resolution for ADTs is likely to fail due to [SI-7046][3]. This issue can be circumvented by moving affected classes into a submodule.
 
 ## Roadmap
 
@@ -229,3 +232,4 @@ MIT, see [LICENSE][1] file for more information
 
 [1]: https://raw.githubusercontent.com/Taig/Soap/master/LICENSE
 [2]: https://github.com/travisbrown/circe/
+[3]: https://issues.scala-lang.org/browse/SI-7046
