@@ -7,7 +7,7 @@ import android.content.{ Intent ⇒ AIntent }
 import android.os.{ Parcelable, Bundle ⇒ ABundle }
 import cats.Functor
 import cats.syntax.functor._
-import julienrf.enum.Enum
+import enum.Enum
 import shapeless.syntax.typeable._
 import shapeless.{ Lazy, Typeable }
 

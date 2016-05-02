@@ -11,7 +11,7 @@ lazy val core = project
             "com.chuusai" %% "shapeless" % "2.3.0" ::
             "org.typelevel" %% "cats-core" % "0.4.1" ::
             "org.typelevel" %% "cats-macros" % "0.4.1" ::
-            "org.julienrf" %% "enum" % "2.2" ::
+            "org.julienrf" %% "enum" % "3.0" ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "3.0.0-M15" % "test" ::
             Nil,

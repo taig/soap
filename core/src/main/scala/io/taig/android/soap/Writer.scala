@@ -8,7 +8,7 @@ import android.content.{ Intent ⇒ AIntent }
 import android.os.{ Parcelable, Bundle ⇒ ABundle }
 import cats.functor.Contravariant
 import cats.syntax.contravariant._
-import julienrf.enum.Enum
+import enum.Enum
 import shapeless.Lazy
 
 import scala.language.{ higherKinds, implicitConversions }
