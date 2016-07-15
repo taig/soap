@@ -5,7 +5,7 @@ lazy val soap = ( project in file( "." ) )
 lazy val core = project
     .settings( androidBuildAar ++ Settings.common ++ Settings.android: _* )
     .settings(
-        addCompilerPlugin( "org.spire-math" %% "kind-projector" % "0.7.1" ),
+        addCompilerPlugin( "org.spire-math" %% "kind-projector" % "0.8.0" ),
         fork in Test := true,
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.1" ::
