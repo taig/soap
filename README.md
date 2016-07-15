@@ -4,7 +4,7 @@
 
 [![Circle CI](https://circleci.com/gh/Taig/soap/tree/master.svg?style=shield)](https://circleci.com/gh/Taig/soap/tree/master)
 [![codecov.io](https://codecov.io/github/Taig/soap/coverage.svg?branch=master)](https://codecov.io/github/Taig/soap?branch=master)
-[![Maven](https://img.shields.io/maven-central/v/io.taig.android/soap_2.11.svg)](http://search.maven.org/#artifactdetails%7Cio.taig.android%7Csoap_2.11%7C3.0.3%7Caar)
+[![Maven](https://img.shields.io/maven-central/v/io.taig.android/soap_2.11.svg)](http://search.maven.org/#artifactdetails%7Cio.taig.android%7Csoap_2.11%7C3.0.4%7Caar)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Taig/soap/master/LICENSE)
 
 Parcelable is Android's serialization tool for inter-process communication (IPC). The emphasis on performance is the prominent difference to the Java Serialization framework (which the developer is discouraged to use for this very reason). Unfortunately, Parcelable requires the developer to implement a vast portion of boilerplate code in order to work. This project combines the performance of Parcelable with the ease of Java's Serializable interface.
@@ -12,7 +12,7 @@ Parcelable is Android's serialization tool for inter-process communication (IPC)
 ## Installation
 
 ````scala
-libraryDependencies += "io.taig.android" %% "soap" % "3.0.3"
+libraryDependencies += "io.taig.android" %% "soap" % "3.0.4"
 ````
 
 ## Overview
