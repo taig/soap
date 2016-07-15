@@ -1,9 +1,9 @@
-lazy val soap = ( project in file( "." ) )
-    .settings( Settings.common ++ Settings.noPublish: _* )
+lazy val soap = project.in( file( "." ) )
+    .settings( Settings.common ++ Settings.noPublish )
     .aggregate( core )
 
 lazy val core = project
-    .settings( androidBuildAar ++ Settings.common ++ Settings.android: _* )
+    .settings( androidBuildAar ++ Settings.common ++ Settings.android )
     .settings(
         addCompilerPlugin( "org.spire-math" %% "kind-projector" % "0.8.0" ),
         fork in Test := true,
@@ -16,6 +16,5 @@ lazy val core = project
             "org.scalatest" %% "scalatest" % "3.0.0-M15" % "test" ::
             Nil,
         name := "Soap",
-        minSdkVersion := "4",
         testOptions in Test += Tests.Argument( "-oDF" )
 )
