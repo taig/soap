@@ -5,7 +5,7 @@ import sbt._
 
 object Settings {
     val android = Seq(
-        platformTarget := "android-23",
+        platformTarget := "android-24",
         typedResources := false
     )
 
