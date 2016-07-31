@@ -4,7 +4,6 @@
 
 [![Circle CI](https://circleci.com/gh/Taig/soap/tree/master.svg?style=shield)](https://circleci.com/gh/Taig/soap/tree/master)
 [![codecov](https://codecov.io/gh/Taig/Soap/branch/master/graph/badge.svg)](https://codecov.io/gh/Taig/Soap)
-
 [![Maven](https://img.shields.io/maven-central/v/io.taig.android/soap_2.11.svg)](http://search.maven.org/#artifactdetails%7Cio.taig.android%7Csoap_2.11%7C3.0.4%7Caar)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Taig/soap/master/LICENSE)
 
