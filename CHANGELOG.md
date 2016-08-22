@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.5
+
+_2016-08-22_
+
+ * Upgrade to shapeless 2.3.2
+ * Upgrade to cats 0.7.0
+ * Upgrade to scalatest 3.0.0
+ * Upgrade to sbt-android 1.6.13
+ * Upgrade to sbt 0.13.12
+
 ## 3.0.4
 
 _2016-07-15_
