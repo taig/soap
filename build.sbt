@@ -8,7 +8,7 @@ lazy val core = project
         addCompilerPlugin( "org.spire-math" %% "kind-projector" % "0.8.0" ),
         fork in Test := true,
         libraryDependencies ++=
-            "com.chuusai" %% "shapeless" % "2.3.1" ::
+            "com.chuusai" %% "shapeless" % "2.3.2" ::
             "org.typelevel" %% "cats-core" % "0.6.1" ::
             "org.typelevel" %% "cats-macros" % "0.6.1" ::
             "org.julienrf" %% "enum" % "3.0" ::
