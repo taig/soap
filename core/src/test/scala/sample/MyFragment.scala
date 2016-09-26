@@ -2,11 +2,8 @@ package sample
 
 import android.app.Fragment
 import cats.Eval
-import io.taig.android.soap.generic.auto._
 import io.taig.android.soap.Bundle
 import io.taig.android.soap.implicits._
-import shapeless._
-import shapeless.syntax.singleton._
 
 class MyFragment extends Fragment {
     val coordinates: Eval[Option[( Int, Int )]] = Eval.later {
@@ -40,11 +37,9 @@ object MyFragment {
     def apply( coordinates: Option[( Int, Int )] ): MyFragment = {
         val fragment = new MyFragment
         fragment.setArguments(
-            Bundle(
-                "coordinates" ->> coordinates ::
-                    "orientation" ->> "portrait" ::
-                    HNil
-            )
+            Bundle( 2 )
+                .write( "coordinates", coordinates )
+                .write( "orientation", "portrait" )
         )
         fragment
     }

@@ -1,4 +1,4 @@
-package io.taig.android.soap
+package io.taig.android.soap.test
 
 import org.scalatest.{ FlatSpec, Matchers, RobolectricSuite }
 
