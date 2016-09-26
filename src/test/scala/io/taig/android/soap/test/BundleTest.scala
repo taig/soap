@@ -33,7 +33,7 @@ class BundleTest extends Suite {
     }
 
     it should "have a record constructor" in {
-        Bundle( "foo" ->> "bar" :: "foobar" ->> 42 :: HNil ) shouldBe
+        Bundle( 'foo ->> "bar" :: "foobar" ->> 42 :: HNil ) shouldBe
             Bundle( 2 ).write( "foo", "bar" ).write( "foobar", 42 )
     }
 }
