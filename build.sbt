@@ -9,8 +9,8 @@ lazy val core = project
         fork in Test := true,
         libraryDependencies ++=
             "com.chuusai" %% "shapeless" % "2.3.2" ::
-            "org.typelevel" %% "cats-core" % "0.7.0" ::
-            "org.typelevel" %% "cats-macros" % "0.7.0" ::
+            "org.typelevel" %% "cats-core" % "0.7.2" ::
+            "org.typelevel" %% "cats-macros" % "0.7.2" ::
             "org.julienrf" %% "enum" % "3.0" ::
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "3.0.0" % "test" ::
