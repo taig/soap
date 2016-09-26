@@ -17,6 +17,11 @@ class BundleTest extends Suite {
         bundle.getString( "key" ) shouldBe "\"value\""
     }
 
+    it should "have a writeAll method" in {
+        Bundle( 2 ).writeAll( 'key ->> "value" :: "foobar" ->> 42 :: HNil ) shouldBe
+            Bundle( 2 ).write( "key", "value" ).write( "foobar", 42 )
+    }
+
     it should "have a read method" in {
         val bundle = Bundle( 1 )
         bundle.putString( "key", "value".asJson.noSpaces )
