@@ -21,6 +21,6 @@ general:
 
 test:
   override:
-    - sbt clean coverage test coverageReport coverageAggregate
+    - sbt clean coverage test coverageReport
   post:
     - pip install --user codecov && codecov
