@@ -1,6 +1,7 @@
 package io.taig.android.soap
 
 import android.os.Build.VERSION_CODES._
+import io.taig.android.soap.generic.auto._
 import org.robolectric.annotation.Config
 import shapeless.{ CNil, HNil }
 import shapeless.syntax.singleton._

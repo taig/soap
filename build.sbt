@@ -15,6 +15,6 @@ lazy val core = project
             "com.geteit" %% "robotest" % "0.12" % "test" ::
             "org.scalatest" %% "scalatest" % "3.0.0" % "test" ::
             Nil,
-        name := "Soap",
+        name := "soap",
         testOptions in Test += Tests.Argument( "-oDF" )
 )

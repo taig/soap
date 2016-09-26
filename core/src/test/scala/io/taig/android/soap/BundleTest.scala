@@ -1,6 +1,7 @@
 package io.taig.android.soap
 
 import android.os.Build.VERSION_CODES._
+import io.taig.android.soap.generic.auto._
 import io.taig.android.soap.Reader.readerBundleSerializable
 import io.taig.android.soap.Writer.writerBundleSerializable
 import io.taig.android.soap.syntax.reader._

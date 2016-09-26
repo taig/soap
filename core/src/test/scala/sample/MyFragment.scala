@@ -1,6 +1,7 @@
 package sample
 
 import android.app.Fragment
+import io.taig.android.soap.generic.auto._
 import io.taig.android.soap.Bundle
 import io.taig.android.soap.implicits._
 import shapeless._

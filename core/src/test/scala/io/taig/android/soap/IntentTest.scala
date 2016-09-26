@@ -2,6 +2,7 @@ package io.taig.android.soap
 
 import android.content.Intent
 import android.os.Build.VERSION_CODES._
+import io.taig.android.soap.generic.auto._
 import io.taig.android.soap.Reader.readerIntentSerializable
 import io.taig.android.soap.Writer.writerIntentSerializable
 import io.taig.android.soap.syntax.reader._
