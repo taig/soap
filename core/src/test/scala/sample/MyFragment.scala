@@ -1,6 +1,7 @@
 package sample
 
 import android.app.Fragment
+import cats.Eval
 import io.taig.android.soap.generic.auto._
 import io.taig.android.soap.Bundle
 import io.taig.android.soap.implicits._
@@ -8,9 +9,13 @@ import shapeless._
 import shapeless.syntax.singleton._
 
 class MyFragment extends Fragment {
-    lazy val coordinates: Option[( Int, Int )] = getArguments.read[( Int, Int )]( "coordinates" )
+    val coordinates: Eval[Option[( Int, Int )]] = Eval.later {
+        getArguments.read[( Int, Int )]( "coordinates" )
+    }
 
-    lazy val orientation: String = getArguments.read[String]( "orientation" ).get
+    val orientation: Eval[String] = Eval.later {
+        getArguments.read[String]( "orientation" ).get
+    }
 
     override def onCreate( state: Bundle ): Unit = {
         super.onCreate( state )
