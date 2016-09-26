@@ -1,18 +1,37 @@
-lazy val soap = project.in( file( "." ) )
-    .settings( Settings.common ++ Settings.noPublish )
-    .aggregate( core )
+androidBuildAar
 
-lazy val core = project
-    .settings( androidBuildAar ++ Settings.common ++ Settings.android )
-    .settings(
-        fork in Test := true,
-        libraryDependencies ++=
-            "io.circe" %% "circe-core" % "0.5.2" ::
-            "io.circe" %% "circe-generic" % "0.5.2" ::
-            "io.circe" %% "circe-parser" % "0.5.2" ::
-            "com.geteit" %% "robotest" % "0.12" % "test" ::
-            "org.scalatest" %% "scalatest" % "3.0.0" % "test" ::
-            Nil,
-        name := "soap",
-        testOptions in Test += Tests.Argument( "-oDF" )
-)
+fork in Test := true
+
+githubProject := "soap"
+
+javacOptions ++=
+    "-source" :: "1.7" ::
+    "-target" :: "1.7" ::
+    Nil
+
+libraryDependencies ++=
+    "io.circe" %% "circe-core" % "0.5.2" ::
+    "io.circe" %% "circe-generic" % "0.5.2" ::
+    "io.circe" %% "circe-parser" % "0.5.2" ::
+    "com.geteit" %% "robotest" % "0.12" % "test" ::
+    "org.scalatest" %% "scalatest" % "3.0.0" % "test" ::
+    Nil
+
+minSdkVersion := "4"
+
+name := "soap"
+
+organization := "io.taig.android"
+
+platformTarget := "android-24"
+
+scalacOptions ++=
+    "-deprecation" ::
+    "-feature" ::
+    Nil
+
+scalaVersion := "2.11.8"
+
+testOptions in Test += Tests.Argument( "-oDF" )
+
+typedResources := false
