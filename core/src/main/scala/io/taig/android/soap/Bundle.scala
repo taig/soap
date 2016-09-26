@@ -1,7 +1,9 @@
 package io.taig.android.soap
 
 import io.circe.Encoder
+import io.taig.android.soap.operation.writer.fold
 import io.taig.android.soap.syntax.writer._
+import shapeless.HList
 
 object Bundle {
     val empty = android.os.Bundle.EMPTY
@@ -12,7 +14,8 @@ object Bundle {
         Bundle( 1 ).write( key, value )
     }
 
-    //    def apply[L <: HList]( arguments: L )( implicit lf: fold.F[L, Bundle] ): Bundle = {
-    //        arguments.foldLeft( Bundle( arguments.runtimeLength ) )( fold )
-    //    }
+    def apply[L <: HList]( arguments: L )(
+        implicit
+        lf: fold.F[L, Bundle]
+    ): Bundle = Bundle( arguments.runtimeLength ).writeAll( arguments )
 }
