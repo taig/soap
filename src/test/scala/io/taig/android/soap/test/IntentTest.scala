@@ -1,11 +1,11 @@
 package io.taig.android.soap.test
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import io.circe.syntax._
 import io.taig.android.soap.Bundle
-import io.taig.android.soap.syntax.reader._
-import io.taig.android.soap.syntax.writer._
+import io.taig.android.soap.implicits._
 import org.robolectric.annotation.Config
 import shapeless.syntax.singleton._
 import shapeless._
@@ -30,5 +30,12 @@ class IntentTest extends Suite {
         intent.putExtra( "key", "value".asJson.noSpaces )
         intent.read[String]( "key" ) shouldBe Some( "value" )
         intent.read[String]( "foobar" ) shouldBe None
+    }
+
+    it should "support Parcelable" in {
+        val intent = new Intent()
+        intent.write( "key", Uri.parse( "http://taig.io/" ) )
+        intent.read[Uri]( "key" ) shouldBe
+            Some( Uri.parse( "http://taig.io/" ) )
     }
 }

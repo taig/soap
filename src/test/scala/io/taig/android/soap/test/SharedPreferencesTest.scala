@@ -1,10 +1,10 @@
 package io.taig.android.soap.test
 
+import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import android.preference.PreferenceManager
 import io.circe.syntax._
-import io.taig.android.soap.syntax.reader._
-import io.taig.android.soap.syntax.writer._
+import io.taig.android.soap.implicits._
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.scalatest.BeforeAndAfterEach
@@ -42,5 +42,11 @@ class SharedPreferencesTest
 
         preferences.read[String]( "key" ) shouldBe Some( "value" )
         preferences.read[String]( "foobar" ) shouldBe None
+    }
+
+    it should "support Parcelable" in {
+        preferences.write( "key", Uri.parse( "http://taig.io/" ) )
+        preferences.read[Uri]( "key" ) shouldBe
+            Some( Uri.parse( "http://taig.io/" ) )
     }
 }

@@ -1,10 +1,10 @@
 package io.taig.android.soap.test
 
+import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import io.circe.syntax._
 import io.taig.android.soap.Bundle
-import io.taig.android.soap.syntax.reader._
-import io.taig.android.soap.syntax.writer._
+import io.taig.android.soap.implicits._
 import org.robolectric.annotation.Config
 import shapeless.syntax.singleton._
 import shapeless._
@@ -27,6 +27,13 @@ class BundleTest extends Suite {
         bundle.putString( "key", "value".asJson.noSpaces )
         bundle.read[String]( "key" ) shouldBe Some( "value" )
         bundle.read[String]( "foobar" ) shouldBe None
+    }
+
+    it should "support Parcelable" in {
+        val bundle = Bundle( 1 )
+        bundle.write( "key", Uri.parse( "http://taig.io/" ) )
+        bundle.read[Uri]( "key" ) shouldBe
+            Some( Uri.parse( "http://taig.io/" ) )
     }
 
     it should "have a capacity constructor" in {
