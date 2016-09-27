@@ -6,8 +6,6 @@ import io.circe.syntax._
 import io.taig.android.soap.Bundle
 import io.taig.android.soap.implicits._
 import org.robolectric.annotation.Config
-import shapeless._
-import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class BundleTest extends Suite {
@@ -15,11 +13,6 @@ class BundleTest extends Suite {
         val bundle = Bundle( 1 )
         bundle.write( "key", "value" )
         bundle.getString( "key" ) shouldBe "\"value\""
-    }
-
-    it should "have a writeAll method" in {
-        Bundle( 2 ).writeAll( 'key ->> "value" :: "foobar" ->> 42 :: HNil ) shouldBe
-            Bundle( 2 ).write( "key", "value" ).write( "foobar", 42 )
     }
 
     it should "have a read method" in {
@@ -42,10 +35,5 @@ class BundleTest extends Suite {
 
     it should "have a single element constructor" in {
         Bundle( "foo", "bar" ) shouldBe Bundle( 2 ).write( "foo", "bar" )
-    }
-
-    it should "have a record constructor" in {
-        Bundle( 'foo ->> "bar" :: "foobar" ->> 42 :: HNil ) shouldBe
-            Bundle( 2 ).write( "foo", "bar" ).write( "foobar", 42 )
     }
 }

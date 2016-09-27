@@ -6,8 +6,6 @@ import android.os.Build.VERSION_CODES._
 import io.circe.syntax._
 import io.taig.android.soap.implicits._
 import org.robolectric.annotation.Config
-import shapeless._
-import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class IntentTest extends Suite {
@@ -15,13 +13,6 @@ class IntentTest extends Suite {
         val intent = new Intent()
         intent.write( "key", "value" )
         intent.getStringExtra( "key" ) shouldBe "\"value\""
-    }
-
-    it should "have a writeAll method" in {
-        val intent1 = new Intent()
-        val intent2 = new Intent()
-        intent1.writeAll( 'key ->> "value" :: "foobar" ->> 42 :: HNil ) shouldBe
-            intent2.write( "key", "value" ).write( "foobar", 42 )
     }
 
     it should "have a read method" in {

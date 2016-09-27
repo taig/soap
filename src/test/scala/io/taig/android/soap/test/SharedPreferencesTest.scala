@@ -8,8 +8,6 @@ import io.taig.android.soap.implicits._
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.scalatest.BeforeAndAfterEach
-import shapeless._
-import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class SharedPreferencesTest
@@ -18,7 +16,7 @@ class SharedPreferencesTest
     lazy val preferences = PreferenceManager
         .getDefaultSharedPreferences( RuntimeEnvironment.application )
 
-    override protected def afterEach(): Unit = {
+    override def afterEach(): Unit = {
         super.afterEach()
         preferences.edit().clear().commit()
     }
@@ -26,12 +24,6 @@ class SharedPreferencesTest
     it should "have a write method" in {
         preferences.write( "key", "value" )
         preferences.getString( "key", null ) shouldBe "\"value\""
-    }
-
-    it should "have a writeAll method" in {
-        preferences.writeAll( 'key ->> "value" :: "foobar" ->> 42 :: HNil )
-        preferences.read[String]( "key" ) shouldBe Some( "value" )
-        preferences.read[Int]( "foobar" ) shouldBe Some( 42 )
     }
 
     it should "have a read method" in {
