@@ -12,28 +12,29 @@ sealed trait reader[C] {
 }
 
 object reader {
+    @inline
+    private def parse[V: Decoder]( json: String ): Option[V] = {
+        Option( json ).flatMap { json ⇒
+            decode[V]( json ).toOption
+        }
+    }
+
     final case class bundle( container: Bundle ) extends reader[Bundle] {
         override def read[V: Decoder]( key: String ): Option[V] = {
-            Option( container.getString( key ) ).flatMap { json ⇒
-                decode[V]( json ).toOption
-            }
+            parse( container.getString( key ) )
         }
     }
 
     final case class intent( container: Intent ) extends reader[Intent] {
         override def read[V: Decoder]( key: String ): Option[V] = {
-            Option( container.getStringExtra( key ) ).flatMap { json ⇒
-                decode[V]( json ).toOption
-            }
+            parse( container.getStringExtra( key ) )
         }
     }
 
     final case class sharedPreferences( container: SharedPreferences )
             extends reader[SharedPreferences] {
         override def read[V: Decoder]( key: String ): Option[V] = {
-            Option( container.getString( key, null ) ).flatMap { json ⇒
-                decode[V]( json ).toOption
-            }
+            parse( container.getString( key, null ) )
         }
     }
 }

@@ -12,16 +12,21 @@ sealed trait writer[C] {
 }
 
 object writer {
+    @inline
+    private def encode[V: Encoder]( value: V )( f: String ⇒ Unit ): Unit = {
+        f( value.asJson.noSpaces )
+    }
+
     final case class bundle( container: Bundle ) extends writer[Bundle] {
         override def write[V: Encoder]( key: String, value: V ): Bundle = {
-            container.putString( key, value.asJson.noSpaces )
+            encode( value )( container.putString( key, _ ) )
             container
         }
     }
 
     final case class intent( container: Intent ) extends writer[Intent] {
         override def write[V: Encoder]( key: String, value: V ): Intent = {
-            container.putExtra( key, value.asJson.noSpaces )
+            encode( value )( container.putExtra( key, _ ) )
             container
         }
     }
@@ -29,10 +34,12 @@ object writer {
     final case class sharedPreferences( container: SharedPreferences )
             extends writer[SharedPreferences] {
         override def write[V: Encoder]( key: String, value: V ): SharedPreferences = {
-            container
-                .edit()
-                .putString( key, value.asJson.noSpaces )
-                .commit()
+            encode( value ) {
+                container
+                    .edit()
+                    .putString( key, _ )
+                    .commit()
+            }
             container
         }
     }

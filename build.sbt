@@ -28,6 +28,7 @@ platformTarget := "android-24"
 scalacOptions ++=
     "-deprecation" ::
     "-feature" ::
+    "-optimize" ::
     Nil
 
 scalaVersion := "2.11.8"
