@@ -8,8 +8,8 @@ import io.taig.android.soap.implicits._
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.scalatest.BeforeAndAfterEach
-import shapeless.syntax.singleton._
 import shapeless._
+import shapeless.syntax.singleton._
 
 @Config( sdk = Array( LOLLIPOP ) )
 class SharedPreferencesTest
