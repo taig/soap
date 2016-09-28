@@ -1,10 +1,11 @@
 # Changelog
 
-## 3.1.0-SNAPSHOT
+## 4.0.0-RC1
 
-_2016-09-26_
+_2016-09-28_
 
- * ???
+ * Removed entire codec infrastructure and migrated to *circe*.
+ * Removed multi-project build definition since only one project is used
 
 ## 3.0.5
 
