@@ -1,4 +1,4 @@
-androidBuildAar
+enablePlugins( AndroidLib )
 
 fork in Test := true
 
