@@ -4,8 +4,8 @@
 
 _2016-09-28_
 
- * Removed entire codec infrastructure and migrated to *circe*.
- * Removed multi-project build definition since only one project is used
+ * Remove entire codec infrastructure and migrate to *circe*
+ * Remove multi-project build definition since only one project is used
 
 ## 3.0.5
 
@@ -56,8 +56,8 @@ _2016-05-30_
 
 ## 3.0.0-BETA2
 
- * Renamed project to Soap (Scala on Android Parcelable)
- * Added io.taig.android.soap.implicits object
+ * Rename project to Soap (Scala on Android Parcelable)
+ * Add io.taig.android.soap.implicits object
 
 ## 3.0.0-BETA1
 
@@ -65,11 +65,11 @@ _2016-05-30_
 
 ## 2.4.0
 
- * Added read/write methods for Bundles and Intents
+ * Add read/write methods for Bundles and Intents
 
 ##  2.3.0
 
- * Added Try[_] support (exceptions are serialized via runtime reflection)
+ * Add Try[_] support (exceptions are serialized via runtime reflection)
 
 ## 2.2.0
 
@@ -85,7 +85,7 @@ _2016-05-30_
 
 ## 2.0.0
 
- * Switched to a type class approach, making the parcel/unparcel process much more accessible and also easier to modify and improve
+ * Switch to a type class approach, making the parcel/unparcel process much more accessible and also easier to modify and improve
 
 ## 1.2.6
 
@@ -104,11 +104,11 @@ _2016-05-30_
 
 ## 1.2.3
 
- * Resolved match error for `Array[_ <: Parcelable]`
+ * Resolve match error for `Array[_ <: Parcelable]`
 
 ## 1.2.2
 
- * Resolved NPE issues with non primitive Option values, such as collections or tuples
+ * Resolve NPE issues with non primitive Option values, such as collections or tuples
 
 ## 1.2.1
 

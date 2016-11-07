@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Build.VERSION_CODES._
 import android.util.{ Size, SizeF }
 import io.circe.syntax._
-import io.taig.android.soap.Bundle
 import io.taig.android.soap.implicits._
 import org.robolectric.annotation.Config
 
