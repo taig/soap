@@ -12,6 +12,7 @@ trait parcelable {
             val parcel = Parcel.obtain()
             parcel.writeParcelable( parcelable, 0 )
             val bytes = parcel.marshall()
+            parcel.recycle()
             bytes.asJson
         }
     }
@@ -20,6 +21,7 @@ trait parcelable {
         Decoder[Array[Byte]].map { bytes ⇒
             val parcel = Parcel.obtain()
             parcel.unmarshall( bytes, 0, bytes.length )
+            parcel.setDataPosition( 0 )
             parcel.readParcelable[P]( classTag[P].runtimeClass.getClassLoader )
         }
     }
