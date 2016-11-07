@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.0.0-RC2
+
+_2016-11-07_
+
+ * Fix Parcelable codecs (need to reset position)
+ * Upgrade to circe 0.5.4
+ * Upgrade to sbt 0.13.13
+ * Upgrade to sbt-android 1.7.1
+ * Upgrade to sbt-scalariform 1.7.1
+
 ## 4.0.0-RC1
 
 _2016-09-28_
