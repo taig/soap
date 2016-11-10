@@ -7,7 +7,7 @@ dependencies:
     - wget -q https://dl.bintray.com/sbt/debian/sbt-0.13.13.deb
     - sudo dpkg -i sbt-0.13.13.deb
     - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --all --filter "tools,platform-tools,android-24,extra-google-m2repository,extra-android-m2repository,extra-google-google_play_services"
-    - echo y | android update sdk --no-ui --all --filter "build-tools-24.0.2"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-24.0.3"
   cache_directories:
     - ~/.android
     - ~/.ivy2

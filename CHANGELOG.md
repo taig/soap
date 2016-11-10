@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.0
+
+_2016-11-10_
+
+ * Upgrade to circe 0.6.0
+ * Upgrade to scalatest 3.0.1
+
 ## 4.0.0-RC2
 
 _2016-11-07_
