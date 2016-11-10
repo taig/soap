@@ -2,6 +2,7 @@ package io.taig.android.soap.operation
 
 import android.content.{ Intent, SharedPreferences }
 import android.os.Bundle
+import cats.syntax.either._
 import io.circe.Decoder
 import io.circe.parser._
 
