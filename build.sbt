@@ -10,9 +10,9 @@ javacOptions ++=
     Nil
 
 libraryDependencies ++=
-    "io.circe" %% "circe-core" % "0.6.0" ::
-    "io.circe" %% "circe-generic" % "0.6.0" ::
-    "io.circe" %% "circe-parser" % "0.6.0" ::
+    List( "core", "generic", "parser" ).map { id =>
+        "io.circe" %% s"circe-$id" % "0.6.1"
+    } :::
     "com.geteit" %% "robotest" % "0.12" % "test" ::
     "org.scalatest" %% "scalatest" % "3.0.1" % "test" ::
     Nil
