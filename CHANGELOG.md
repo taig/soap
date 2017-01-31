@@ -1,12 +1,19 @@
 # Changelog
 
+## 4.0.2
+
+_2017-01-31_
+
+ * Upgrade to circe 0.7.0
+ * Upgrade to sbt-android 1.7.4
+ 
 ## 4.0.1
 
 _2017-01-08_
 
+ * Upgrade to circe 0.6.1
  * Upgrade to sbt-android 1.7.2
  * Upgrade to sbt-scoverage 1.5.0
- * Upgrade to circe 0.6.1
 
 ## 4.0.0
 
