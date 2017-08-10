@@ -11,10 +11,10 @@ javacOptions ++=
 
 libraryDependencies ++=
     List( "core", "generic", "parser" ).map { id =>
-        "io.circe" %% s"circe-$id" % "0.7.0"
+        "io.circe" %% s"circe-$id" % "0.8.0"
     } :::
     "com.geteit" %% "robotest" % "0.12" % "test" ::
-    "org.scalatest" %% "scalatest" % "3.0.1" % "test" ::
+    "org.scalatest" %% "scalatest" % "3.0.3" % "test" ::
     Nil
 
 minSdkVersion := "4"
@@ -23,7 +23,7 @@ name := "soap"
 
 organization := "io.taig.android"
 
-platformTarget := "android-24"
+platformTarget := "android-26"
 
 scalacOptions ++=
     "-deprecation" ::
@@ -31,7 +31,7 @@ scalacOptions ++=
     "-optimize" ::
     Nil
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.11"
 
 testOptions in Test += Tests.Argument( "-oDF" )
 

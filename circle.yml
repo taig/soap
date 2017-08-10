@@ -4,16 +4,16 @@ machine:
 
 dependencies:
   pre:
-    - wget -q https://dl.bintray.com/sbt/debian/sbt-0.13.13.deb
-    - sudo dpkg -i sbt-0.13.13.deb
-    - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --all --filter "tools,platform-tools,android-24,extra-google-m2repository,extra-android-m2repository,extra-google-google_play_services"
-    - echo y | android update sdk --no-ui --all --filter "build-tools-24.0.3"
+    - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --all --filter "tools,platform-tools,android-26,extra-google-m2repository,extra-android-m2repository,extra-google-google_play_services"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-26.0.0"
+    - echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+    - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+    - sudo apt-get update
+    - sudo apt-get install sbt
   cache_directories:
     - ~/.android
     - ~/.ivy2
     - ~/.sbt
-  override:
-    - sbt test:compile
 
 general:
   artifacts:
