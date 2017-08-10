@@ -19,7 +19,7 @@ In previous versions of *Soap*, the library provided its own codec generation fr
 ## Installation
 
 ```scala
-libraryDependencies += "io.taig.android" %% "soap" % "4.0.2"
+libraryDependencies += "io.taig.android" %% "soap" % "4.0.3"
 ```
 
 ## Quickstart
@@ -51,7 +51,7 @@ import android.preference.PreferenceManager
 val preferences = PreferenceManager.getDefaultSharedPreferences( ??? )
     .write( "foo", 42 )
     .write( "bar", "foobar" )
-    
+
 preferences.read[Int]( "foo" )      // Some( 42 )
 ```
 
