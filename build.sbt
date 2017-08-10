@@ -14,7 +14,7 @@ libraryDependencies ++=
         "io.circe" %% s"circe-$id" % "0.8.0"
     } :::
     "com.geteit" %% "robotest" % "0.12" % "test" ::
-    "org.scalatest" %% "scalatest" % "3.0.1" % "test" ::
+    "org.scalatest" %% "scalatest" % "3.0.3" % "test" ::
     Nil
 
 minSdkVersion := "4"
