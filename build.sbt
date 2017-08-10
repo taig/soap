@@ -11,7 +11,7 @@ javacOptions ++=
 
 libraryDependencies ++=
     List( "core", "generic", "parser" ).map { id =>
-        "io.circe" %% s"circe-$id" % "0.7.0"
+        "io.circe" %% s"circe-$id" % "0.8.0"
     } :::
     "com.geteit" %% "robotest" % "0.12" % "test" ::
     "org.scalatest" %% "scalatest" % "3.0.1" % "test" ::
