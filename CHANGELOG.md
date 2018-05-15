@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.1.0
+
+_2018-05-15_
+
+ * Upgrade to circe 0.9.3
+ * Upgrade to android platform 27
+ * Upgrade to scala 2.11.12
+ * Upgrade to sbt-android 1.7.10
+ * Upgrade to scalatest 3.0.5
+
 ## 4.0.3
 
 _2017-08-10_

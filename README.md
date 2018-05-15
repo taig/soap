@@ -19,7 +19,7 @@ In previous versions of *Soap*, the library provided its own codec generation fr
 ## Installation
 
 ```scala
-libraryDependencies += "io.taig.android" %% "soap" % "4.0.3"
+libraryDependencies += "io.taig.android" %% "soap" % "4.1.0"
 ```
 
 ## Quickstart
