@@ -31,7 +31,7 @@ scalacOptions ++=
     "-optimize" ::
     Nil
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.11.12"
 
 testOptions in Test += Tests.Argument( "-oDF" )
 
