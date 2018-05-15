@@ -23,7 +23,7 @@ name := "soap"
 
 organization := "io.taig.android"
 
-platformTarget := "android-26"
+platformTarget := "android-27"
 
 scalacOptions ++=
     "-deprecation" ::

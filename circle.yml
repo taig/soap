@@ -5,7 +5,7 @@ machine:
 dependencies:
   pre:
     - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android update sdk --no-ui --all --filter "tools,platform-tools,android-26,extra-google-m2repository,extra-android-m2repository,extra-google-google_play_services"
-    - echo y | android update sdk --no-ui --all --filter "build-tools-26.0.0"
+    - echo y | android update sdk --no-ui --all --filter "build-tools-27.0.3"
     - echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
     - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
     - sudo apt-get update
